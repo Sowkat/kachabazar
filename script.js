@@ -7,13 +7,21 @@ const defaultProducts = [
 
 let products = JSON.parse(localStorage.getItem('sb_products')) || defaultProducts;
 let savedPass = localStorage.getItem('sb_admin_pass') || '1234';
+let savedNotice = localStorage.getItem('sb_notice') || 'স্বাগতম! আমাদের কাঁচাবাজারে টাটকা সবজি ও ফলমূল পাওয়া যায়। আজই অর্ডার করুন এবং ঘরে বসেই ডেলিভারি পান!';
 let cart = [];
 let currentCategory = 'all';
 
-function filterCategory(cat) {
+// স্ক্রোলিং নোটিশ সেটআপ
+document.getElementById('scrollNotice').innerText = savedNotice;
+
+function scrollToCart() {
+    document.getElementById('cartSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function filterCategory(cat, event) {
     currentCategory = cat;
     document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    if(event) event.target.classList.add('active');
 
     const catNames = {
         'all': 'সকল পণ্যসমূহ',
@@ -34,7 +42,7 @@ function renderProducts() {
         : products.filter(p => p.category === currentCategory);
 
     if (filtered.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; color: #777;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</p>';
+        grid.innerHTML = '<p style="grid-column: 1/-1; color: #777; font-size: 0.85rem;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</p>';
         return;
     }
 
@@ -51,7 +59,7 @@ function renderProducts() {
                         <option value="gm">গ্রাম</option>
                     </select>
                 </div>
-                <button class="add-btn" onclick="addToCart(${p.id})">কার্টে যোগ করুন</button>
+                <button class="add-btn" onclick="addToCart(${p.id})">যোগ করুন</button>
             </div>
         `;
     });
@@ -90,8 +98,15 @@ function removeFromCart(index) {
 
 function updateCart() {
     const cartContainer = document.getElementById('cartItems');
+    const badge = document.getElementById('cartCountBadge');
+    const countText = document.getElementById('itemTotalCount');
+
+    let totalItems = cart.reduce((sum, item) => sum + 1, 0);
+    badge.innerText = totalItems;
+    countText.innerText = `(${totalItems} টি আইটেম)`;
+
     if (cart.length === 0) {
-        cartContainer.innerHTML = '<p style="color: #777; font-size: 0.9rem;">কার্ট খালি রয়েছে।</p>';
+        cartContainer.innerHTML = '<p style="color: #777; font-size: 0.85rem; text-align: center; padding: 10px 0;">কার্ট খালি রয়েছে। পণ্য যোগ করুন!</p>';
         document.getElementById('subTotal').innerText = '৳ 0';
         document.getElementById('deliveryCharge').innerText = '৳ 0';
         document.getElementById('grandTotal').innerText = '৳ 0';
@@ -136,10 +151,10 @@ function processOrder(type) {
     let delivery = subtotal >= 300 ? 0 : 20;
     let grandTotal = subtotal + delivery;
 
-    // মেমো নোটিফিকেশন প্রদর্শন
+    // মেমো রাইট
     let receiptHTML = `<strong>গ্রাহক:</strong> ${name}<br>`;
     receiptHTML += `<strong>ফোন:</strong> ${phone}<br>`;
-    receiptHTML += `<strong>ঠিকানা:</strong> ${village}, সাতবাড়ীয়া ইউনিয়ন<br><hr style="margin: 6px 0;">`;
+    receiptHTML += `<strong>ঠিকানা:</strong> ${village}, সাতবাড়ীয়া ইউনিয়ন<br><hr style="margin: 4px 0;">`;
     receiptHTML += `<strong>পণ্যসমূহ:</strong><br>`;
 
     let orderText = `নতুন কাঁচাবাজার অর্ডার\n`;
@@ -151,7 +166,7 @@ function processOrder(type) {
         orderText += `${i + 1}. ${item.name} - ${item.qty}${item.unit} (${item.totalPrice.toFixed(0)}টাকা)\n`;
     });
 
-    receiptHTML += `<hr style="margin: 6px 0;">`;
+    receiptHTML += `<hr style="margin: 4px 0;">`;
     receiptHTML += `পণ্যের দাম: ৳${subtotal.toFixed(0)}<br>`;
     receiptHTML += `ডেলিভারি চার্জ: ${delivery === 0 ? 'ফ্রি' : '৳' + delivery}<br>`;
     receiptHTML += `<strong>সর্বমোট বিল: ৳${grandTotal.toFixed(0)}</strong>`;
@@ -180,7 +195,7 @@ function closeReceiptModal() {
     updateCart();
 }
 
-// Admin Portal
+// অ্যাডমিন ফাংশনালিটি
 function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
 function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
@@ -189,42 +204,124 @@ function checkAdminPassword() {
     if (pass === savedPass) {
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('newNoticeText').value = savedNotice;
+        renderAdminProductList();
     } else {
         alert('ভুল পাসওয়ার্ড!');
     }
 }
 
-function addNewProduct() {
+function updateNotice() {
+    const text = document.getElementById('newNoticeText').value;
+    if (!text) return alert('বিজ্ঞপ্তি খালি রাখা যাবে না');
+    savedNotice = text;
+    localStorage.setItem('sb_notice', text);
+    document.getElementById('scrollNotice').innerText = text;
+    alert('বিজ্ঞপ্তি সফলভাবে পরিবর্তন করা হয়েছে!');
+}
+
+function renderAdminProductList() {
+    const container = document.getElementById('adminProductList');
+    container.innerHTML = '';
+
+    products.forEach(p => {
+        container.innerHTML += `
+            <div class="admin-prod-item">
+                <span><strong>${p.name}</strong> (৳${p.price})</span>
+                <div>
+                    <button class="admin-action-btn" style="background:#0275d8;" onclick="editProduct(${p.id})">সম্পাদনা</button>
+                    <button class="admin-action-btn" style="background:#d9534f;" onclick="deleteProduct(${p.id})">মুছে ফেলুন</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function saveProduct() {
+    const editId = document.getElementById('editProductId').value;
     const name = document.getElementById('newProdName').value;
     const price = parseFloat(document.getElementById('newProdPrice').value);
     const category = document.getElementById('newProdCat').value;
     const fileInput = document.getElementById('newProdImgFile');
 
-    if (!name || !price) return alert('নাম এবং মূল্য দিন');
+    if (!name || !price) return alert('পণ্যের নাম এবং মূল্য দিন');
 
-    let imgData = 'https://via.placeholder.com/150';
+    if (editId) {
+        // এডিট মোড
+        let prod = products.find(p => p.id == editId);
+        if (prod) {
+            prod.name = name;
+            prod.price = price;
+            prod.category = category;
 
-    if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            imgData = e.target.result;
-            saveProductObj(name, price, category, imgData);
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    prod.img = e.target.result;
+                    finishSaveProduct();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                finishSaveProduct();
+            }
+        }
     } else {
-        saveProductObj(name, price, category, imgData);
+        // নতুন পণ্য যোগ মোড
+        let imgData = 'https://via.placeholder.com/150';
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imgData = e.target.result;
+                products.push({ id: Date.now(), name, price, category, img: imgData });
+                finishSaveProduct();
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            products.push({ id: Date.now(), name, price, category, img: imgData });
+            finishSaveProduct();
+        }
     }
 }
 
-function saveProductObj(name, price, category, img) {
-    const newP = { id: Date.now(), name, price, category, img };
-    products.push(newP);
+function finishSaveProduct() {
     localStorage.setItem('sb_products', JSON.stringify(products));
     renderProducts();
-    alert('পণ্য সফলভাবে যোগ করা হয়েছে!');
+    renderAdminProductList();
+    resetProductForm();
+    alert('পণ্য সফলভাবে সংরক্ষণ করা হয়েছে!');
+}
+
+function editProduct(pId) {
+    const prod = products.find(p => p.id === pId);
+    if (!prod) return;
+
+    document.getElementById('editProductId').value = prod.id;
+    document.getElementById('newProdName').value = prod.name;
+    document.getElementById('newProdPrice').value = prod.price;
+    document.getElementById('newProdCat').value = prod.category;
+
+    document.getElementById('formModeTitle').innerText = 'পণ্য এডিট করুন';
+    document.getElementById('saveProductBtn').innerText = 'আপডেট করুন';
+    document.getElementById('cancelEditBtn').style.display = 'block';
+}
+
+function deleteProduct(pId) {
+    if (confirm('আপনি কি সত্যিই এই পণ্যটি মুছে ফেলতে চান?')) {
+        products = products.filter(p => p.id !== pId);
+        localStorage.setItem('sb_products', JSON.stringify(products));
+        renderProducts();
+        renderAdminProductList();
+    }
+}
+
+function resetProductForm() {
+    document.getElementById('editProductId').value = '';
     document.getElementById('newProdName').value = '';
     document.getElementById('newProdPrice').value = '';
     document.getElementById('newProdImgFile').value = '';
+    document.getElementById('formModeTitle').innerText = 'নতুন পণ্য যোগ করুন';
+    document.getElementById('saveProductBtn').innerText = 'পণ্য যোগ করুন';
+    document.getElementById('cancelEditBtn').style.display = 'none';
 }
 
 function changePassword() {

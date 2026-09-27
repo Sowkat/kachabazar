@@ -1,19 +1,44 @@
-// ডিফল্ট পণ্যসমূহ (কমপক্ষে ৪টি)
 const defaultProducts = [
-    { id: 1, name: "আলু (দেশি)", price: 45, img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300" },
-    { id: 2, name: "পেঁয়াজ (দেশি)", price: 80, img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8ce?w=300" },
-    { id: 3, name: "টমেটো", price: 60, img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=300" },
-    { id: 4, name: "কাঁচামরিচ", price: 120, img: "https://images.unsplash.com/photo-1567375698348-5d9d5ae99de0?w=300" }
+    { id: 1, name: "আলু (দেশি)", price: 45, category: "vegetable", img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300" },
+    { id: 2, name: "পেঁয়াজ (দেশি)", price: 80, category: "vegetable", img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8ce?w=300" },
+    { id: 3, name: "টমেটো", price: 60, category: "vegetable", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=300" },
+    { id: 4, name: "কাঁচামরিচ", price: 120, category: "vegetable", img: "https://images.unsplash.com/photo-1567375698348-5d9d5ae99de0?w=300" }
 ];
 
 let products = JSON.parse(localStorage.getItem('sb_products')) || defaultProducts;
 let savedPass = localStorage.getItem('sb_admin_pass') || '1234';
 let cart = [];
+let currentCategory = 'all';
+
+function filterCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const catNames = {
+        'all': 'সকল পণ্যসমূহ',
+        'vegetable': 'শাক-সবজি',
+        'fruit': 'ফলমূল',
+        'grocery': 'মশলা ও নিত্যপণ্য'
+    };
+    document.getElementById('catTitle').innerText = catNames[cat] || 'পণ্যসমূহ';
+    renderProducts();
+}
 
 function renderProducts() {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = '';
-    products.forEach(p => {
+
+    const filtered = currentCategory === 'all' 
+        ? products 
+        : products.filter(p => p.category === currentCategory);
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; color: #777;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</p>';
+        return;
+    }
+
+    filtered.forEach(p => {
         grid.innerHTML += `
             <div class="product-card">
                 <img src="${p.img}" class="product-img" alt="${p.name}">
@@ -50,10 +75,8 @@ function addToCart(pId) {
         cart.push({
             id: product.id,
             name: product.name,
-            pricePerKg: product.price,
             qty: qtyVal,
             unit: unit,
-            qtyInKg: qtyInKg,
             totalPrice: itemPrice
         });
     }
@@ -101,7 +124,7 @@ function updateCart() {
     document.getElementById('grandTotal').innerText = `৳ ${grandTotal.toFixed(0)}`;
 }
 
-function sendWhatsAppOrder() {
+function processOrder(type) {
     if (cart.length === 0) return alert('আপনার কার্ট খালি!');
     const name = document.getElementById('custName').value;
     const phone = document.getElementById('custPhone').value;
@@ -113,30 +136,54 @@ function sendWhatsAppOrder() {
     let delivery = subtotal >= 300 ? 0 : 20;
     let grandTotal = subtotal + delivery;
 
-    let orderText = `*নতুন অনলাইন বাজার অর্ডার*\n\n`;
-    orderText += `*গ্রাহকের তথ্য:*\nনাম: ${name}\nমোবাইল: ${phone}\nইউনিয়ন: সাতবাড়ীয়া ইউনিয়ন\nগ্রাম/এলাকা: ${village}\n\n`;
-    orderText += `*অর্ডারকৃত পণ্যসমূহ:*\n`;
+    // মেমো নোটিফিকেশন প্রদর্শন
+    let receiptHTML = `<strong>গ্রাহক:</strong> ${name}<br>`;
+    receiptHTML += `<strong>ফোন:</strong> ${phone}<br>`;
+    receiptHTML += `<strong>ঠিকানা:</strong> ${village}, সাতবাড়ীয়া ইউনিয়ন<br><hr style="margin: 6px 0;">`;
+    receiptHTML += `<strong>পণ্যসমূহ:</strong><br>`;
+
+    let orderText = `নতুন কাঁচাবাজার অর্ডার\n`;
+    orderText += `নাম: ${name}\nমোবাইল: ${phone}\nইউনিয়ন: সাতবাড়ীয়া\nগ্রাম: ${village}\n\n`;
+    orderText += `পণ্যসমূহ:\n`;
 
     cart.forEach((item, i) => {
-        orderText += `${i + 1}. ${item.name} - ${item.qty} ${item.unit} (৳${item.totalPrice.toFixed(0)})\n`;
+        receiptHTML += `${i + 1}. ${item.name} - ${item.qty}${item.unit} (${item.totalPrice.toFixed(0)}টাকা)<br>`;
+        orderText += `${i + 1}. ${item.name} - ${item.qty}${item.unit} (${item.totalPrice.toFixed(0)}টাকা)\n`;
     });
 
-    orderText += `\n*পণ্যের মোট দাম:* ৳${subtotal.toFixed(0)}`;
-    orderText += `\n*ডেলিভারি চার্জ:* ${delivery === 0 ? 'ফ্রি' : '৳' + delivery}`;
-    orderText += `\n*সর্বমোট বিল:* ৳${grandTotal.toFixed(0)}`;
+    receiptHTML += `<hr style="margin: 6px 0;">`;
+    receiptHTML += `পণ্যের দাম: ৳${subtotal.toFixed(0)}<br>`;
+    receiptHTML += `ডেলিভারি চার্জ: ${delivery === 0 ? 'ফ্রি' : '৳' + delivery}<br>`;
+    receiptHTML += `<strong>সর্বমোট বিল: ৳${grandTotal.toFixed(0)}</strong>`;
 
-    const targetWhatsApp = "8801960174982";
-    const url = `https://wa.me/${targetWhatsApp}?text=${encodeURIComponent(orderText)}`;
-    window.open(url, '_blank');
+    orderText += `\nমোট: ${subtotal.toFixed(0)}টাকা`;
+    orderText += `\nডেলিভারি: ${delivery === 0 ? 'ফ্রি' : delivery + 'টাকা'}`;
+    orderText += `\nসর্বমোট: ${grandTotal.toFixed(0)}টাকা`;
+
+    document.getElementById('receiptDetails').innerHTML = receiptHTML;
+    document.getElementById('receiptModal').style.display = 'flex';
+
+    const targetNum = "8801960174982";
+
+    if (type === 'wa') {
+        window.open(`https://wa.me/${targetNum}?text=${encodeURIComponent(orderText)}`, '_blank');
+    } else if (type === 'sms') {
+        window.open(`sms:${targetNum}?body=${encodeURIComponent(orderText)}`, '_blank');
+    } else if (type === 'call') {
+        window.open(`tel:01960174982`, '_self');
+    }
 }
 
-// অ্যাডমিন প্যানেল ফাংশন
-function openAdminModal() {
-    document.getElementById('adminModal').style.display = 'flex';
+function closeReceiptModal() {
+    document.getElementById('receiptModal').style.display = 'none';
+    cart = [];
+    updateCart();
 }
-function closeAdminModal() {
-    document.getElementById('adminModal').style.display = 'none';
-}
+
+// Admin Portal
+function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
 function checkAdminPassword() {
     const pass = document.getElementById('adminPassword').value;
     if (pass === savedPass) {
@@ -146,22 +193,40 @@ function checkAdminPassword() {
         alert('ভুল পাসওয়ার্ড!');
     }
 }
+
 function addNewProduct() {
     const name = document.getElementById('newProdName').value;
     const price = parseFloat(document.getElementById('newProdPrice').value);
-    const img = document.getElementById('newProdImg').value || 'https://via.placeholder.com/150';
+    const category = document.getElementById('newProdCat').value;
+    const fileInput = document.getElementById('newProdImgFile');
 
     if (!name || !price) return alert('নাম এবং মূল্য দিন');
 
-    const newP = { id: Date.now(), name, price, img };
+    let imgData = 'https://via.placeholder.com/150';
+
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imgData = e.target.result;
+            saveProductObj(name, price, category, imgData);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        saveProductObj(name, price, category, imgData);
+    }
+}
+
+function saveProductObj(name, price, category, img) {
+    const newP = { id: Date.now(), name, price, category, img };
     products.push(newP);
     localStorage.setItem('sb_products', JSON.stringify(products));
     renderProducts();
     alert('পণ্য সফলভাবে যোগ করা হয়েছে!');
     document.getElementById('newProdName').value = '';
     document.getElementById('newProdPrice').value = '';
-    document.getElementById('newProdImg').value = '';
+    document.getElementById('newProdImgFile').value = '';
 }
+
 function changePassword() {
     const curr = document.getElementById('currPass').value;
     const newP = document.getElementById('newPass').value;
@@ -176,5 +241,4 @@ function changePassword() {
     document.getElementById('newPass').value = '';
 }
 
-// অ্যাপ চালু করা
 renderProducts();

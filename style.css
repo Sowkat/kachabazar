@@ -1,0 +1,230 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    background-color: #f4f7f6;
+    color: #333;
+    padding-bottom: 60px;
+}
+header {
+    background-color: #2e7d32;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+header h1 {
+    font-size: 1.2rem;
+}
+.admin-btn {
+    background: #1b5e20;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+.notice-bar {
+    background: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+@media (min-width: 600px) {
+    .products-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+.product-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.product-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.product-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+.product-price {
+    color: #2e7d32;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+.qty-controls {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.qty-controls input {
+    width: 60%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+.qty-controls select {
+    width: 40%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+.add-btn {
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* Cart Section */
+.cart-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.cart-title {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e8f5e9;
+    padding-bottom: 8px;
+}
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+.remove-item {
+    color: red;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.cart-summary {
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+.cart-summary div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+.total-price {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #2e7d32;
+    border-top: 1px solid #ccc;
+    padding-top: 5px;
+}
+
+/* Checkout Form */
+.checkout-form {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.checkout-form input, .checkout-form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+.order-btn {
+    background-color: #25d366;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Admin Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.close-modal {
+    float: right;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.admin-section {
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #333;
+    color: white;
+    font-size: 0.85rem;
+    margin-top: 30px;
+}

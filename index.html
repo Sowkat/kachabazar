@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সাতবাড়ীয়া ইউনিয়ন কাঁচাবাজার</title>
+    <!-- CSS লিংক -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>সাতবাড়ীয়া কাঁচাবাজার</h1>
+        <button class="admin-btn" onclick="openAdminModal()">Admin Portal</button>
+    </header>
+
+    <div class="container">
+        <div class="notice-bar">
+            <strong>বিশেষ বিজ্ঞপ্তি:</strong> সাতবাড়ীয়া ইউনিয়নে ৩০০ টাকার বা তার বেশি অর্ডারে <strong>ফ্রি ডেলিভারি</strong>! (৩০০ টাকার নিচে ডেলিভারি চার্জ ২০ টাকা)
+        </div>
+
+        <h2 style="margin-bottom: 15px; font-size: 1.1rem;">তাজা পণ্যসমূহ</h2>
+        <div class="products-grid" id="productsGrid">
+            <!-- ডাইনামিকভাবে পণ্য লোড হবে -->
+        </div>
+
+        <!-- কার্ট ও চেকআউট সেকশন -->
+        <div class="cart-section">
+            <div class="cart-title">আপনার শপিং কার্ট</div>
+            <div id="cartItems">
+                <p style="color: #777; font-size: 0.9rem;">কার্ট খালি রয়েছে।</p>
+            </div>
+            
+            <div class="cart-summary">
+                <div><span>পণ্যের মোট দাম:</span> <span id="subTotal">৳ 0</span></div>
+                <div><span>ডেলিভারি চার্জ:</span> <span id="deliveryCharge">৳ 0</span></div>
+                <div class="total-price"><span>সর্বমোট বিল:</span> <span id="grandTotal">৳ 0</span></div>
+            </div>
+
+            <div class="checkout-form">
+                <input type="text" id="custName" placeholder="আপনার নাম" required>
+                <input type="tel" id="custPhone" placeholder="মোবাইল নম্বর" required>
+                <select id="custUnion" disabled>
+                    <option value="সাতবাড়ীয়া ইউনিয়ন">ইউনিয়ন: সাতবাড়ীয়া ইউনিয়ন</option>
+                </select>
+                <input type="text" id="custVillage" placeholder="গ্রাম / এলাকার নাম (যেমন: সাতবাড়ীয়া বাজার)" required>
+                <button class="order-btn" onclick="sendWhatsAppOrder()">
+                    হোয়াটসঅ্যাপে অর্ডার করুন
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- অ্যাডমিন মডাল -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAdminModal()">&times;</span>
+            <div id="adminLogin">
+                <h3>অ্যাডমিন লগইন</h3>
+                <br>
+                <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড দিন" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                <button class="add-btn" onclick="checkAdminPassword()">লগইন করুন</button>
+            </div>
+            
+            <div id="adminPanel" style="display: none;">
+                <h3>অ্যাডমিন প্যানেল</h3>
+                
+                <div class="admin-section">
+                    <h4>নতুন পণ্য যোগ করুন</h4>
+                    <br>
+                    <input type="text" id="newProdName" placeholder="পণ্যের নাম" style="width:100%; padding:6px; margin-bottom:6px;">
+                    <input type="number" id="newProdPrice" placeholder="মূল্য (প্রতি কেজি/লিটার)" style="width:100%; padding:6px; margin-bottom:6px;">
+                    <input type="text" id="newProdImg" placeholder="ছবির লিংক (URL)" style="width:100%; padding:6px; margin-bottom:6px;">
+                    <button class="add-btn" onclick="addNewProduct()">পণ্য যোগ করুন</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4>পাসওয়ার্ড পরিবর্তন করুন</h4>
+                    <br>
+                    <input type="password" id="currPass" placeholder="বর্তমান পাসওয়ার্ড" style="width:100%; padding:6px; margin-bottom:6px;">
+                    <input type="password" id="newPass" placeholder="নতুন পাসওয়ার্ড" style="width:100%; padding:6px; margin-bottom:6px;">
+                    <button class="add-btn" style="background:#007bff;" onclick="changePassword()">পাসওয়ার্ড আপডেট করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Powered by Sowkat & Biplob
+    </footer>
+
+    <!-- JavaScript লিংক -->
+    <script src="script.js"></script>
+</body>
+</html>

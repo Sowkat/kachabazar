@@ -12,7 +12,6 @@ let cart = [];
 let currentCategory = 'all';
 const merchantPhone = "01960174982";
 
-// নোটিশ সেটআপ
 document.getElementById('scrollNotice').innerText = savedNotice;
 
 function scrollToCart() {
@@ -140,7 +139,6 @@ function updateCart() {
     document.getElementById('grandTotal').innerText = `৳ ${grandTotal.toFixed(0)}`;
 }
 
-// পেমেন্ট ফিল্ড টগল
 function togglePaymentInfo() {
     const selectedPay = document.querySelector('input[name="payMethod"]:checked').value;
     const infoBox = document.getElementById('mfsInfoBox');
@@ -177,28 +175,32 @@ function processOrder(type) {
     let delivery = subtotal >= 300 ? 0 : 20;
     let grandTotal = subtotal + delivery;
 
-    let payMethodText = selectedPay === 'cod' ? 'ক্যাশ অন ডেলিভারি (Cash on Delivery)' : 
+    let payMethodName = selectedPay === 'cod' ? 'ক্যাশ অন ডেলিভারি (Cash on Delivery)' : 
                        selectedPay === 'bkash' ? 'বিকাশ (bKash)' : 
                        selectedPay === 'nagad' ? 'নগদ (Nagad)' : 'রকেট (Rocket)';
 
-    // মেমো রাইট
+    // মেমো তৈরি
     let receiptHTML = `<strong>গ্রাহক:</strong> ${name}<br>`;
     receiptHTML += `<strong>ফোন:</strong> ${phone}<br>`;
     receiptHTML += `<strong>ঠিকানা:</strong> ${village}, সাতবাড়ীয়া ইউনিয়ন<br>`;
-    receiptHTML += `<strong>পেমেন্ট পদ্ধতি:</strong> ${payMethodText}<br>`;
+    receiptHTML += `<strong>পেমেন্ট পদ্ধতি:</strong> ${payMethodName}<br>`;
     if (selectedPay !== 'cod') {
         receiptHTML += `<strong>প্রেরক নম্বর:</strong> ${senderNum}<br>`;
         receiptHTML += `<strong>TrxID:</strong> ${trxId}<br>`;
     }
     receiptHTML += `<hr style="margin: 4px 0;"><strong>পণ্যসমূহ:</strong><br>`;
 
-    let orderText = `নতুন কাঁচাবাজার অর্ডার\n`;
-    orderText += `নাম: ${name}\nমোবাইল: ${phone}\nইউনিয়ন: সাতবাড়ীয়া\nগ্রাম: ${village}\n`;
-    orderText += `পেমেন্ট: ${payMethodText}\n`;
+    // WhatsApp ও SMS বার্তা তৈরি
+    let orderText = `*নতুন কাঁচাবাজার অর্ডার*\n\n`;
+    orderText += `*নাম:* ${name}\n`;
+    orderText += `*মোবাইল:* ${phone}\n`;
+    orderText += `*ঠিকানা:* ${village}, সাতবাড়ীয়া\n`;
+    orderText += `*পেমেন্ট পদ্ধতি:* ${payMethodName}\n`;
     if (selectedPay !== 'cod') {
-        orderText += `প্রেরক নম্বর: ${senderNum}\nTrxID: ${trxId}\n`;
+        orderText += `*প্রেরক নম্বর:* ${senderNum}\n`;
+        orderText += `*TrxID:* ${trxId}\n`;
     }
-    orderText += `\nপণ্যসমূহ:\n`;
+    orderText += `\n*পণ্যসমূহ:*\n`;
 
     cart.forEach((item, i) => {
         receiptHTML += `${i + 1}. ${item.name} - ${item.qty}${item.unit} (${item.totalPrice.toFixed(0)}টাকা)<br>`;
@@ -210,9 +212,9 @@ function processOrder(type) {
     receiptHTML += `ডেলিভারি চার্জ: ${delivery === 0 ? 'ফ্রি' : '৳' + delivery}<br>`;
     receiptHTML += `<strong>সর্বমোট বিল: ৳${grandTotal.toFixed(0)}</strong>`;
 
-    orderText += `\nমোট: ${subtotal.toFixed(0)}টাকা`;
-    orderText += `\nডেলিভারি: ${delivery === 0 ? 'ফ্রি' : delivery + 'টাকা'}`;
-    orderText += `\nসর্বমোট: ${grandTotal.toFixed(0)}টাকা`;
+    orderText += `\n*পণ্যের দাম:* ${subtotal.toFixed(0)} টাকা`;
+    orderText += `\n*ডেলিভারি চার্জ:* ${delivery === 0 ? 'ফ্রি' : delivery + ' টাকা'}`;
+    orderText += `\n*সর্বমোট বিল:* ${grandTotal.toFixed(0)} টাকা`;
 
     document.getElementById('receiptDetails').innerHTML = receiptHTML;
     document.getElementById('receiptModal').style.display = 'flex';
@@ -234,7 +236,6 @@ function closeReceiptModal() {
     updateCart();
 }
 
-// অ্যাডমিন ফাংশনালিটি
 function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
 function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 

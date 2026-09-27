@@ -4,231 +4,348 @@
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 body {
     background-color: #f4f7f6;
     color: #333;
-    padding-bottom: 60px;
 }
+
+/* বড় ডিজাইনার হেডার */
 header {
-    background-color: #2e7d32;
+    background: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c);
     color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 12px 15px;
     position: sticky;
     top: 0;
     z-index: 1000;
-}
-header h1 {
-    font-size: 1.2rem;
-}
-.admin-btn {
-    background: #1b5e20;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.85rem;
-}
-.container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 0 15px;
-}
-.notice-bar {
-    background: #e8f5e9;
-    border-left: 4px solid #2e7d32;
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-    border-radius: 4px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-/* Category Tabs */
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* কার্ট আইকন ও ব্যাজ */
+.cart-icon-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff3d00;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-btn {
+    background: #ffffff;
+    color: #1b5e20;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* স্থির ফ্রি ডেলিভারি ব্যানার */
+.sticky-banner {
+    background: #e8f5e9;
+    border-bottom: 2px solid #a5d6a7;
+    color: #1b5e20;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.sticky-banner .highlight {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+/* স্ক্রোলিং টেক্সট */
+.marquee-container {
+    background: #fff9c4;
+    color: #f57f17;
+    padding: 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid #fff59d;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 16s linear infinite;
+}
+
+@keyframes marquee {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
+.container {
+    max-width: 1000px;
+    margin: 10px auto;
+    padding: 0 10px;
+}
+
+/* ক্যাটাগরি ফিল্টার */
 .category-tabs {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     overflow-x: auto;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
 }
+
 .cat-btn {
     background: #e0e0e0;
     border: none;
-    padding: 8px 14px;
-    border-radius: 20px;
+    padding: 5px 12px;
+    border-radius: 15px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     white-space: nowrap;
 }
+
 .cat-btn.active {
     background: #2e7d32;
     color: white;
     font-weight: bold;
 }
 
-/* Products Grid */
+.section-title {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #2e7d32;
+}
+
+/* কমপ্যাক্ট পণ্য গ্রিড */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 8px;
 }
+
 @media (min-width: 600px) {
     .products-grid {
         grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
     }
 }
+
 .product-card {
     background: white;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-radius: 6px;
+    padding: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    border: 1px solid #e0e0e0;
 }
+
 .product-img {
     width: 100%;
-    height: 120px;
+    height: 80px;
     object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 8px;
-}
-.product-title {
-    font-weight: bold;
-    font-size: 1rem;
+    border-radius: 4px;
     margin-bottom: 4px;
 }
+
+.product-title {
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: #222;
+    line-height: 1.1;
+    margin-bottom: 2px;
+}
+
 .product-price {
     color: #2e7d32;
     font-weight: bold;
-    font-size: 0.9rem;
-    margin-bottom: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
 }
+
 .qty-controls {
     display: flex;
-    gap: 5px;
-    margin-bottom: 10px;
+    gap: 4px;
+    margin-bottom: 6px;
 }
+
 .qty-controls input {
-    width: 60%;
-    padding: 5px;
+    width: 55%;
+    padding: 3px 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.85rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
 }
+
 .qty-controls select {
-    width: 40%;
-    padding: 5px;
+    width: 45%;
+    padding: 3px 2px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.85rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
 }
+
 .add-btn {
     background-color: #2e7d32;
     color: white;
     border: none;
-    padding: 8px;
-    border-radius: 5px;
+    padding: 6px;
+    border-radius: 4px;
     width: 100%;
     cursor: pointer;
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
 }
 
-/* Cart Section */
+/* কার্ট সেকশন */
 .cart-section {
     background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 25px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
+
 .cart-title {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-bottom: 10px;
     border-bottom: 2px solid #e8f5e9;
-    padding-bottom: 8px;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
+
 .cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 0.9rem;
+    padding: 6px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 0.8rem;
 }
+
 .remove-item {
     color: red;
     cursor: pointer;
     font-weight: bold;
-    margin-left: 10px;
+    margin-left: 8px;
 }
+
 .cart-summary {
-    margin-top: 15px;
-    font-size: 0.95rem;
+    margin-top: 10px;
+    font-size: 0.85rem;
 }
+
 .cart-summary div {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 5px;
-}
-.total-price {
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: #2e7d32;
-    border-top: 1px solid #ccc;
-    padding-top: 5px;
+    margin-bottom: 4px;
 }
 
-/* Checkout Form & Order Buttons */
+.total-price {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: #2e7d32;
+    border-top: 1px solid #ccc;
+    padding-top: 4px;
+}
+
+/* ফর্ম ও বাটন */
 .checkout-form {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.checkout-form input, .checkout-form select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 0.9rem;
-}
-.order-buttons {
+    margin-top: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
+
+.checkout-form input, .checkout-form select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.order-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .order-btn {
     color: white;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 9px;
+    border-radius: 4px;
     font-weight: bold;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     cursor: pointer;
     text-align: center;
-    text-decoration: none;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
+
 .wa-btn { background-color: #25d366; }
 .sms-btn { background-color: #0275d8; }
 .call-btn { background-color: #d9534f; }
 
-/* Receipt Styling */
+/* মডাল ও অন্যান্য */
 .receipt-box {
     background: #f9f9f9;
     border: 1px dashed #2e7d32;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 0.88rem;
-    line-height: 1.5;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.4;
 }
 
-/* Admin Modal */
 .modal {
     display: none;
     position: fixed;
@@ -238,32 +355,59 @@ header h1 {
     justify-content: center;
     align-items: center;
 }
+
 .modal-content {
     background: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
+    width: 92%;
+    max-width: 480px;
     max-height: 90vh;
     overflow-y: auto;
 }
+
 .close-modal {
     float: right;
     cursor: pointer;
     font-size: 1.2rem;
     font-weight: bold;
 }
+
 .admin-section {
-    margin-top: 15px;
+    margin-top: 12px;
     border-top: 1px solid #ddd;
-    padding-top: 15px;
+    padding-top: 10px;
+}
+
+.admin-section h4 {
+    font-size: 0.85rem;
+    color: #333;
+}
+
+.admin-prod-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.8rem;
+}
+
+.admin-action-btn {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    margin-left: 4px;
 }
 
 footer {
     text-align: center;
-    padding: 15px;
-    background: #333;
-    color: white;
-    font-size: 0.85rem;
-    margin-top: 30px;
+    padding: 12px;
+    background: #222;
+    color: #ccc;
+    font-size: 0.8rem;
+    margin-top: 25px;
 }

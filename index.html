@@ -77,6 +77,38 @@
                 </select>
                 <input type="text" id="custVillage" placeholder="গ্রাম / এলাকার নাম (যেমন: সাতবাড়ীয়া বাজার)" required>
                 
+                <!-- পেমেন্ট মেথড সেকশন -->
+                <div class="payment-selection">
+                    <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px; color: #2e7d32;">পেমেন্ট পদ্ধতি নির্বাচন করুন:</label>
+                    <div class="payment-options">
+                        <label class="pay-option">
+                            <input type="radio" name="payMethod" value="cod" checked onclick="togglePaymentInfo()">
+                            <span>ক্যাশ অন ডেলিভারি</span>
+                        </label>
+                        <label class="pay-option">
+                            <input type="radio" name="payMethod" value="bkash" onclick="togglePaymentInfo()">
+                            <span>বিকাশ</span>
+                        </label>
+                        <label class="pay-option">
+                            <input type="radio" name="payMethod" value="nagad" onclick="togglePaymentInfo()">
+                            <span>নগদ</span>
+                        </label>
+                        <label class="pay-option">
+                            <input type="radio" name="payMethod" value="rocket" onclick="togglePaymentInfo()">
+                            <span>রকেট</span>
+                        </label>
+                    </div>
+
+                    <!-- মোবাইল ব্যাংকিং নির্দেশনা ও ট্রানজেকশন তথ্য -->
+                    <div id="mfsInfoBox" class="mfs-info-box" style="display: none;">
+                        <p style="font-size: 0.8rem; color: #d32f2f; font-weight: bold;" id="mfsInstruction">
+                            <!-- ডাইনামিক মেসেজ আসবে -->
+                        </p>
+                        <input type="tel" id="paySenderNum" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন" style="margin-top: 6px;">
+                        <input type="text" id="payTrxId" placeholder="ট্রানজেকশন আইডি (TrxID)" style="margin-top: 6px;">
+                    </div>
+                </div>
+
                 <div class="order-buttons">
                     <button class="order-btn wa-btn" onclick="processOrder('wa')">
                         <i class="fab fa-whatsapp"></i> হোয়াটসঅ্যাপে অর্ডার করুন
@@ -148,7 +180,7 @@
                     <button class="add-btn" id="cancelEditBtn" style="margin-top:5px; background:#777; display:none;" onclick="resetProductForm()">বাতিল করুন</button>
                 </div>
 
-                <!-- বর্তমান পণ্যের তালিকা (এডিট/ডিলিট করার জন্য) -->
+                <!-- বর্তমান পণ্যের তালিকা -->
                 <div class="admin-section">
                     <h4>বর্তমান পণ্যের তালিকা</h4>
                     <div id="adminProductList" style="margin-top:8px;"></div>

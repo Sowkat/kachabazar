@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>সাতবাড়ীয়া ইউনিয়ন কাঁচাবাজার</title>
-    <!-- CSS লিংক -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +18,15 @@
             <strong>বিশেষ বিজ্ঞপ্তি:</strong> সাতবাড়ীয়া ইউনিয়নে ৩০০ টাকার বা তার বেশি অর্ডারে <strong>ফ্রি ডেলিভারি</strong>! (৩০০ টাকার নিচে ডেলিভারি চার্জ ২০ টাকা)
         </div>
 
-        <h2 style="margin-bottom: 15px; font-size: 1.1rem;">তাজা পণ্যসমূহ</h2>
+        <!-- ক্যাটাগরি ফিল্টার -->
+        <div class="category-tabs" id="categoryTabs">
+            <button class="cat-btn active" onclick="filterCategory('all')">সব পণ্য</button>
+            <button class="cat-btn" onclick="filterCategory('vegetable')">শাক-সবজি</button>
+            <button class="cat-btn" onclick="filterCategory('fruit')">ফলমূল</button>
+            <button class="cat-btn" onclick="filterCategory('grocery')">মশলা ও নিত্যপণ্য</button>
+        </div>
+
+        <h2 style="margin-bottom: 15px; font-size: 1.1rem;" id="catTitle">সকল পণ্যসমূহ</h2>
         <div class="products-grid" id="productsGrid">
             <!-- ডাইনামিকভাবে পণ্য লোড হবে -->
         </div>
@@ -44,10 +51,34 @@
                     <option value="সাতবাড়ীয়া ইউনিয়ন">ইউনিয়ন: সাতবাড়ীয়া ইউনিয়ন</option>
                 </select>
                 <input type="text" id="custVillage" placeholder="গ্রাম / এলাকার নাম (যেমন: সাতবাড়ীয়া বাজার)" required>
-                <button class="order-btn" onclick="sendWhatsAppOrder()">
-                    হোয়াটসঅ্যাপে অর্ডার করুন
-                </button>
+                
+                <div class="order-buttons">
+                    <button class="order-btn wa-btn" onclick="processOrder('wa')">
+                        হোয়াটসঅ্যাপে অর্ডার করুন
+                    </button>
+                    <button class="order-btn sms-btn" onclick="processOrder('sms')">
+                        সাধারণ SMS-এ অর্ডার করুন
+                    </button>
+                    <button class="order-btn call-btn" onclick="processOrder('call')">
+                        সরাসরি ফোন করে অর্ডার করুন
+                    </button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- অর্ডার নোটিফিকেশন / মেমো মডাল -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
+            <h3 style="color: #2e7d32; text-align: center; margin-bottom: 10px;">অর্ডার সফল হয়েছে!</h3>
+            <p style="font-size: 0.85rem; text-align: center; color: #555; margin-bottom: 15px;">আপনার অর্ডারের রশিদ নিচে দেওয়া হলো। প্রয়োজনে স্ক্রিনশট নিয়ে রাখুন।</p>
+            
+            <div id="receiptDetails" class="receipt-box">
+                <!-- ডাইনামিকভাবে মেমো তৈরি হবে -->
+            </div>
+
+            <button class="add-btn" style="margin-top: 15px; background-color: #333;" onclick="closeReceiptModal()">ঠিক আছে</button>
         </div>
     </div>
 
@@ -70,7 +101,17 @@
                     <br>
                     <input type="text" id="newProdName" placeholder="পণ্যের নাম" style="width:100%; padding:6px; margin-bottom:6px;">
                     <input type="number" id="newProdPrice" placeholder="মূল্য (প্রতি কেজি/লিটার)" style="width:100%; padding:6px; margin-bottom:6px;">
-                    <input type="text" id="newProdImg" placeholder="ছবির লিংক (URL)" style="width:100%; padding:6px; margin-bottom:6px;">
+                    
+                    <label style="font-size:0.85rem; font-weight:bold;">ক্যাটাগরি নির্বাচন করুন:</label>
+                    <select id="newProdCat" style="width:100%; padding:6px; margin-bottom:6px; margin-top:4px;">
+                        <option value="vegetable">শাক-সবজি</option>
+                        <option value="fruit">ফলমূল</option>
+                        <option value="grocery">মশলা ও নিত্যপণ্য</option>
+                    </select>
+
+                    <label style="font-size:0.85rem; font-weight:bold;">গ্যালারি থেকে ছবি সিলেক্ট করুন:</label>
+                    <input type="file" id="newProdImgFile" accept="image/*" style="width:100%; padding:6px; margin-bottom:10px;">
+                    
                     <button class="add-btn" onclick="addNewProduct()">পণ্য যোগ করুন</button>
                 </div>
 
@@ -89,7 +130,6 @@
         Powered by Sowkat & Biplob
     </footer>
 
-    <!-- JavaScript লিংক -->
     <script src="script.js"></script>
 </body>
 </html>

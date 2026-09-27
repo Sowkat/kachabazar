@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>সাতবাড়ীয়া ইউনিয়ন কাঁচাবাজার</title>
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome Icons for Cart -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -19,7 +19,10 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-badge" id="cartCountBadge">0</span>
                 </button>
-                <button class="admin-btn" onclick="openAdminModal()">অ্যাডমিন</button>
+                <!-- অ্যাডমিন বাটন (শুধুমাত্র আইকন) -->
+                <button class="admin-icon-btn" onclick="openAdminModal()" title="অ্যাডমিন প্যানেল">
+                    <i class="fas fa-user-shield"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -27,6 +30,11 @@
     <!-- স্থির ফ্রি ডেলিভারি ব্যানার -->
     <div class="sticky-banner">
         <strong>বিশেষ অফার:</strong> সাতবাড়ীয়া ইউনিয়নে ৩০০ টাকার বা তার বেশি অর্ডারে <span class="highlight">ফ্রি ডেলিভারি!</span> (৩০০ টাকার নিচে ডেলিভারি চার্জ ২০ টাকা)
+    </div>
+
+    <!-- সার্ভিস এলাকা সম্পর্কিত নোটিশ -->
+    <div class="location-notice">
+        <i class="fas fa-map-marker-alt"></i> (শুধুমাত্র সাতবাড়ীয়া ইউনিয়নের ভিতরে ডেলিভারি দেওয়া হয়)
     </div>
 
     <!-- ডান থেকে বামে স্ক্রোলিং নোটিশ -->
@@ -99,11 +107,9 @@
                         </label>
                     </div>
 
-                    <!-- মোবাইল ব্যাংকিং নির্দেশনা ও ট্রানজেকশন তথ্য -->
+                    <!-- মোবাইল ব্যাংকিং নির্দেশিকা -->
                     <div id="mfsInfoBox" class="mfs-info-box" style="display: none;">
-                        <p style="font-size: 0.8rem; color: #d32f2f; font-weight: bold;" id="mfsInstruction">
-                            <!-- ডাইনামিক মেসেজ আসবে -->
-                        </p>
+                        <p style="font-size: 0.8rem; color: #d32f2f; font-weight: bold;" id="mfsInstruction"></p>
                         <input type="tel" id="paySenderNum" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন" style="margin-top: 6px;">
                         <input type="text" id="payTrxId" placeholder="ট্রানজেকশন আইডি (TrxID)" style="margin-top: 6px;">
                     </div>
@@ -129,11 +135,9 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
             <h3 style="color: #2e7d32; text-align: center; margin-bottom: 8px;">অর্ডার সফল হয়েছে!</h3>
-            <p style="font-size: 0.8rem; text-align: center; color: #555; margin-bottom: 12px;">আপনার অর্ডারের রশিদ নিচে দেওয়া হলো। প্রয়োজনে স্ক্রিনশট নিয়ে রাখুন।</p>
+            <p style="font-size: 0.8rem; text-align: center; color: #555; margin-bottom: 12px;">আপনার অর্ডারের রশিদ নিচে দেওয়া হলো। প্রয়োজনে স্ক্রিনশট নিয়ে রাখুন।</p>
             
-            <div id="receiptDetails" class="receipt-box">
-                <!-- ডাইনামিক মেমো -->
-            </div>
+            <div id="receiptDetails" class="receipt-box"></div>
 
             <button class="add-btn" style="margin-top: 12px; background-color: #333;" onclick="closeReceiptModal()">ঠিক আছে</button>
         </div>

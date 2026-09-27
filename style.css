@@ -10,7 +10,6 @@ body {
     color: #333;
 }
 
-/* বড় ডিজাইনার হেডার */
 header {
     background: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c);
     color: white;
@@ -39,10 +38,9 @@ header {
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
-/* কার্ট আইকন ও ব্যাজ */
 .cart-icon-btn {
     background: rgba(255, 255, 255, 0.2);
     border: none;
@@ -73,21 +71,29 @@ header {
     justify-content: center;
 }
 
-.admin-btn {
-    background: #ffffff;
-    color: #1b5e20;
+/* অ্যাডমিন আইকন বাটন */
+.admin-icon-btn {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
 }
 
-/* স্থির ফ্রি ডেলিভারি ব্যানার */
+.admin-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
 .sticky-banner {
     background: #e8f5e9;
-    border-bottom: 2px solid #a5d6a7;
+    border-bottom: 1px solid #a5d6a7;
     color: #1b5e20;
     padding: 6px 10px;
     font-size: 0.8rem;
@@ -99,7 +105,17 @@ header {
     font-weight: bold;
 }
 
-/* স্ক্রোলিং টেক্সট */
+/* লোকেশন নোটিশ বার */
+.location-notice {
+    background: #ffebee;
+    color: #c62828;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-bottom: 1px solid #ffcdd2;
+}
+
 .marquee-container {
     background: #fff9c4;
     color: #f57f17;
@@ -128,7 +144,6 @@ header {
     padding: 0 10px;
 }
 
-/* ক্যাটাগরি ফিল্টার */
 .category-tabs {
     display: flex;
     gap: 6px;
@@ -159,7 +174,6 @@ header {
     color: #2e7d32;
 }
 
-/* কমপ্যাক্ট পণ্য গ্রিড */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -241,7 +255,6 @@ header {
     font-size: 0.75rem;
 }
 
-/* কার্ট সেকশন */
 .cart-section {
     background: white;
     border-radius: 6px;
@@ -296,7 +309,6 @@ header {
     padding-top: 4px;
 }
 
-/* ফর্ম ও বাটন */
 .checkout-form {
     margin-top: 12px;
     display: flex;
@@ -311,7 +323,6 @@ header {
     font-size: 0.8rem;
 }
 
-/* পেমেন্ট সেকশন সিএসএস */
 .payment-selection {
     background: #f9f9f9;
     padding: 10px;
@@ -371,7 +382,6 @@ header {
 .sms-btn { background-color: #0275d8; }
 .call-btn { background-color: #d9534f; }
 
-/* মডাল ও অন্যান্য */
 .receipt-box {
     background: #f9f9f9;
     border: 1px dashed #2e7d32;

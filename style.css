@@ -42,9 +42,32 @@ header h1 {
     background: #e8f5e9;
     border-left: 4px solid #2e7d32;
     padding: 10px 15px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-size: 0.9rem;
     border-radius: 4px;
+}
+
+/* Category Tabs */
+.category-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.cat-btn {
+    background: #e0e0e0;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.cat-btn.active {
+    background: #2e7d32;
+    color: white;
+    font-weight: bold;
 }
 
 /* Products Grid */
@@ -161,7 +184,7 @@ header h1 {
     padding-top: 5px;
 }
 
-/* Checkout Form */
+/* Checkout Form & Order Buttons */
 .checkout-form {
     margin-top: 15px;
     display: flex;
@@ -174,19 +197,35 @@ header h1 {
     border-radius: 5px;
     font-size: 0.9rem;
 }
+.order-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 .order-btn {
-    background-color: #25d366;
     color: white;
     border: none;
-    padding: 12px;
+    padding: 10px;
     border-radius: 5px;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+.wa-btn { background-color: #25d366; }
+.sms-btn { background-color: #0275d8; }
+.call-btn { background-color: #d9534f; }
+
+/* Receipt Styling */
+.receipt-box {
+    background: #f9f9f9;
+    border: 1px dashed #2e7d32;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    line-height: 1.5;
 }
 
 /* Admin Modal */

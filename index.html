@@ -7,6 +7,27 @@
     <link rel="stylesheet" href="style.css">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDK (Version 9 Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // আপনার ফায়ারবেস কনফিগারেশন
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWnsBl3347xfA",
+            authDomain: "kachabazar-87e97.firebaseapp.com",
+            projectId: "kachabazar-87e97",
+            storageBucket: "kachabazar-87e97.firebasestorage.app",
+            messagingSenderId: "1033389997118",
+            appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f",
+            measurementId: "G-63C54C7KH8"
+        };
+
+        // ফায়ারবেস চালু করা
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
 </head>
 <body>
 
@@ -19,7 +40,7 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-badge" id="cartCountBadge">0</span>
                 </button>
-                <!-- অ্যাডমিন বাটন (শুধুমাত্র আইকন) -->
+                <!-- অ্যাডমিন বাটন -->
                 <button class="admin-icon-btn" onclick="openAdminModal()" title="অ্যাডমিন প্যানেল">
                     <i class="fas fa-user-shield"></i>
                 </button>
@@ -32,15 +53,15 @@
         <strong>বিশেষ অফার:</strong> সাতবাড়ীয়া ইউনিয়নে ৩০০ টাকার বা তার বেশি অর্ডারে <span class="highlight">ফ্রি ডেলিভারি!</span> (৩০০ টাকার নিচে ডেলিভারি চার্জ ২০ টাকা)
     </div>
 
-    <!-- সার্ভিস এলাকা সম্পর্কিত নোটিশ -->
+    <!-- সার্ভিস এলাকা নোটিশ -->
     <div class="location-notice">
         <i class="fas fa-map-marker-alt"></i> (শুধুমাত্র সাতবাড়ীয়া ইউনিয়নের ভিতরে ডেলিভারি দেওয়া হয়)
     </div>
 
-    <!-- ডান থেকে বামে স্ক্রোলিং নোটিশ -->
+    <!-- স্ক্রোলিং নোটিশ -->
     <div class="marquee-container">
         <div class="marquee-text" id="scrollNotice">
-            স্বাগতম! আমাদের কাঁচাবাজারে টাটকা সবজি ও ফলমূল পাওয়া যায়। আজই অর্ডার করুন এবং ঘরে বসেই ডেলিভারি পান!
+            ডাটা লোড হচ্ছে...
         </div>
     </div>
 
@@ -58,7 +79,7 @@
         
         <!-- কমপ্যাক্ট পণ্য গ্রিড -->
         <div class="products-grid" id="productsGrid">
-            <!-- ডাইনামিকভাবে পণ্য লোড হবে -->
+            <p style="grid-column: 1/-1; text-align: center; padding: 20px;">পণ্য লোড হচ্ছে...</p>
         </div>
 
         <!-- কার্ট ও চেকআউট সেকশন -->

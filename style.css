@@ -1118,3 +1118,235 @@ button {
     }
 
 }
+/* =========================================================
+   CART
+========================================================= */
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item img {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.cart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-item-info h4 {
+    margin: 0 0 4px;
+    font-size: 15px;
+}
+
+.cart-item-price {
+    font-size: 13px;
+    opacity: .75;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 7px;
+}
+
+.quantity-control button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.quantity-control span {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.cart-item-total {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.remove-cart-item {
+    border: none;
+    background: transparent;
+    color: #d32f2f;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 35px 15px;
+    opacity: .7;
+}
+
+.empty-cart i {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   DIRECT ORDER BUTTONS
+========================================================= */
+
+.direct-order-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.direct-order-btn {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 15px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.direct-order-btn:hover {
+    transform: translateY(-1px);
+    opacity: .92;
+}
+
+.direct-order-btn i {
+    margin-right: 7px;
+}
+
+.whatsapp-btn {
+    background: #25D366;
+    color: #fff;
+}
+
+.sms-btn {
+    background: #1976d2;
+    color: #fff;
+}
+
+.call-btn {
+    background: #168a45;
+    color: #fff;
+}
+
+
+/* =========================================================
+   PRODUCT
+========================================================= */
+
+.product-image {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+}
+
+.add-to-cart-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.product-description {
+    font-size: 13px;
+    opacity: .75;
+}
+
+.stock-text {
+    font-size: 13px;
+    margin: 5px 0 10px;
+}
+
+.out-of-stock {
+    color: #d32f2f;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.site-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 25px;
+    transform: translate(-50%, 80px);
+    background: #222;
+    color: #fff;
+    padding: 11px 18px;
+    border-radius: 8px;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s ease;
+    font-size: 14px;
+    max-width: 90%;
+    text-align: center;
+}
+
+.site-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+
+/* =========================================================
+   TRACKING
+========================================================= */
+
+.tracking-box {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 12px;
+    border: 1px solid #ddd;
+}
+
+.tracking-box p {
+    margin: 7px 0;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .cart-item {
+        gap: 7px;
+    }
+
+    .cart-item img {
+        width: 55px;
+        height: 55px;
+    }
+
+    .cart-item-info h4 {
+        font-size: 14px;
+    }
+
+    .cart-item-total {
+        font-size: 13px;
+    }
+
+    .remove-cart-item {
+        font-size: 13px;
+    }
+
+}

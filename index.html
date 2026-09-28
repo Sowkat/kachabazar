@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>১০ নং সাতবাড়ীয়া কাঁচাবাজার</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="style.css">
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet"
@@ -18,10 +24,14 @@
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      HEADER
@@ -31,17 +41,31 @@
 
     <div class="container header-inner">
 
-        <a href="#" class="logo">
+        <a href="#"
+           class="logo">
+
             <i class="fa-solid fa-basket-shopping"></i>
-            <span id="shopName">১০ নং সাতবাড়ীয়া কাঁচাবাজার</span>
+
+            <span id="shopName">
+                ১০ নং সাতবাড়ীয়া কাঁচাবাজার
+            </span>
+
         </a>
+
 
         <div class="header-actions">
 
-            <button class="cart-button" onclick="openCart()">
+            <button
+                type="button"
+                class="cart-button"
+                onclick="openCart()">
+
                 <i class="fa-solid fa-cart-shopping"></i>
+
                 <span>কার্ট</span>
+
                 <b id="cartCount">0</b>
+
             </button>
 
         </div>
@@ -49,6 +73,7 @@
     </div>
 
 </header>
+
 
 
 <!-- =====================================================
@@ -62,17 +87,27 @@
         <div class="hero-text">
 
             <h1 id="heroTitle">
+
                 তাজা কাঁচামাল ও তরিতরকারি
                 এখন আপনার ঘরে
+
             </h1>
 
+
             <p id="shopDescription">
+
                 ১০ নং সাতবাড়ীয়া ইউনিয়নের ভিতরে সহজ হোম ডেলিভারি।
+
             </p>
 
-            <a href="#products" class="hero-button">
+
+            <a href="#products"
+               class="hero-button">
+
                 <i class="fa-solid fa-cart-shopping"></i>
+
                 এখনই বাজার করুন
+
             </a>
 
         </div>
@@ -80,6 +115,7 @@
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -90,33 +126,70 @@
 
     <div class="container info-grid">
 
+
         <div class="info-card">
+
             <i class="fa-solid fa-truck"></i>
+
             <div>
-                <strong>হোম ডেলিভারি</strong>
-                <p id="deliveryInfo">ইউনিয়নের ভিতরে</p>
+
+                <strong>
+                    হোম ডেলিভারি
+                </strong>
+
+                <p id="deliveryInfo">
+                    ইউনিয়নের ভিতরে
+                </p>
+
             </div>
+
         </div>
 
+
+
         <div class="info-card">
+
             <i class="fa-solid fa-money-bill-wave"></i>
+
             <div>
-                <strong>পেমেন্ট</strong>
-                <p id="paymentInfo">Cash on Delivery</p>
+
+                <strong>
+                    পেমেন্ট
+                </strong>
+
+                <p id="paymentInfo">
+                    Cash on Delivery
+                </p>
+
             </div>
+
         </div>
 
+
+
         <div class="info-card">
+
             <i class="fa-solid fa-phone"></i>
+
             <div>
-                <strong>যোগাযোগ</strong>
-                <p id="phoneDisplay">লোড হচ্ছে...</p>
+
+                <strong>
+                    যোগাযোগ
+                </strong>
+
+                <p id="phoneDisplay">
+                    লোড হচ্ছে...
+                </p>
+
             </div>
+
         </div>
+
 
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -128,972 +201,3 @@
     <div class="container">
 
         <div class="search-box">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <input
-                type="search"
-                id="searchInput"
-                placeholder="পণ্য খুঁজুন... যেমন আলু, পেঁয়াজ, টমেটো"
-                oninput="searchProducts()"
-            >
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     CATEGORY
-===================================================== -->
-
-<section class="category-section">
-
-    <div class="container">
-
-        <h2 class="section-title">
-            <i class="fa-solid fa-layer-group"></i>
-            ক্যাটাগরি
-        </h2>
-
-        <div id="categoryList" class="category-list">
-
-            <button
-                class="category-button active"
-                onclick="filterCategory('all', this)">
-                সব পণ্য
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     PRODUCTS
-===================================================== -->
-
-<section id="products" class="products-section">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <div>
-                <h2 class="section-title">
-                    <i class="fa-solid fa-store"></i>
-                    আমাদের পণ্য
-                </h2>
-
-                <p>তাজা ও মানসম্মত পণ্য</p>
-            </div>
-
-            <span id="productCount"></span>
-
-        </div>
-
-
-        <!-- Loading -->
-
-        <div id="productsLoading" class="loading">
-
-            <i class="fa-solid fa-spinner fa-spin"></i>
-
-            <p>পণ্য লোড হচ্ছে...</p>
-
-        </div>
-
-
-        <!-- Product List -->
-
-        <div id="productList" class="product-grid"></div>
-
-
-        <!-- No Product -->
-
-        <div id="noProducts" class="empty-state" style="display:none;">
-
-            <i class="fa-solid fa-box-open"></i>
-
-            <h3>কোনো পণ্য পাওয়া যায়নি</h3>
-
-            <p>অন্য কোনো পণ্য বা ক্যাটাগরি খুঁজে দেখুন।</p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     ORDER SECTION
-===================================================== -->
-
-<section class="order-section">
-
-    <div class="container">
-
-        <div class="order-information">
-
-            <h2>
-                <i class="fa-solid fa-circle-info"></i>
-                অর্ডার করার নিয়ম
-            </h2>
-
-            <div class="order-steps">
-
-                <div>
-                    <span>১</span>
-                    <p>পণ্য কার্টে যোগ করুন</p>
-                </div>
-
-                <div>
-                    <span>২</span>
-                    <p>আপনার তথ্য দিন</p>
-                </div>
-
-                <div>
-                    <span>৩</span>
-                    <p>Cash on Delivery নির্বাচন করুন</p>
-                </div>
-
-                <div>
-                    <span>৪</span>
-                    <p>অর্ডার নিশ্চিত করুন</p>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     ORDER TRACKING
-===================================================== -->
-
-<section class="tracking-section">
-
-    <div class="container">
-
-        <h2 class="section-title">
-            <i class="fa-solid fa-truck-fast"></i>
-            অর্ডার ট্র্যাক করুন
-        </h2>
-
-        <div class="tracking-box">
-
-            <input
-                type="text"
-                id="trackingInput"
-                placeholder="আপনার Order ID লিখুন"
-            >
-
-            <button onclick="trackOrder()">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                খুঁজুন
-            </button>
-
-        </div>
-
-        <div id="trackingResult"></div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     CART SIDEBAR
-===================================================== -->
-
-<div id="cartOverlay"
-     class="cart-overlay"
-     onclick="closeCart()">
-</div>
-
-
-<aside id="cartSidebar" class="cart-sidebar">
-
-    <div class="cart-header">
-
-        <h2>
-            <i class="fa-solid fa-cart-shopping"></i>
-            আপনার কার্ট
-        </h2>
-
-        <button onclick="closeCart()">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-    </div>
-
-
-    <div id="cartItems" class="cart-items">
-
-        <div class="cart-empty">
-
-            <i class="fa-solid fa-cart-shopping"></i>
-
-            <p>কার্টে এখনো কোনো পণ্য নেই।</p>
-
-        </div>
-
-    </div>
-
-
-    <div class="cart-summary">
-
-        <div class="summary-row">
-
-            <span>পণ্যের মূল্য</span>
-
-            <strong>
-                ৳ <span id="cartSubtotal">0</span>
-            </strong>
-
-        </div>
-
-
-        <div class="summary-row">
-
-            <span>ডেলিভারি চার্জ</span>
-
-            <strong>
-                ৳ <span id="cartDelivery">0</span>
-            </strong>
-
-        </div>
-
-
-        <div class="summary-total">
-
-            <span>সর্বমোট</span>
-
-            <strong>
-                ৳ <span id="cartTotal">0</span>
-            </strong>
-
-        </div>
-
-
-        <button
-            class="checkout-button"
-            onclick="openCheckout()">
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-            অর্ডার করুন
-
-        </button>
-
-    </div>
-
-</aside>
-
-
-<!-- =====================================================
-     CHECKOUT MODAL
-===================================================== -->
-
-<div id="checkoutModal" class="modal">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>
-                <i class="fa-solid fa-file-invoice"></i>
-                অর্ডার সম্পন্ন করুন
-            </h2>
-
-            <button onclick="closeCheckout()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-        </div>
-
-
-        <form id="checkoutForm">
-
-            <div class="form-group">
-
-                <label for="customerName">
-                    <i class="fa-solid fa-user"></i>
-                    আপনার নাম
-                </label>
-
-                <input
-                    type="text"
-                    id="customerName"
-                    placeholder="আপনার নাম লিখুন"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="customerPhone">
-                    <i class="fa-solid fa-phone"></i>
-                    মোবাইল নম্বর
-                </label>
-
-                <input
-                    type="tel"
-                    id="customerPhone"
-                    placeholder="01XXXXXXXXX"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="customerAddress">
-                    <i class="fa-solid fa-location-dot"></i>
-                    ডেলিভারি ঠিকানা
-                </label>
-
-                <textarea
-                    id="customerAddress"
-                    rows="3"
-                    placeholder="গ্রাম, ওয়ার্ড, ইউনিয়ন..."
-                    required
-                ></textarea>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="customerNote">
-                    <i class="fa-solid fa-note-sticky"></i>
-                    অতিরিক্ত তথ্য
-                </label>
-
-                <textarea
-                    id="customerNote"
-                    rows="2"
-                    placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"
-                ></textarea>
-
-            </div>
-
-
-            <!-- Payment -->
-
-            <div class="payment-box">
-
-                <h3>
-                    <i class="fa-solid fa-wallet"></i>
-                    পেমেন্ট পদ্ধতি
-                </h3>
-
-                <label class="payment-option">
-
-                    <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="Cash on Delivery"
-                        checked
-                    >
-
-                    <span>
-
-                        <i class="fa-solid fa-money-bill-wave"></i>
-
-                        Cash on Delivery
-
-                    </span>
-
-                </label>
-
-            </div>
-
-
-            <!-- Order Summary -->
-
-            <div class="checkout-summary">
-
-                <div>
-                    <span>পণ্যের মূল্য</span>
-                    <strong>৳ <span id="checkoutSubtotal">0</span></strong>
-                </div>
-
-                <div>
-                    <span>ডেলিভারি চার্জ</span>
-                    <strong>৳ <span id="checkoutDelivery">0</span></strong>
-                </div>
-
-                <div class="checkout-total">
-                    <span>মোট</span>
-                    <strong>৳ <span id="checkoutTotal">0</span></strong>
-                </div>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="place-order-button"
-                id="placeOrderButton">
-
-                <i class="fa-solid fa-check"></i>
-
-                অর্ডার নিশ্চিত করুন
-
-            </button>
-
-
-            <div class="alternative-order">
-
-                <p>অথবা সরাসরি যোগাযোগ করুন</p>
-
-                <div class="direct-order-buttons">
-
-                    <a
-                        id="whatsappOrderButton"
-                        href="#"
-                        target="_blank"
-                        class="whatsapp-button">
-
-                        <i class="fa-brands fa-whatsapp"></i>
-
-                        WhatsApp
-
-                    </a>
-
-
-                    <a
-                        id="callOrderButton"
-                        href="#"
-                        class="call-button">
-
-                        <i class="fa-solid fa-phone"></i>
-
-                        Call
-
-                    </a>
-
-
-                    <a
-                        id="smsOrderButton"
-                        href="#"
-                        class="sms-button">
-
-                        <i class="fa-solid fa-comment-sms"></i>
-
-                        SMS
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     ORDER SUCCESS MODAL
-===================================================== -->
-
-<div id="successModal" class="modal">
-
-    <div class="success-content">
-
-        <div class="success-icon">
-
-            <i class="fa-solid fa-check"></i>
-
-        </div>
-
-        <h2>অর্ডার সফল হয়েছে! 🎉</h2>
-
-        <p>আপনার Order ID:</p>
-
-        <strong id="successOrderId">
-            —
-        </strong>
-
-        <p class="success-message">
-            আপনার অর্ডারটি গ্রহণ করা হয়েছে।
-            খুব শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।
-        </p>
-
-        <button onclick="closeSuccess()">
-            ঠিক আছে
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     FLOATING CONTACT BUTTONS
-===================================================== -->
-
-<div class="floating-buttons">
-
-    <a
-        id="floatingWhatsApp"
-        href="#"
-        target="_blank"
-        class="floating-button whatsapp"
-        title="WhatsApp">
-
-        <i class="fa-brands fa-whatsapp"></i>
-
-    </a>
-
-
-    <a
-        id="floatingCall"
-        href="#"
-        class="floating-button call"
-        title="Call">
-
-        <i class="fa-solid fa-phone"></i>
-
-    </a>
-
-
-    <a
-        id="floatingFacebook"
-        href="#"
-        target="_blank"
-        class="floating-button facebook"
-        title="Facebook Page">
-
-        <i class="fa-brands fa-facebook-f"></i>
-
-    </a>
-
-</div>
-
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
-<footer class="footer">
-
-    <div class="container">
-
-        <div class="footer-grid">
-
-            <div>
-
-                <h3 id="footerShopName">
-                    ১০ নং সাতবাড়ীয়া কাঁচাবাজার
-                </h3>
-
-                <p id="footerDescription">
-                    আপনার নিকটস্থ অনলাইন কাঁচাবাজার।
-                </p>
-
-            </div>
-
-
-            <div>
-
-                <h3>যোগাযোগ</h3>
-
-                <p id="footerAddress">
-                    ১০ নং সাতবাড়ীয়া ইউনিয়ন
-                </p>
-
-                <p>
-                    <i class="fa-solid fa-phone"></i>
-                    <span id="footerPhone">—</span>
-                </p>
-
-            </div>
-
-
-            <div>
-
-                <h3>সোশ্যাল</h3>
-
-                <div class="footer-social">
-
-                    <a
-                        id="footerFacebook"
-                        href="#"
-                        target="_blank">
-
-                        <i class="fa-brands fa-facebook-f"></i>
-
-                    </a>
-
-                    <a
-                        id="footerWhatsApp"
-                        href="#"
-                        target="_blank">
-
-                        <i class="fa-brands fa-whatsapp"></i>
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="footer-bottom">
-
-            <p>
-                © <span id="currentYear"></span>
-                <span id="copyrightName">
-                    ১০ নং সাতবাড়ীয়া কাঁচাবাজার
-                </span>
-            </p>
-
-        </div>
-
-    </div>
-
-</footer>
-
-
-<!-- =====================================================
-     FIREBASE CONFIG
-===================================================== -->
-
-<script>
-
-const firebaseConfig = {
-
-    apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWWsBl3347xfA",
-
-    authDomain: "kachabazar-87e97.firebaseapp.com",
-
-    databaseURL:
-        "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-    projectId: "kachabazar-87e97",
-
-    storageBucket:
-        "kachabazar-87e97.firebasestorage.app",
-
-    messagingSenderId: "1033389997118",
-
-    appId:
-        "1:1033389997118:web:3af50b0e824f9e3cbf656f",
-
-    measurementId: "G-63C54C7KH8"
-
-};
-
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.database();
-
-</script>
-
-
-<!-- =====================================================
-     MAIN JAVASCRIPT
-===================================================== -->
-
-<script src="script.js"></script>
-
-
-<script>
-
-/*
-|--------------------------------------------------------------------------
-| CURRENT YEAR
-|--------------------------------------------------------------------------
-*/
-
-document.getElementById("currentYear").textContent =
-    new Date().getFullYear();
-
-
-/*
-|--------------------------------------------------------------------------
-| DEFAULT SETTINGS
-|--------------------------------------------------------------------------
-|
-| পরে Admin Panel থেকে এগুলো পরিবর্তন করা যাবে।
-|
-*/
-
-window.shopSettings = {
-
-    shopName: "১০ নং সাতবাড়ীয়া কাঁচাবাজার",
-
-    description:
-        "১০ নং সাতবাড়ীয়া ইউনিয়নের ভিতরে সহজ হোম ডেলিভারি।",
-
-    phone: "",
-
-    whatsapp: "",
-
-    facebook:
-        "",
-
-    address:
-        "১০ নং সাতবাড়ীয়া ইউনিয়ন, যশোর",
-
-    deliveryCharge: 0,
-
-    minimumOrder:
-        0,
-
-    codEnabled:
-        true,
-
-    notificationEnabled:
-        true,
-
-    soundEnabled:
-        true
-
-};
-
-
-/*
-|--------------------------------------------------------------------------
-| LOAD SETTINGS FROM FIREBASE
-|--------------------------------------------------------------------------
-*/
-
-db.ref("settings").on("value", function(snapshot) {
-
-    const data = snapshot.val();
-
-    if (!data) {
-        return;
-    }
-
-    window.shopSettings = {
-
-        ...window.shopSettings,
-
-        ...data
-
-    };
-
-
-    /*
-    | SHOP NAME
-    */
-
-    if (data.shopName) {
-
-        document.getElementById("shopName").textContent =
-            data.shopName;
-
-        document.getElementById("footerShopName").textContent =
-            data.shopName;
-
-        document.getElementById("copyrightName").textContent =
-            data.shopName;
-
-    }
-
-
-    /*
-    | DESCRIPTION
-    */
-
-    if (data.description) {
-
-        document.getElementById("shopDescription").textContent =
-            data.description;
-
-        document.getElementById("footerDescription").textContent =
-            data.description;
-
-    }
-
-
-    /*
-    | PHONE
-    */
-
-    if (data.phone) {
-
-        document.getElementById("phoneDisplay").textContent =
-            data.phone;
-
-        document.getElementById("footerPhone").textContent =
-            data.phone;
-
-        document.getElementById("floatingCall").href =
-            "tel:" + data.phone;
-
-        document.getElementById("callOrderButton").href =
-            "tel:" + data.phone;
-
-    }
-
-
-    /*
-    | WHATSAPP
-    */
-
-    if (data.whatsapp) {
-
-        let whatsappNumber =
-            data.whatsapp.replace(/\D/g, "");
-
-        if (whatsappNumber.startsWith("01")) {
-
-            whatsappNumber =
-                "88" + whatsappNumber;
-
-        }
-
-
-        const whatsappURL =
-            "https://wa.me/" + whatsappNumber;
-
-
-        document.getElementById("floatingWhatsApp").href =
-            whatsappURL;
-
-        document.getElementById("footerWhatsApp").href =
-            whatsappURL;
-
-        document.getElementById("whatsappOrderButton").href =
-            whatsappURL;
-
-    }
-
-
-    /*
-    | FACEBOOK
-    */
-
-    if (data.facebook) {
-
-        document.getElementById("floatingFacebook").href =
-            data.facebook;
-
-        document.getElementById("footerFacebook").href =
-            data.facebook;
-
-    }
-
-
-    /*
-    | ADDRESS
-    */
-
-    if (data.address) {
-
-        document.getElementById("footerAddress").textContent =
-            data.address;
-
-    }
-
-
-    /*
-    | DELIVERY
-    */
-
-    if (
-        data.deliveryCharge !== undefined
-    ) {
-
-        document.getElementById("deliveryInfo").textContent =
-            "ডেলিভারি চার্জ ৳" +
-            Number(data.deliveryCharge);
-
-    }
-
-
-    /*
-    | CASH ON DELIVERY
-    */
-
-    if (data.codEnabled === false) {
-
-        document.querySelector(
-            'input[value="Cash on Delivery"]'
-        ).disabled = true;
-
-    }
-
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| LOAD PRODUCTS
-|--------------------------------------------------------------------------
-*/
-
-db.ref("products").on("value", function(snapshot) {
-
-    const data = snapshot.val();
-
-    window.products = [];
-
-    if (data) {
-
-        Object.keys(data).forEach(function(key) {
-
-            const product =
-                data[key];
-
-            if (product.available !== false) {
-
-                window.products.push({
-
-                    id: key,
-
-                    ...product
-
-                });
-
-            }
-
-        });
-
-    }
-
-
-    /*
-    | SCRIPT.JS-এ PRODUCT RENDER হবে
-    */
-
-    if (
-        typeof renderProducts === "function"
-    ) {
-
-        renderProducts(
-            window.products
-        );
-
-    }
-
-});
-
-
-</script>
-
-</body>
-</html>

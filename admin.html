@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>১০ নং সাতবাড়ীয়া কাঁচাবাজার - Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:'Hind Siliguri',sans-serif;
+    background:#f3f6f4;
+    color:#222;
+}
+
+header{
+    background:linear-gradient(135deg,#087f23,#16a34a);
+    color:white;
+    padding:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+header h2{
+    margin:0;
+    font-size:21px;
+}
+
+header button{
+    background:white;
+    color:#087f23;
+    border:0;
+    padding:9px 14px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+h3{
+    margin-top:0;
+    color:#087f23;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:7px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-family:inherit;
+    font-size:15px;
+}
+
+textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
+button{
+    border:0;
+    border-radius:8px;
+    padding:11px 16px;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:600;
+}
+
+.primary{
+    background:#087f23;
+    color:white;
+}
+
+.danger{
+    background:#dc2626;
+    color:white;
+}
+
+.secondary{
+    background:#e5e7eb;
+}
+
+.login{
+    max-width:420px;
+    margin:60px auto;
+    padding:20px;
+}
+
+.product{
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:12px;
+    margin:10px 0;
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.product img{
+    width:75px;
+    height:75px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.product-info{
+    flex:1;
+}
+
+.product-info strong{
+    display:block;
+    font-size:17px;
+}
+
+.actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.hidden{
+    display:none !important;
+}
+
+#message{
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:10px;
+    display:none;
+}
+
+.success{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+@media(max-width:600px){
+    header{
+        align-items:flex-start;
+    }
+
+    header h2{
+        font-size:17px;
+    }
+
+    .product{
+        align-items:flex-start;
+    }
+
+    .product img{
+        width:65px;
+        height:65px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🛒 ১০ নং সাতবাড়ীয়া কাঁচাবাজার - Admin</h2>
+
+    <div>
+        <button onclick="goHome()">ওয়েবসাইট</button>
+        <button id="logoutBtn" onclick="logout()" class="hidden">Logout</button>
+    </div>
+</header>
+
+<!-- LOGIN -->
+<div id="loginBox" class="login card">
+
+    <h2>🔐 Admin Login</h2>
+
+    <p>Firebase Email ও Password দিয়ে লগইন করুন</p>
+
+    <div id="loginMessage"></div>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Admin Email"
+        autocomplete="username"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+    >
+
+    <button class="primary" onclick="login()" style="width:100%;">
+        লগইন
+    </button>
+
+</div>
+
+
+<!-- ADMIN -->
+<div id="adminPanel" class="container hidden">
+
+    <div id="message"></div>
+
+    <!-- NOTICE -->
+    <div class="card">
+
+        <h3>📢 ওয়েবসাইট নোটিশ</h3>
+
+        <textarea id="noticeInput"
+        placeholder="ওয়েবসাইটে দেখানোর নোটিশ লিখুন"></textarea>
+
+        <button class="primary" onclick="saveNotice()">
+            নোটিশ সেভ করুন
+        </button>
+
+    </div>
+
+
+    <!-- PRODUCT -->
+    <div class="card">
+
+        <h3>🥬 পণ্য যোগ / পরিবর্তন</h3>
+
+        <input type="hidden" id="productId">
+
+        <input
+            type="text"
+            id="productName"
+            placeholder="পণ্যের নাম"
+        >
+
+        <input
+            type="number"
+            id="productPrice"
+            placeholder="প্রতি কেজির দাম"
+            min="0"
+        >
+
+        <select id="productCategory">
+            <option value="vegetables">শাক-সবজি</option>
+            <option value="fruits">ফলমূল</option>
+            <option value="daily">মশলা ও নিত্যপণ্য</option>
+        </select>
+
+        <input
+            type="file"
+            id="productImage"
+            accept="image/*"
+        >
+
+        <button class="primary" onclick="saveProduct()">
+            💾 পণ্য সেভ করুন
+        </button>
+
+        <button class="secondary" onclick="resetForm()">
+            নতুন পণ্য
+        </button>
+
+    </div>
+
+
+    <!-- PRODUCT LIST -->
+    <div class="card">
+
+        <h3>📦 সব পণ্য</h3>
+
+        <div id="productList">
+            পণ্য লোড হচ্ছে...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWnsBl3347xfA",
+    authDomain: "kachabazar-87e97.firebaseapp.com",
+    projectId: "kachabazar-87e97",
+    storageBucket: "kachabazar-87e97.firebasestorage.app",
+    messagingSenderId: "1033389997118",
+    appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f",
+    measurementId: "G-63C54C7KH8"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const database = firebase.database();
+
+let products = {};
+
+
+// ===============================
+// AUTH CHECK
+// ===============================
+
+auth.onAuthStateChanged(function(user){
+
+    if(user){
+
+        document.getElementById("loginBox")
+            .classList.add("hidden");
+
+        document.getElementById("adminPanel")
+            .classList.remove("hidden");
+
+        document.getElementById("logoutBtn")
+            .classList.remove("hidden");
+
+        loadAdminData();
+
+    }else{
+
+        document.getElementById("loginBox")
+            .classList.remove("hidden");
+
+        document.getElementById("adminPanel")
+            .classList.add("hidden");
+
+        document.getElementById("logoutBtn")
+            .classList.add("hidden");
+
+    }
+
+});
+
+
+// ===============================
+// LOGIN
+// ===============================
+
+function login(){
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    if(!email || !password){
+
+        showLoginMessage(
+            "Email এবং Password দিন।",
+            true
+        );
+
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(
+        email,
+        password
+    )
+    .then(function(){
+
+        showLoginMessage(
+            "লগইন সফল হয়েছে।",
+            false
+        );
+
+    })
+    .catch(function(error){
+
+        let msg = "লগইন করা যায়নি।";
+
+        if(error.code === "auth/invalid-credential"){
+            msg = "Email অথবা Password ভুল।";
+        }
+
+        if(error.code === "auth/user-not-found"){
+            msg = "এই Email-এর কোনো Admin User নেই।";
+        }
+
+        showLoginMessage(msg,true);
+
+    });
+
+}
+
+
+// ===============================
+// LOGOUT
+// ===============================
+
+function logout(){
+
+    auth.signOut();
+
+}
+
+
+// ===============================
+// HOME
+// ===============================
+
+function goHome(){
+
+    window.location.href = "index.html";
+
+}
+
+
+// ===============================
+// LOAD DATA
+// ===============================
+
+function loadAdminData(){
+
+    database.ref("notice").on("value",function(snapshot){
+
+        const notice = snapshot.val();
+
+        document.getElementById("noticeInput").value =
+            notice || "";
+
+    });
+
+
+    database.ref("products").on("value",function(snapshot){
+
+        products = snapshot.val() || {};
+
+        renderProducts();
+
+    });
+
+}
+
+
+// ===============================
+// NOTICE
+// ===============================
+
+function saveNotice(){
+
+    const notice =
+        document.getElementById("noticeInput").value.trim();
+
+    database.ref("notice").set(notice)
+    .then(function(){
+
+        showMessage(
+            "নোটিশ সফলভাবে আপডেট হয়েছে।"
+        );
+
+    })
+    .catch(function(error){
+
+        showMessage(
+            "নোটিশ সেভ হয়নি: " + error.message,
+            true
+        );
+
+    });
+
+}
+
+
+// ===============================
+// PRODUCTS
+// ===============================
+
+function renderProducts(){
+
+    const box =
+        document.getElementById("productList");
+
+    box.innerHTML = "";
+
+    const keys = Object.keys(products);
+
+    if(keys.length === 0){
+
+        box.innerHTML =
+            "<p>এখনো কোনো পণ্য যোগ করা হয়নি।</p>";
+
+        return;
+    }
+
+    keys.forEach(function(id){
+
+        const p = products[id];
+
+        const div = document.createElement("div");
+
+        div.className = "product";
+
+        div.innerHTML = `
+
+            ${
+                p.image
+                ? `<img src="${p.image}">`
+                : `<div style="
+                    width:75px;
+                    height:75px;
+                    background:#eee;
+                    border-radius:8px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                  ">🥬</div>`
+            }
+
+            <div class="product-info">
+
+                <strong>${escapeHtml(p.name)}</strong>
+
+                <div>
+                    ৳${Number(p.price).toFixed(0)} / কেজি
+                </div>
+
+                <small>
+                    ${categoryName(p.category)}
+                </small>
+
+            </div>
+
+            <div class="actions">
+
+                <button
+                    class="secondary"
+                    onclick="editProduct('${id}')">
+                    Edit
+                </button>
+
+                <button
+                    class="danger"
+                    onclick="deleteProduct('${id}')">
+                    Delete
+                </button>
+
+            </div>
+        `;
+
+        box.appendChild(div);
+
+    });
+
+}
+
+
+// ===============================
+// SAVE PRODUCT
+// ===============================
+
+async function saveProduct(){
+
+    const id =
+        document.getElementById("productId").value;
+
+    const name =
+        document.getElementById("productName")
+        .value.trim();
+
+    const price =
+        Number(document.getElementById("productPrice").value);
+
+    const category =
+        document.getElementById("productCategory").value;
+
+    const file =
+        document.getElementById("productImage").files[0];
+
+    if(!name){
+
+        showMessage(
+            "পণ্যের নাম দিন।",
+            true
+        );
+
+        return;
+    }
+
+    if(!price || price < 0){
+
+        showMessage(
+            "সঠিক দাম দিন।",
+            true
+        );
+
+        return;
+    }
+
+    try{
+
+        let image = "";
+
+        if(id && products[id]){
+            image = products[id].image || "";
+        }
+
+        if(file){
+
+            image = await compressImage(file);
+
+        }
+
+        const productData = {
+
+            name:name,
+
+            price:price,
+
+            category:category,
+
+            image:image,
+
+            updatedAt:Date.now()
+
+        };
+
+        if(id){
+
+            await database
+                .ref("products/" + id)
+                .update(productData);
+
+        }else{
+
+            const newRef =
+                database.ref("products").push();
+
+            await newRef.set(productData);
+
+        }
+
+        showMessage(
+            "পণ্য সফলভাবে সেভ হয়েছে।"
+        );
+
+        resetForm();
+
+    }
+    catch(error){
+
+        showMessage(
+            "পণ্য সেভ হয়নি: " + error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// ===============================
+// EDIT
+// ===============================
+
+function editProduct(id){
+
+    const p = products[id];
+
+    if(!p) return;
+
+    document.getElementById("productId").value = id;
+
+    document.getElementById("productName").value =
+        p.name || "";
+
+    document.getElementById("productPrice").value =
+        p.price || "";
+
+    document.getElementById("productCategory").value =
+        p.category || "vegetables";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+// ===============================
+// DELETE
+// ===============================
+
+function deleteProduct(id){
+
+    if(!confirm("এই পণ্যটি মুছে ফেলবেন?")){
+        return;
+    }
+
+    database.ref("products/" + id)
+    .remove()
+    .then(function(){
+
+        showMessage(
+            "পণ্য মুছে ফেলা হয়েছে।"
+        );
+
+    })
+    .catch(function(error){
+
+        showMessage(
+            "মুছতে সমস্যা হয়েছে: " + error.message,
+            true
+        );
+
+    });
+
+}
+
+
+// ===============================
+// RESET
+// ===============================
+
+function resetForm(){
+
+    document.getElementById("productId").value = "";
+
+    document.getElementById("productName").value = "";
+
+    document.getElementById("productPrice").value = "";
+
+    document.getElementById("productCategory").value =
+        "vegetables";
+
+    document.getElementById("productImage").value = "";
+
+}
+
+
+// ===============================
+// IMAGE COMPRESS
+// ===============================
+
+function compressImage(file){
+
+    return new Promise(function(resolve,reject){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            const img = new Image();
+
+            img.onload = function(){
+
+                const maxWidth = 700;
+
+                let width = img.width;
+                let height = img.height;
+
+                if(width > maxWidth){
+
+                    height =
+                        height * maxWidth / width;
+
+                    width = maxWidth;
+
+                }
+
+                const canvas =
+                    document.createElement("canvas");
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx =
+                    canvas.getContext("2d");
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                resolve(
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.75
+                    )
+                );
+
+            };
+
+            img.onerror = reject;
+
+            img.src = e.target.result;
+
+        };
+
+        reader.onerror = reject;
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+// ===============================
+// HELPERS
+// ===============================
+
+function categoryName(category){
+
+    if(category === "vegetables")
+        return "শাক-সবজি";
+
+    if(category === "fruits")
+        return "ফলমূল";
+
+    if(category === "daily")
+        return "মশলা ও নিত্যপণ্য";
+
+    return "অন্যান্য";
+
+}
+
+
+function escapeHtml(text){
+
+    return String(text || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function showMessage(text,error=false){
+
+    const box =
+        document.getElementById("message");
+
+    box.innerText = text;
+
+    box.className =
+        error ? "error" : "success";
+
+    box.style.display = "block";
+
+    setTimeout(function(){
+
+        box.style.display = "none";
+
+    },3000);
+
+}
+
+
+function showLoginMessage(text,error=false){
+
+    const box =
+        document.getElementById("loginMessage");
+
+    box.innerText = text;
+
+    box.className =
+        error ? "error" : "success";
+
+    box.style.display = "block";
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,18 +1,41 @@
-const defaultProducts = [
-    { id: 1, name: "আলু (দেশি)", price: 45, category: "vegetable", img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300" },
-    { id: 2, name: "পেঁয়াজ (দেশি)", price: 80, category: "vegetable", img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8ce?w=300" },
-    { id: 3, name: "টমেটো", price: 60, category: "vegetable", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=300" },
-    { id: 4, name: "কাঁচামরিচ", price: 120, category: "vegetable", img: "https://images.unsplash.com/photo-1567375698348-5d9d5ae99de0?w=300" }
-];
-
-let products = JSON.parse(localStorage.getItem('sb_products')) || defaultProducts;
-let savedPass = localStorage.getItem('sb_admin_pass') || '1234';
-let savedNotice = localStorage.getItem('sb_notice') || 'স্বাগতম! আমাদের কাঁচাবাজারে টাটকা সবজি ও ফলমূল পাওয়া যায়। আজই অর্ডার করুন এবং ঘরে বসেই ডেলিভারি পান!';
+let products = [];
+let savedPass = '1234';
+let savedNotice = 'স্বাগতম! আমাদের কাঁচাবাজারে টাটকা সবজি ও ফলমূল পাওয়া যায়। আজই অর্ডার করুন এবং ঘরে বসেই ডেলিভারি পান!';
 let cart = [];
 let currentCategory = 'all';
 const merchantPhone = "01960174982";
 
-document.getElementById('scrollNotice').innerText = savedNotice;
+// ১. ফায়ারবেস থেকে রিয়েলটাইমে নোটিশ লোড করা
+database.ref('notice').on('value', (snapshot) => {
+    const val = snapshot.val();
+    if (val) {
+        savedNotice = val;
+        document.getElementById('scrollNotice').innerText = savedNotice;
+    } else {
+        document.getElementById('scrollNotice').innerText = savedNotice;
+    }
+});
+
+// ২. ফায়ারবেস থেকে রিয়েলটাইমে পাসওয়ার্ড লোড করা
+database.ref('admin_pass').on('value', (snapshot) => {
+    const val = snapshot.val();
+    if (val) savedPass = val;
+});
+
+// ৩. ফায়ারবেস থেকে রিয়েলটাইমে পণ্য লোড করা
+database.ref('products').on('value', (snapshot) => {
+    const data = snapshot.val();
+    products = [];
+    if (data) {
+        Object.keys(data).forEach(key => {
+            products.push({ id: key, ...data[key] });
+        });
+    }
+    renderProducts();
+    if (document.getElementById('adminPanel').style.display === 'block') {
+        renderAdminProductList();
+    }
+});
 
 function scrollToCart() {
     document.getElementById('cartSection').scrollIntoView({ behavior: 'smooth' });
@@ -42,14 +65,14 @@ function renderProducts() {
         : products.filter(p => p.category === currentCategory);
 
     if (filtered.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; color: #777; font-size: 0.85rem;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</p>';
+        grid.innerHTML = '<p style="grid-column: 1/-1; color: #777; font-size: 0.85rem; text-align: center; padding: 20px;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</p>';
         return;
     }
 
     filtered.forEach(p => {
         grid.innerHTML += `
             <div class="product-card">
-                <img src="${p.img}" class="product-img" alt="${p.name}">
+                <img src="${p.img || 'https://via.placeholder.com/150'}" class="product-img" alt="${p.name}">
                 <div class="product-title">${p.name}</div>
                 <div class="product-price">৳ ${p.price} / কেজি</div>
                 <div class="qty-controls">
@@ -59,14 +82,16 @@ function renderProducts() {
                         <option value="gm">গ্রাম</option>
                     </select>
                 </div>
-                <button class="add-btn" onclick="addToCart(${p.id})">যোগ করুন</button>
+                <button class="add-btn" onclick="addToCart('${p.id}')">যোগ করুন</button>
             </div>
         `;
     });
 }
 
 function addToCart(pId) {
-    const product = products.find(p => p.id === pId);
+    const product = products.find(p => p.id == pId);
+    if (!product) return;
+
     let qtyVal = parseFloat(document.getElementById(`qty-${pId}`).value);
     const unit = document.getElementById(`unit-${pId}`).value;
 
@@ -75,7 +100,7 @@ function addToCart(pId) {
     let qtyInKg = unit === 'gm' ? qtyVal / 1000 : qtyVal;
     let itemPrice = product.price * qtyInKg;
 
-    const existingIndex = cart.findIndex(c => c.id === pId && c.unit === unit);
+    const existingIndex = cart.findIndex(c => c.id == pId && c.unit === unit);
     if (existingIndex > -1) {
         cart[existingIndex].qty += qtyVal;
         cart[existingIndex].totalPrice += itemPrice;
@@ -101,7 +126,7 @@ function updateCart() {
     const badge = document.getElementById('cartCountBadge');
     const countText = document.getElementById('itemTotalCount');
 
-    let totalItems = cart.reduce((sum, item) => sum + 1, 0);
+    let totalItems = cart.length;
     badge.innerText = totalItems;
     countText.innerText = `(${totalItems} টি আইটেম)`;
 
@@ -179,7 +204,6 @@ function processOrder(type) {
                        selectedPay === 'bkash' ? 'বিকাশ (bKash)' : 
                        selectedPay === 'nagad' ? 'নগদ (Nagad)' : 'রকেট (Rocket)';
 
-    // মেমো তৈরি
     let receiptHTML = `<strong>গ্রাহক:</strong> ${name}<br>`;
     receiptHTML += `<strong>ফোন:</strong> ${phone}<br>`;
     receiptHTML += `<strong>ঠিকানা:</strong> ${village}, সাতবাড়ীয়া ইউনিয়ন<br>`;
@@ -190,7 +214,6 @@ function processOrder(type) {
     }
     receiptHTML += `<hr style="margin: 4px 0;"><strong>পণ্যসমূহ:</strong><br>`;
 
-    // WhatsApp ও SMS বার্তা তৈরি
     let orderText = `*নতুন কাঁচাবাজার অর্ডার*\n\n`;
     orderText += `*নাম:* ${name}\n`;
     orderText += `*মোবাইল:* ${phone}\n`;
@@ -254,10 +277,9 @@ function checkAdminPassword() {
 function updateNotice() {
     const text = document.getElementById('newNoticeText').value;
     if (!text) return alert('বিজ্ঞপ্তি খালি রাখা যাবে না');
-    savedNotice = text;
-    localStorage.setItem('sb_notice', text);
-    document.getElementById('scrollNotice').innerText = text;
-    alert('বিজ্ঞপ্তি সফলভাবে পরিবর্তন করা হয়েছে!');
+    database.ref('notice').set(text).then(() => {
+        alert('বিজ্ঞপ্তি সফলভাবে রিয়েলটাইম ডাটাবেসে পরিবর্তন করা হয়েছে!');
+    });
 }
 
 function renderAdminProductList() {
@@ -269,8 +291,8 @@ function renderAdminProductList() {
             <div class="admin-prod-item">
                 <span><strong>${p.name}</strong> (৳${p.price})</span>
                 <div>
-                    <button class="admin-action-btn" style="background:#0275d8;" onclick="editProduct(${p.id})">সম্পাদনা</button>
-                    <button class="admin-action-btn" style="background:#d9534f;" onclick="deleteProduct(${p.id})">মুছে ফেলুন</button>
+                    <button class="admin-action-btn" style="background:#0275d8;" onclick="editProduct('${p.id}')">সম্পাদনা</button>
+                    <button class="admin-action-btn" style="background:#d9534f;" onclick="deleteProduct('${p.id}')">মুছে ফেলুন</button>
                 </div>
             </div>
         `;
@@ -286,51 +308,41 @@ function saveProduct() {
 
     if (!name || !price) return alert('পণ্যের নাম এবং মূল্য দিন');
 
+    let existingImg = 'https://via.placeholder.com/150';
     if (editId) {
-        let prod = products.find(p => p.id == editId);
-        if (prod) {
-            prod.name = name;
-            prod.price = price;
-            prod.category = category;
+        let p = products.find(item => item.id == editId);
+        if (p && p.img) existingImg = p.img;
+    }
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    prod.img = e.target.result;
-                    finishSaveProduct();
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                finishSaveProduct();
-            }
-        }
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            finishSaveProduct(editId, name, price, category, e.target.result);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
     } else {
-        let imgData = 'https://via.placeholder.com/150';
-        if (fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                imgData = e.target.result;
-                products.push({ id: Date.now(), name, price, category, img: imgData });
-                finishSaveProduct();
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            products.push({ id: Date.now(), name, price, category, img: imgData });
-            finishSaveProduct();
-        }
+        finishSaveProduct(editId, name, price, category, existingImg);
     }
 }
 
-function finishSaveProduct() {
-    localStorage.setItem('sb_products', JSON.stringify(products));
-    renderProducts();
-    renderAdminProductList();
-    resetProductForm();
-    alert('পণ্য সফলভাবে সংরক্ষণ করা হয়েছে!');
+function finishSaveProduct(editId, name, price, category, img) {
+    const prodData = { name, price, category, img };
+
+    if (editId) {
+        database.ref('products/' + editId).update(prodData).then(() => {
+            alert('পণ্য সফলভাবে আপডেট করা হয়েছে!');
+            resetProductForm();
+        });
+    } else {
+        database.ref('products').push(prodData).then(() => {
+            alert('পণ্য সফলভাবে অনলাইন ডাটাবেসে যোগ করা হয়েছে!');
+            resetProductForm();
+        });
+    }
 }
 
 function editProduct(pId) {
-    const prod = products.find(p => p.id === pId);
+    const prod = products.find(p => p.id == pId);
     if (!prod) return;
 
     document.getElementById('editProductId').value = prod.id;
@@ -344,11 +356,10 @@ function editProduct(pId) {
 }
 
 function deleteProduct(pId) {
-    if (confirm('আপনি কি সত্যিই এই পণ্যটি মুছে ফেলতে চান?')) {
-        products = products.filter(p => p.id !== pId);
-        localStorage.setItem('sb_products', JSON.stringify(products));
-        renderProducts();
-        renderAdminProductList();
+    if (confirm('আপনি কি সত্যিই এই পণ্যটি অনলাইন থেকে মুছে ফেলতে চান?')) {
+        database.ref('products/' + pId).remove().then(() => {
+            alert('পণ্যটি মুছে ফেলা হয়েছে!');
+        });
     }
 }
 
@@ -369,11 +380,9 @@ function changePassword() {
     if (curr !== savedPass) return alert('বর্তমান পাসওয়ার্ড ভুল!');
     if (!newP) return alert('নতুন পাসওয়ার্ড টাইপ করুন');
 
-    savedPass = newP;
-    localStorage.setItem('sb_admin_pass', newP);
-    alert('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!');
-    document.getElementById('currPass').value = '';
-    document.getElementById('newPass').value = '';
+    database.ref('admin_pass').set(newP).then(() => {
+        alert('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!');
+        document.getElementById('currPass').value = '';
+        document.getElementById('newPass').value = '';
+    });
 }
-
-renderProducts();

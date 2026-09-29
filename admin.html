@@ -13,7 +13,6 @@
     <!-- CSS Link -->
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Admin Panel Custom Styles */
         body {
             background-color: #f1f5f9;
             font-family: 'Hind Siliguri', sans-serif;
@@ -151,24 +150,24 @@
             <form id="adminLoginForm">
                 <div class="form-group">
                     <label>Admin Email</label>
-                    <input type="email" id="adminEmail" placeholder="যেমন: sowkat420@gmail.com" value="sowkat420@gmail.com" required>
+                    <input type="email" id="adminEmail" value="sowkat420@gmail.com" required>
                 </div>
                 <div class="form-group">
                     <label>পাসওয়ার্ড</label>
-                    <input type="password" id="adminPassword" placeholder="এডমিন পাসওয়ার্ড লিখুন" required>
+                    <input type="password" id="adminPassword" placeholder="আপনার পাসওয়ার্ড দিন" required>
                 </div>
-                <button type="submit" class="place-order-button" style="width: 100%; padding: 12px; background: #15803d; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">লগইন করুন</button>
+                <button type="submit" id="loginBtn" style="width: 100%; padding: 12px; background: #15803d; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">লগইন করুন</button>
             </form>
         </div>
     </div>
 
     <!-- MAIN ADMIN CONTENT -->
-    <div class="container hidden" id="adminContent" style="display:none;">
+    <div class="container" id="adminContent" style="display:none;">
         <!-- Navigation -->
         <div class="admin-nav">
-            <button class="admin-nav-btn active" onclick="switchTab('ordersTab')"><i class="fa-solid fa-list-check"></i> অর্ডারসমূহ</button>
-            <button class="admin-nav-btn" onclick="switchTab('productsTab')"><i class="fa-solid fa-box-open"></i> পণ্য ব্যবস্থাপনা</button>
-            <button class="admin-nav-btn" onclick="switchTab('settingsTab')"><i class="fa-solid fa-sliders"></i> দোকান সেটআপ</button>
+            <button class="admin-nav-btn active" onclick="switchTab('ordersTab', this)"><i class="fa-solid fa-list-check"></i> অর্ডারসমূহ</button>
+            <button class="admin-nav-btn" onclick="switchTab('productsTab', this)"><i class="fa-solid fa-box-open"></i> পণ্য ব্যবস্থাপনা</button>
+            <button class="admin-nav-btn" onclick="switchTab('settingsTab', this)"><i class="fa-solid fa-sliders"></i> দোকান সেটআপ</button>
         </div>
 
         <!-- ORDERS TAB -->
@@ -290,8 +289,9 @@
         </div>
     </div>
 
-    <!-- Firebase compatibility SDKs -->
+    <!-- Firebase SDKs with Auth Support -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <script>
@@ -308,26 +308,33 @@
         
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth();
 
-        // DEFAULT CREDENTIALS
-        const ADMIN_EMAIL = "sowkat420@gmail.com";
-        const ADMIN_PASS = "admin123";
-
+        // Firebase Auth Login
         document.getElementById('adminLoginForm').addEventListener('submit', function(e){
             e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPassword').value;
-            
-            if(email === ADMIN_EMAIL && pass === ADMIN_PASS){
-                localStorage.setItem('admin_logged', 'true');
-                checkAuth();
-            } else {
-                alert('ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে!');
-            }
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPassword').value.trim();
+            const btn = document.getElementById('loginBtn');
+
+            btn.innerText = "লগইন হচ্ছে...";
+            btn.disabled = true;
+
+            auth.signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    btn.innerText = "লগইন করুন";
+                    btn.disabled = false;
+                })
+                .catch((error) => {
+                    btn.innerText = "লগইন করুন";
+                    btn.disabled = false;
+                    alert("লগইন ভুল হয়েছে! কারণ: " + error.message);
+                });
         });
 
-        function checkAuth(){
-            if(localStorage.getItem('admin_logged') === 'true'){
+        // Track Login State
+        auth.onAuthStateChanged((user) => {
+            if (user && user.email === 'sowkat420@gmail.com') {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('adminContent').style.display = 'block';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
@@ -339,18 +346,17 @@
                 document.getElementById('adminContent').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'none';
             }
-        }
+        });
 
         function adminLogout(){
-            localStorage.removeItem('admin_logged');
-            checkAuth();
+            auth.signOut();
         }
 
-        function switchTab(tabId){
+        function switchTab(tabId, btn){
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.admin-nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).style.display = 'block';
-            event.currentTarget.classList.add('active');
+            if(btn) btn.classList.add('active');
         }
 
         // LOAD ORDERS
@@ -360,18 +366,18 @@
                 const tbody = document.getElementById('adminOrdersList');
                 const keys = Object.keys(data).reverse();
                 if(!keys.length){
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">কোনো অর্ডার নেই।</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
                     return;
                 }
                 tbody.innerHTML = keys.map(id => {
                     const o = data[id];
-                    const itemsStr = o.items ? o.items.map(i => `${i.name} (${i.quantity} ${i.unit})`).join(', ') : '';
+                    const itemsStr = o.items ? (Array.isArray(o.items) ? o.items.map(i => `${i.name || i.title} (${i.quantity || 1})`).join(', ') : 'পণ্য আছে') : '';
                     return `
                         <tr>
                             <td><strong>${id}</strong></td>
-                            <td>${o.customerName || ''}</td>
-                            <td>${o.customerPhone || ''}</td>
-                            <td>${o.customerAddress || ''}</td>
+                            <td>${o.name || o.customerName || 'N/A'}</td>
+                            <td>${o.phone || o.customerPhone || 'N/A'}</td>
+                            <td>${o.address || o.customerAddress || 'N/A'}</td>
                             <td><small>${itemsStr}</small></td>
                             <td>৳${o.total || 0}</td>
                             <td><span class="badge badge-${o.status || 'pending'}">${o.status || 'pending'}</span></td>
@@ -387,6 +393,8 @@
                         </tr>
                     `;
                 }).join('');
+            }, error => {
+                document.getElementById('adminOrdersList').innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">ডাটা পড়তে সমস্যা হচ্ছে: ' + error.message + '</td></tr>';
             });
         }
 
@@ -419,7 +427,7 @@
                 const tbody = document.getElementById('adminProductsList');
                 const keys = Object.keys(data);
                 if(!keys.length){
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">কোনো পণ্য নেই।</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">কোনো পণ্য পাওয়া যায়নি।</td></tr>';
                     return;
                 }
                 tbody.innerHTML = keys.map(id => {
@@ -479,9 +487,6 @@
                 alert('সেটিং সেভ করা হয়েছে!');
             });
         });
-
-        // INIT CHECK
-        checkAuth();
     </script>
 </body>
 </html>

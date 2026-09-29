@@ -256,16 +256,23 @@
     </div>
 
     <!-- SUCCESS MODAL -->
-    <div class="modal-overlay" id="successModal">
-        <div class="success-modal">
-            <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
-            <h2>অর্ডার সফল হয়েছে!</h2>
-            <p>আপনার অর্ডার আইডি:</p>
-            <strong id="successOrderId">SB-0000</strong>
-            <p class="success-note">আপনার সাথে খুব শীঘ্রই যোগাযোগ করা হবে।</p>
-            <button class="success-button" onclick="closeSuccess()">ঠিক আছে</button>
-        </div>
+<div class="modal-overlay" id="successModal">
+    <div class="success-modal">
+        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>অর্ডার সফল হয়েছে!</h2>
+        <p>আপনার অর্ডার আইডি:</p>
+        <strong id="successOrderId">SB-0000</strong>
+        <p class="success-note">আপনার সাথে খুব শীঘ্রই যোগাযোগ করা হবে।</p>
+        
+        <!-- নতুন হোয়াটসঅ্যাপ বাটন -->
+        <a id="successWhatsAppBtn" href="#" target="_blank" class="direct-order-btn whatsapp-btn" style="display:none; text-decoration:none; margin-bottom:10px;">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp-এ বার্তা পাঠান
+        </a><br>
+
+        <button class="success-button" onclick="closeSuccess()">ঠিক আছে</button>
     </div>
+</div>
+
 
     <!-- TOAST NOTIFICATION -->
     <div class="site-toast" id="siteToast"></div>

@@ -40,13 +40,19 @@ let cart = JSON.parse(
     localStorage.getItem("kachabazar_cart") || "{}"
 );
 
+// প্রোডাক্ট কার্ডের পরিমাণের ট্র্যাকিং (+ / -)
+let cardQuantities = {};
+
 let shopSettings = {
     shopName: "১০ নং সাতবাড়ীয়া কাঁচাবাজার",
     shopPhone: "",
     shopWhatsApp: "",
     shopFacebook: "",
     shopAddress: "১০ নং সাতবাড়ীয়া ইউনিয়ন",
-    deliveryCharge: 0,
+    deliveryCharge: 20,
+    freeDeliveryMin: 300,
+    noticeText: "",
+    isNoticeActive: false,
     heroDescription: "তাজা কাঁচামাল সহজেই অর্ডার করুন।",
     footerDescription: "তাজা কাঁচামাল সহজেই আপনার ঘরে।"
 };
@@ -135,10 +141,17 @@ function applySettings() {
     document.getElementById("shopPhone").textContent =
         phone || "যোগাযোগ করুন";
 
+    // ডেলিভারি টেক্সট আপডেট (ফ্রি ডেলিভারির নোটিশসহ)
+    const baseDelivery = Number(shopSettings.deliveryCharge || 20);
+    const minFree = Number(shopSettings.freeDeliveryMin || 300);
+
     document.getElementById("deliveryInfo").textContent =
-        Number(shopSettings.deliveryCharge || 0) > 0
-            ? "ডেলিভারি ৳" + formatNumber(shopSettings.deliveryCharge)
-            : "ইউনিয়নের ভিতরে";
+        `ডেলিভারি ৳${formatNumber(baseDelivery)} (৳${formatNumber(minFree)}+ এ ফ্রি)`;
+
+    const badgeEl = document.getElementById("shopDeliveryBadge");
+    if(badgeEl) {
+        badgeEl.textContent = `৳${formatNumber(minFree)} টাকার অর্ডারে ফ্রি ডেলিভারি`;
+    }
 
     document.getElementById("footerShopName").textContent = name;
 
@@ -154,6 +167,19 @@ function applySettings() {
         phone || "-";
 
     document.getElementById("copyrightName").textContent = name;
+
+    /* NOTICE TICKER SYSTEM (Left -> Right) */
+    const noticeWrap = document.getElementById("noticeTicker");
+    const noticeContent = document.getElementById("tickerContent");
+
+    if (noticeWrap && noticeContent) {
+        if (shopSettings.isNoticeActive && shopSettings.noticeText && shopSettings.noticeText.trim() !== "") {
+            noticeContent.textContent = shopSettings.noticeText;
+            noticeWrap.style.display = "block";
+        } else {
+            noticeWrap.style.display = "none";
+        }
+    }
 
 
     /* PHONE */
@@ -413,8 +439,28 @@ function applyProductFilter() {
 
 
 /* =========================================================
-   RENDER PRODUCTS
+   RENDER PRODUCTS (সহ প্রোডাক্ট কার্ডে পরিমানের লজিক)
 ========================================================= */
+
+function changeCardQty(pId, amount) {
+    if (!cardQuantities[pId]) cardQuantities[pId] = 1;
+
+    let current = cardQuantities[pId] + amount;
+    if (current < 1) current = 1;
+
+    const product = allProducts[pId];
+    if (product) {
+        const stockKnown = product.stock !== null && product.stock !== undefined && product.stock !== "";
+        if (stockKnown && current > Number(product.stock)) {
+            current = Number(product.stock);
+            showToast("স্টকের বেশি নেওয়া যাবে না।", "error");
+        }
+    }
+
+    cardQuantities[pId] = current;
+    const qtyEl = document.getElementById(`card-qty-${pId}`);
+    if (qtyEl) qtyEl.innerText = formatNumber(current);
+}
 
 function renderProducts() {
 
@@ -485,6 +531,8 @@ function renderProducts() {
         const description =
             escapeHtml(product.description || "");
 
+        const currentQty = cardQuantities[id] || 1;
+
         return `
 
             <article class="product-card">
@@ -531,7 +579,6 @@ function renderProducts() {
                         ${description || "&nbsp;"}
                     </div>
 
-
                     <div class="product-bottom">
 
                         <div class="product-price">
@@ -541,18 +588,25 @@ function renderProducts() {
                             </span>
                         </div>
 
-                        <button
-                            type="button"
-                            class="add-to-cart-btn"
-                            onclick="addToCart('${id}')"
-                            ${soldOut ? "disabled" : ""}>
-
-                            <i class="fa-solid fa-cart-plus"></i>
-                            ${soldOut ? "স্টক নেই" : "কার্টে দিন"}
-
-                        </button>
-
                     </div>
+
+                    <!-- কার্ডে পরিমাণ পরিবর্তন (- 1 +) -->
+                    <div class="card-qty-control">
+                        <button type="button" class="card-qty-btn" onclick="changeCardQty('${id}', -1)" ${soldOut ? "disabled" : ""}>−</button>
+                        <span class="card-qty-val" id="card-qty-${id}">${formatNumber(currentQty)}</span>
+                        <button type="button" class="card-qty-btn" onclick="changeCardQty('${id}', 1)" ${soldOut ? "disabled" : ""}>+</button>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="add-to-cart-btn"
+                        onclick="addToCart('${id}')"
+                        ${soldOut ? "disabled" : ""}>
+
+                        <i class="fa-solid fa-cart-plus"></i>
+                        ${soldOut ? "স্টক নেই" : "কার্টে দিন"}
+
+                    </button>
 
 
                     ${
@@ -627,18 +681,23 @@ function addToCart(id) {
             ? Number(product.stock)
             : null;
 
-    const currentQty =
-        Number(cart[id] || 0);
+    const qtyToAdd = cardQuantities[id] || 1;
+    const currentQty = Number(cart[id] || 0);
 
     if (
         stockKnown &&
-        currentQty >= stock
+        (currentQty + qtyToAdd) > stock
     ) {
         showToast("স্টকের বেশি নেওয়া যাবে না।", "error");
         return;
     }
 
-    cart[id] = currentQty + 1;
+    cart[id] = currentQty + qtyToAdd;
+
+    // যোগ করার পর কার্ডের পরিমাণ আবার ১-এ নিয়ে যাওয়া
+    cardQuantities[id] = 1;
+    const qtyEl = document.getElementById(`card-qty-${id}`);
+    if(qtyEl) qtyEl.innerText = "১";
 
     saveCart();
 
@@ -746,6 +805,16 @@ function getCartSubtotal() {
 
         }, 0);
 
+}
+
+// ডেলিভারি চার্জের অটোমেটিক হিসাব (৳৩০০+ হলে ফ্রি, নয়তো ৳২০)
+function calculateDeliveryCharge(subtotal) {
+    if (subtotal === 0) return 0;
+
+    const minFree = Number(shopSettings.freeDeliveryMin || 300);
+    const baseFee = Number(shopSettings.deliveryCharge || 20);
+
+    return subtotal >= minFree ? 0 : baseFee;
 }
 
 
@@ -880,21 +949,16 @@ function updateCart() {
     }
 
 
-    const subtotal =
-        getCartSubtotal();
-
-    const delivery =
-        Number(shopSettings.deliveryCharge || 0);
-
-    const total =
-        subtotal + delivery;
+    const subtotal = getCartSubtotal();
+    const delivery = calculateDeliveryCharge(subtotal);
+    const total = subtotal + delivery;
 
 
     document.getElementById("cartSubtotal").textContent =
         "৳" + formatNumber(subtotal);
 
     document.getElementById("cartDelivery").textContent =
-        "৳" + formatNumber(delivery);
+        delivery === 0 && subtotal > 0 ? "ফ্রি (Free)" : "৳" + formatNumber(delivery);
 
     document.getElementById("cartTotal").textContent =
         "৳" + formatNumber(total);
@@ -964,21 +1028,16 @@ function openCheckout(action = null) {
 
     directOrderAction = action;
 
-    const subtotal =
-        getCartSubtotal();
-
-    const delivery =
-        Number(shopSettings.deliveryCharge || 0);
-
-    const total =
-        subtotal + delivery;
+    const subtotal = getCartSubtotal();
+    const delivery = calculateDeliveryCharge(subtotal);
+    const total = subtotal + delivery;
 
 
     document.getElementById("checkoutSubtotal").textContent =
         "৳" + formatNumber(subtotal);
 
     document.getElementById("checkoutDelivery").textContent =
-        "৳" + formatNumber(delivery);
+        delivery === 0 ? "ফ্রি (Free)" : "৳" + formatNumber(delivery);
 
     document.getElementById("checkoutTotal").textContent =
         "৳" + formatNumber(total);
@@ -1106,13 +1165,6 @@ document
         }
 
 
-        /*
-         * IMPORTANT:
-         * Order-এর সময় stock কমানো হচ্ছে না।
-         * কারণ customer unauthenticated অবস্থায় order তৈরি করে।
-         * Admin stock manually update করবে।
-         */
-
         const orderItems =
             items.map(function (item) {
 
@@ -1137,18 +1189,11 @@ document
             });
 
 
-        const subtotal =
-            getCartSubtotal();
+        const subtotal = getCartSubtotal();
+        const delivery = calculateDeliveryCharge(subtotal);
+        const total = subtotal + delivery;
 
-        const delivery =
-            Number(shopSettings.deliveryCharge || 0);
-
-        const total =
-            subtotal + delivery;
-
-
-        const orderId =
-            generateOrderId();
+        const orderId = generateOrderId();
 
 
         const orderData = {
@@ -1338,7 +1383,7 @@ function buildOrderMessage(orderId, order) {
             "১০ নং সাতবাড়ীয়া কাঁচাবাজার") +
         "\n\n";
 
-    message += "অর্ডার:\n\n";
+    message += "অর্ডার বিবরণ:\n\n";
 
 
     order.items.forEach(function (item, index) {
@@ -1412,7 +1457,7 @@ function buildOrderMessage(orderId, order) {
 
 
 /* =========================================================
-   DIRECT ORDER ACTION
+   DIRECT ORDER ACTION (WhatsApp API ছাড়া ফ্রি মেসেজিং)
 ========================================================= */
 
 function openDirectOrderAction(action, message) {

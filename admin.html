@@ -277,16 +277,18 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <script>
-        // FIREBASE INIT
+        // UPDATED FIREBASE CONFIG WITH VALID API KEY
         const firebaseConfig = {
-            apiKey: "AIzaSyDGZjvwv_ZmVbiVPgKtUAdMWWsBl3347xfA",
+            apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWWsBl3347xfA",
             authDomain: "kachabazar-87e97.firebaseapp.com",
             databaseURL: "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "kachabazar-87e97",
             storageBucket: "kachabazar-87e97.firebasestorage.app",
             messagingSenderId: "1033389997118",
-            appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f"
+            appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f",
+            measurementId: "G-63C54C7KH8"
         };
+        
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 

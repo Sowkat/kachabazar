@@ -1554,18 +1554,22 @@ function openDirectOrderAction(action, message) {
 /* =========================================================
    SUCCESS MODAL
 ========================================================= */
+// Success modal এ Order ID ও WhatsApp Link সেট করা
+document.getElementById("successOrderId").textContent = orderId;
 
-function closeSuccess() {
+const waBtn = document.getElementById("successWhatsAppBtn");
+const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
 
-    document
-        .getElementById("successModal")
-        .classList.remove("show");
-
-    document.body.style.overflow = "";
-
+if (whatsapp) {
+    const waUrl = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
+    waBtn.href = waUrl;
+    waBtn.style.display = "inline-flex";
+} else {
+    waBtn.style.display = "none";
 }
 
-
+document.getElementById("successModal").classList.add("show");
+document.body.style.overflow = "hidden";
 /* =========================================================
    ORDER TRACKING
 ========================================================= */

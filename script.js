@@ -9,7 +9,7 @@
 ========================================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDGZjvwv_ZmVbiVPgKtUAdMWWsBl3347xfA",
+    apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWWsBl3347xfA",
     authDomain: "kachabazar-87e97.firebaseapp.com",
     databaseURL: "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "kachabazar-87e97",
@@ -1279,12 +1279,23 @@ document
 
 
             /*
-             * Show success
+             * Show success modal & WhatsApp link
              */
 
             document
                 .getElementById("successOrderId")
                 .textContent = orderId;
+
+            const waBtn = document.getElementById("successWhatsAppBtn");
+            const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
+
+            if (whatsapp && waBtn) {
+                const waUrl = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
+                waBtn.href = waUrl;
+                waBtn.style.display = "inline-flex";
+            } else if (waBtn) {
+                waBtn.style.display = "none";
+            }
 
             document
                 .getElementById("successModal")
@@ -1554,22 +1565,18 @@ function openDirectOrderAction(action, message) {
 /* =========================================================
    SUCCESS MODAL
 ========================================================= */
-// Success modal এ Order ID ও WhatsApp Link সেট করা
-document.getElementById("successOrderId").textContent = orderId;
 
-const waBtn = document.getElementById("successWhatsAppBtn");
-const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
+function closeSuccess() {
 
-if (whatsapp) {
-    const waUrl = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
-    waBtn.href = waUrl;
-    waBtn.style.display = "inline-flex";
-} else {
-    waBtn.style.display = "none";
+    document
+        .getElementById("successModal")
+        .classList.remove("show");
+
+    document.body.style.overflow = "";
+
 }
 
-document.getElementById("successModal").classList.add("show");
-document.body.style.overflow = "hidden";
+
 /* =========================================================
    ORDER TRACKING
 ========================================================= */

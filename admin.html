@@ -334,4 +334,1585 @@ th{
 
 .delete-btn{
     background:#fee2e2;
-    color:#dc
+    color:#dc2626;
+}
+
+/* ================= ORDER ================= */
+
+.order-card{
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:12px;
+}
+
+.order-header{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+
+.order-id{
+    font-weight:700;
+    color:#166534;
+}
+
+.order-info{
+    color:#475569;
+    line-height:1.7;
+}
+
+.status-select{
+    padding:7px 10px;
+    border-radius:7px;
+    border:1px solid #cbd5e1;
+    font-family:inherit;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:200;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:520px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:15px;
+    padding:22px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.close-btn{
+    border:0;
+    background:#f1f5f9;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:20px;
+}
+
+.cancel-btn{
+    border:0;
+    background:#e2e8f0;
+    padding:10px 15px;
+    border-radius:8px;
+    font-family:inherit;
+    cursor:pointer;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    text-align:center;
+    color:#64748b;
+    padding:35px 10px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:800px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .topbar{
+        height:auto;
+        padding:12px 15px;
+        gap:10px;
+        flex-wrap:wrap;
+    }
+
+    .topbar-title{
+        font-size:18px;
+    }
+
+    .admin-email{
+        display:none;
+    }
+
+    .container{
+        padding:14px;
+    }
+
+    .panel{
+        padding:14px;
+    }
+}
+
+@media(max-width:500px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .stat-card{
+        padding:14px;
+    }
+
+    .stat-card .value{
+        font-size:22px;
+    }
+
+    .login-box{
+        padding:28px 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+
+<div id="loginPage">
+
+    <div class="login-box">
+
+        <div class="login-logo">
+            <div class="icon">🥬</div>
+            <h1>১০ নং সাতবাড়ীয়া</h1>
+            <p>কাঁচাবাজার Admin Panel</p>
+        </div>
+
+        <div id="loginError" class="error-box hidden"></div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="admin@gmail.com"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>পাসওয়ার্ড</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="পাসওয়ার্ড দিন"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" id="loginBtn" class="login-btn">
+                লগইন করুন
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= ADMIN PAGE ================= -->
+
+<div id="adminPage" class="hidden">
+
+    <div class="topbar">
+
+        <div class="topbar-title">
+            🥬 ১০ নং সাতবাড়ীয়া কাঁচাবাজার
+        </div>
+
+        <div class="topbar-right">
+
+            <span id="adminEmail" class="admin-email"></span>
+
+            <button class="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <div class="label">মোট পণ্য</div>
+                <div class="value" id="totalProducts">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">মোট অর্ডার</div>
+                <div class="value" id="totalOrders">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">Pending</div>
+                <div class="value" id="pendingOrders">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">Completed</div>
+                <div class="value" id="completedOrders">0</div>
+            </div>
+
+        </div>
+
+
+        <!-- TABS -->
+
+        <div class="tabs">
+
+            <button
+                class="tab-btn active"
+                onclick="showTab('products',this)">
+                🥬 পণ্য
+            </button>
+
+            <button
+                class="tab-btn"
+                onclick="showTab('orders',this)">
+                🛒 অর্ডার
+            </button>
+
+            <button
+                class="tab-btn"
+                onclick="showTab('settings',this)">
+                ⚙️ সেটিংস
+            </button>
+
+        </div>
+
+
+        <!-- ================= PRODUCTS ================= -->
+
+        <div id="productsTab" class="panel tab-content">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    পণ্য তালিকা
+                </div>
+
+                <button
+                    class="primary-btn"
+                    onclick="openProductModal()">
+                    + নতুন পণ্য
+                </button>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ছবি</th>
+                            <th>পণ্যের নাম</th>
+                            <th>ক্যাটাগরি</th>
+                            <th>দাম</th>
+                            <th>ইউনিট</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="productsTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= ORDERS ================= -->
+
+        <div id="ordersTab" class="panel tab-content hidden">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    অর্ডার তালিকা
+                </div>
+
+                <button
+                    class="primary-btn"
+                    onclick="loadOrders()">
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+            <div id="ordersList"></div>
+
+        </div>
+
+
+        <!-- ================= SETTINGS ================= -->
+
+        <div id="settingsTab" class="panel tab-content hidden">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    ওয়েবসাইট সেটিংস
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>দোকানের নাম</label>
+
+                <input
+                    type="text"
+                    id="shopName"
+                    placeholder="১০ নং সাতবাড়ীয়া কাঁচাবাজার"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>ডেলিভারি চার্জ</label>
+
+                <input
+                    type="number"
+                    id="deliveryCharge"
+                    placeholder="0"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>যোগাযোগ নম্বর</label>
+
+                <input
+                    type="text"
+                    id="contactNumber"
+                    placeholder="01XXXXXXXXX"
+                >
+
+            </div>
+
+            <button
+                class="primary-btn"
+                onclick="saveSettings()">
+                💾 সেটিংস সংরক্ষণ
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= PRODUCT MODAL ================= -->
+
+<div id="productModal" class="modal hidden">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                নতুন পণ্য
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeProductModal()">
+                ×
+            </button>
+
+        </div>
+
+
+        <input type="hidden" id="productId">
+
+
+        <div class="form-group">
+
+            <label>পণ্যের নাম</label>
+
+            <input
+                type="text"
+                id="productName"
+                placeholder="যেমন: আলু"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>ক্যাটাগরি</label>
+
+            <select id="productCategory">
+
+                <option value="সবজি">সবজি</option>
+                <option value="ফল">ফল</option>
+                <option value="মাছ">মাছ</option>
+                <option value="মাংস">মাংস</option>
+                <option value="মসলা">মসলা</option>
+                <option value="অন্যান্য">অন্যান্য</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>দাম</label>
+
+            <input
+                type="number"
+                id="productPrice"
+                placeholder="দাম"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>ইউনিট</label>
+
+            <input
+                type="text"
+                id="productUnit"
+                placeholder="কেজি / পিস / লিটার"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>ছবির URL</label>
+
+            <input
+                type="url"
+                id="productImage"
+                placeholder="https://..."
+            >
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="cancel-btn"
+                onclick="closeProductModal()">
+                বাতিল
+            </button>
+
+            <button
+                class="primary-btn"
+                onclick="saveProduct()">
+                💾 সংরক্ষণ
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyDGZjvwv_ZmVbiVPgKtUAdMWWsBl3347xfA",
+
+    authDomain:
+        "kachabazar-87e97.firebaseapp.com",
+
+    databaseURL:
+        "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId:
+        "kachabazar-87e97",
+
+    storageBucket:
+        "kachabazar-87e97.firebasestorage.app",
+
+    messagingSenderId:
+        "1033389997118",
+
+    appId:
+        "1:1033389997118:web:3af50b0e824f9e3cbf656f",
+
+    measurementId:
+        "G-63C54C7KH8"
+
+};
+
+
+/* =====================================================
+   INITIALIZE FIREBASE
+===================================================== */
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+
+const db = firebase.database();
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+document
+.getElementById("loginForm")
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const email =
+        document
+        .getElementById("loginEmail")
+        .value
+        .trim();
+
+    const password =
+        document
+        .getElementById("loginPassword")
+        .value;
+
+    const errorBox =
+        document.getElementById("loginError");
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+
+    errorBox.classList.add("hidden");
+
+    loginBtn.disabled = true;
+
+    loginBtn.textContent = "লগইন হচ্ছে...";
+
+
+    try{
+
+        await auth.signInWithEmailAndPassword(
+            email,
+            password
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Firebase Login Error:",
+            error
+        );
+
+        errorBox.innerHTML =
+            getFirebaseError(error);
+
+        errorBox.classList.remove("hidden");
+
+    }
+
+    finally{
+
+        loginBtn.disabled = false;
+
+        loginBtn.textContent = "লগইন করুন";
+
+    }
+
+});
+
+
+/* =====================================================
+   FIREBASE ERROR
+===================================================== */
+
+function getFirebaseError(error){
+
+    const code = error.code || "";
+
+    const errors = {
+
+        "auth/invalid-email":
+            "❌ ইমেইল ঠিক নয়।",
+
+        "auth/user-not-found":
+            "❌ এই ইমেইলে কোনো Admin User পাওয়া যায়নি।",
+
+        "auth/wrong-password":
+            "❌ পাসওয়ার্ড ভুল।",
+
+        "auth/invalid-credential":
+            "❌ ইমেইল অথবা পাসওয়ার্ড ভুল।",
+
+        "auth/operation-not-allowed":
+            "❌ Firebase Authentication-এ Email/Password চালু করা নেই।",
+
+        "auth/network-request-failed":
+            "❌ ইন্টারনেট সংযোগের সমস্যা হয়েছে।",
+
+        "auth/too-many-requests":
+            "❌ অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",
+
+        "auth/user-disabled":
+            "❌ এই Admin User নিষ্ক্রিয় করা হয়েছে।",
+
+        "auth/invalid-api-key":
+            "❌ Firebase API Key সমস্যা।",
+
+        "auth/app-not-authorized":
+            "❌ এই ওয়েবসাইট Firebase-এর জন্য অনুমোদিত নয়।"
+
+    };
+
+
+    if(errors[code]){
+        return errors[code];
+    }
+
+
+    return `
+        ❌ লগইন করা যায়নি।<br>
+        <small>
+        Error Code: ${escapeHtml(code)}<br>
+        ${escapeHtml(error.message || "Unknown Firebase error")}
+        </small>
+    `;
+
+}
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+auth.onAuthStateChanged(function(user){
+
+    if(user){
+
+        document
+        .getElementById("loginPage")
+        .classList.add("hidden");
+
+        document
+        .getElementById("adminPage")
+        .classList.remove("hidden");
+
+
+        document
+        .getElementById("adminEmail")
+        .textContent =
+            user.email || "";
+
+
+        loadProducts();
+
+        loadOrders();
+
+        loadSettings();
+
+    }
+
+    else{
+
+        document
+        .getElementById("adminPage")
+        .classList.add("hidden");
+
+        document
+        .getElementById("loginPage")
+        .classList.remove("hidden");
+
+    }
+
+});
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    auth.signOut();
+
+}
+
+
+/* =====================================================
+   TAB
+===================================================== */
+
+function showTab(tab,button){
+
+    document
+    .querySelectorAll(".tab-content")
+    .forEach(function(el){
+
+        el.classList.add("hidden");
+
+    });
+
+
+    document
+    .querySelectorAll(".tab-btn")
+    .forEach(function(el){
+
+        el.classList.remove("active");
+
+    });
+
+
+    document
+    .getElementById(tab+"Tab")
+    .classList.remove("hidden");
+
+
+    button.classList.add("active");
+
+}
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
+let productsCache = {};
+
+
+function loadProducts(){
+
+    db.ref("products")
+    .on("value",function(snapshot){
+
+        productsCache = snapshot.val() || {};
+
+        const table =
+            document.getElementById("productsTable");
+
+        table.innerHTML = "";
+
+
+        const keys =
+            Object.keys(productsCache);
+
+
+        document
+        .getElementById("totalProducts")
+        .textContent = keys.length;
+
+
+        if(keys.length === 0){
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="empty">
+                            এখনো কোনো পণ্য যোগ করা হয়নি।
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        keys.reverse().forEach(function(id){
+
+            const product =
+                productsCache[id];
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${
+                        product.image
+                        ?
+                        `<img
+                            class="product-img"
+                            src="${escapeAttr(product.image)}"
+                            onerror="this.style.display='none'"
+                        >`
+                        :
+                        "—"
+                    }
+                </td>
+
+                <td>
+                    ${escapeHtml(product.name || "")}
+                </td>
+
+                <td>
+                    ${escapeHtml(product.category || "")}
+                </td>
+
+                <td>
+                    ৳${escapeHtml(product.price || "0")}
+                </td>
+
+                <td>
+                    ${escapeHtml(product.unit || "")}
+                </td>
+
+                <td>
+
+                    <button
+                        class="action-btn edit-btn"
+                        onclick="editProduct('${escapeAttr(id)}')">
+                        Edit
+                    </button>
+
+                    <button
+                        class="action-btn delete-btn"
+                        onclick="deleteProduct('${escapeAttr(id)}')">
+                        Delete
+                    </button>
+
+                </td>
+
+            `;
+
+
+            table.appendChild(row);
+
+        });
+
+    });
+
+}
+
+
+/* =====================================================
+   PRODUCT MODAL
+===================================================== */
+
+function openProductModal(){
+
+    document
+    .getElementById("productModal")
+    .classList.remove("hidden");
+
+
+    document
+    .getElementById("modalTitle")
+    .textContent =
+        "নতুন পণ্য";
+
+
+    document
+    .getElementById("productId")
+    .value = "";
+
+
+    document
+    .getElementById("productName")
+    .value = "";
+
+
+    document
+    .getElementById("productCategory")
+    .value = "সবজি";
+
+
+    document
+    .getElementById("productPrice")
+    .value = "";
+
+
+    document
+    .getElementById("productUnit")
+    .value = "";
+
+
+    document
+    .getElementById("productImage")
+    .value = "";
+
+}
+
+
+function closeProductModal(){
+
+    document
+    .getElementById("productModal")
+    .classList.add("hidden");
+
+}
+
+
+/* =====================================================
+   EDIT PRODUCT
+===================================================== */
+
+function editProduct(id){
+
+    const product =
+        productsCache[id];
+
+
+    if(!product){
+        return;
+    }
+
+
+    document
+    .getElementById("productModal")
+    .classList.remove("hidden");
+
+
+    document
+    .getElementById("modalTitle")
+    .textContent =
+        "পণ্য সম্পাদনা";
+
+
+    document
+    .getElementById("productId")
+    .value = id;
+
+
+    document
+    .getElementById("productName")
+    .value =
+        product.name || "";
+
+
+    document
+    .getElementById("productCategory")
+    .value =
+        product.category || "সবজি";
+
+
+    document
+    .getElementById("productPrice")
+    .value =
+        product.price || "";
+
+
+    document
+    .getElementById("productUnit")
+    .value =
+        product.unit || "";
+
+
+    document
+    .getElementById("productImage")
+    .value =
+        product.image || "";
+
+}
+
+
+/* =====================================================
+   SAVE PRODUCT
+===================================================== */
+
+async function saveProduct(){
+
+    const id =
+        document
+        .getElementById("productId")
+        .value;
+
+
+    const product = {
+
+        name:
+            document
+            .getElementById("productName")
+            .value
+            .trim(),
+
+        category:
+            document
+            .getElementById("productCategory")
+            .value,
+
+        price:
+            Number(
+                document
+                .getElementById("productPrice")
+                .value
+            ),
+
+        unit:
+            document
+            .getElementById("productUnit")
+            .value
+            .trim(),
+
+        image:
+            document
+            .getElementById("productImage")
+            .value
+            .trim(),
+
+        updatedAt:
+            Date.now()
+
+    };
+
+
+    if(!product.name){
+
+        alert("পণ্যের নাম দিন।");
+
+        return;
+
+    }
+
+
+    if(!product.price){
+
+        alert("পণ্যের দাম দিন।");
+
+        return;
+
+    }
+
+
+    try{
+
+        if(id){
+
+            await db
+            .ref("products/"+id)
+            .update(product);
+
+        }
+
+        else{
+
+            product.createdAt =
+                Date.now();
+
+
+            await db
+            .ref("products")
+            .push(product);
+
+        }
+
+
+        closeProductModal();
+
+        alert("পণ্য সফলভাবে সংরক্ষণ হয়েছে।");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "পণ্য সংরক্ষণ করা যায়নি: "
+            + error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE PRODUCT
+===================================================== */
+
+async function deleteProduct(id){
+
+    if(!confirm("এই পণ্যটি মুছে ফেলবেন?")){
+        return;
+    }
+
+
+    try{
+
+        await db
+        .ref("products/"+id)
+        .remove();
+
+
+        alert("পণ্য মুছে ফেলা হয়েছে।");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "পণ্য মুছে ফেলা যায়নি: "
+            + error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ORDERS
+===================================================== */
+
+let ordersCache = {};
+
+
+function loadOrders(){
+
+    db.ref("orders")
+    .on("value",function(snapshot){
+
+        ordersCache =
+            snapshot.val() || {};
+
+
+        const ordersList =
+            document.getElementById("ordersList");
+
+
+        ordersList.innerHTML = "";
+
+
+        const orders =
+            Object.entries(ordersCache);
+
+
+        document
+        .getElementById("totalOrders")
+        .textContent =
+            orders.length;
+
+
+        let pending = 0;
+
+        let completed = 0;
+
+
+        orders.forEach(function([id,order]){
+
+            const status =
+                String(
+                    order.status || "Pending"
+                ).toLowerCase();
+
+
+            if(
+                status === "pending"
+                ||
+                status === "pending"
+            ){
+
+                pending++;
+
+            }
+
+
+            if(
+                status === "completed"
+                ||
+                status === "delivered"
+            ){
+
+                completed++;
+
+            }
+
+        });
+
+
+        document
+        .getElementById("pendingOrders")
+        .textContent =
+            pending;
+
+
+        document
+        .getElementById("completedOrders")
+        .textContent =
+            completed;
+
+
+        if(orders.length === 0){
+
+            ordersList.innerHTML = `
+                <div class="empty">
+                    এখনো কোনো অর্ডার আসেনি।
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        orders
+        .reverse()
+        .forEach(function([id,order]){
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "order-card";
+
+
+            const customer =
+                order.customerName
+                ||
+                order.name
+                ||
+                "নাম নেই";
+
+
+            const phone =
+                order.phone
+                ||
+                order.customerPhone
+                ||
+                "নম্বর নেই";
+
+
+            const address =
+                order.address
+                ||
+                "ঠিকানা নেই";
+
+
+            const total =
+                order.total
+                ||
+                order.grandTotal
+                ||
+                0;
+
+
+            const status =
+                order.status
+                ||
+                "Pending";
+
+
+            card.innerHTML = `
+
+                <div class="order-header">
+
+                    <div>
+
+                        <div class="order-id">
+                            অর্ডার #${escapeHtml(id)}
+                        </div>
+
+                        <div class="order-info">
+
+                            👤
+                            ${escapeHtml(customer)}
+                            <br>
+
+                            📞
+                            ${escapeHtml(phone)}
+                            <br>
+
+                            📍
+                            ${escapeHtml(address)}
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <select
+                            class="status-select"
+                            onchange="updateOrderStatus('${escapeAttr(id)}',this.value)">
+
+                            <option
+                                value="Pending"
+                                ${status==="Pending"?"selected":""}>
+                                Pending
+                            </option>
+
+                            <option
+                                value="Confirmed"
+                                ${status==="Confirmed"?"selected":""}>
+                                Confirmed
+                            </option>
+
+                            <option
+                                value="Processing"
+                                ${status==="Processing"?"selected":""}>
+                                Processing
+                            </option>
+
+                            <option
+                                value="Delivered"
+                                ${status==="Delivered"?"selected":""}>
+                                Delivered
+                            </option>
+
+                            <option
+                                value="Completed"
+                                ${status==="Completed"?"selected":""}>
+                                Completed
+                            </option>
+
+                            <option
+                                value="Cancelled"
+                                ${status==="Cancelled"?"selected":""}>
+                                Cancelled
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="order-info">
+
+                    💰 মোট:
+                    <strong>
+                        ৳${escapeHtml(String(total))}
+                    </strong>
+
+                </div>
+
+            `;
+
+
+            ordersList.appendChild(card);
+
+        });
+
+    });
+
+}
+
+
+/* =====================================================
+   ORDER STATUS
+===================================================== */
+
+async function updateOrderStatus(id,status){
+
+    try{
+
+        await db
+        .ref("orders/"+id)
+        .update({
+
+            status:
+                status,
+
+            updatedAt:
+                Date.now()
+
+        });
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Status update করা যায়নি: "
+            + error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+function loadSettings(){
+
+    db.ref("settings")
+    .once("value")
+    .then(function(snapshot){
+
+        const settings =
+            snapshot.val() || {};
+
+
+        document
+        .getElementById("shopName")
+        .value =
+            settings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার";
+
+
+        document
+        .getElementById("deliveryCharge")
+        .value =
+            settings.deliveryCharge || 0;
+
+
+        document
+        .getElementById("contactNumber")
+        .value =
+            settings.contactNumber || "";
+
+    })
+    .catch(function(error){
+
+        console.error(
+            "Settings Error:",
+            error
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   SAVE SETTINGS
+===================================================== */
+
+async function saveSettings(){
+
+    const settings = {
+
+        shopName:
+            document
+            .getElementById("shopName")
+            .value
+            .trim(),
+
+        deliveryCharge:
+            Number(
+                document
+                .getElementById("deliveryCharge")
+                .value || 0
+            ),
+
+        contactNumber:
+            document
+            .getElementById("contactNumber")
+            .value
+            .trim(),
+
+        updatedAt:
+            Date.now()
+
+    };
+
+
+    try{
+
+        await db
+        .ref("settings")
+        .set(settings);
+
+
+        alert("সেটিংস সফলভাবে সংরক্ষণ হয়েছে।");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "সেটিংস সংরক্ষণ করা যায়নি: "
+            + error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SECURITY HELPERS
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttr(value){
+
+    return String(value ?? "")
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"&#039;")
+        .replace(/"/g,"&quot;");
+
+}
+
+</script>
+
+</body>
+</html>

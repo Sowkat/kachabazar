@@ -133,6 +133,34 @@ a {
     font-size: 12px;
 }
 
+/* =========================
+   NOTICE TICKER (Left -> Right)
+========================= */
+
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background-color: #166534;
+    color: #ffffff;
+    padding: 8px 0;
+    white-space: nowrap;
+    border-bottom: 1px solid #15803d;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.ticker-text {
+    display: inline-block;
+    padding-right: 100%;
+    animation: ticker-lr 18s linear infinite;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+@keyframes ticker-lr {
+    0% { transform: translate3d(-100%, 0, 0); }
+    100% { transform: translate3d(100%, 0, 0); }
+}
+
 
 /* =========================
    HERO
@@ -485,7 +513,49 @@ a {
     font-weight: 400;
 }
 
+/* CARD QUANTITY CONTROL (- 1 +) */
+.card-qty-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 4px 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+.card-qty-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #166534;
+    background: #ffffff;
+    color: #166534;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.card-qty-btn:hover {
+    background: #166534;
+    color: #ffffff;
+}
+
+.card-qty-val {
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+    color: #14532d;
+}
+
 .add-to-cart-btn {
+    width: 100%;
     border: 0;
     background: #15803d;
     color: #fff;
@@ -1269,15 +1339,6 @@ a {
 
     .product-price {
         font-size: 16px;
-    }
-
-    .product-bottom {
-        align-items: flex-end;
-        flex-direction: column;
-    }
-
-    .add-to-cart-btn {
-        width: 100%;
     }
 
     .tracking-card {

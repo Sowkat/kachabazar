@@ -33,6 +33,11 @@
         </div>
     </header>
 
+    <!-- NOTICE TICKER (Left -> Right চলমান নোটিশ) -->
+    <div id="noticeTicker" class="ticker-wrap" style="display: none;">
+        <div class="ticker-text" id="tickerContent"></div>
+    </div>
+
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="container hero-inner">
@@ -73,7 +78,7 @@
                 <div class="info-icon"><i class="fa-solid fa-truck-fast"></i></div>
                 <div>
                     <small>ডেলিভারি</small>
-                    <strong>দ্রুত হোম ডেলিভারি</strong>
+                    <strong id="shopDeliveryBadge">দ্রুত হোম ডেলিভারি</strong>
                 </div>
             </div>
         </div>
@@ -132,7 +137,7 @@
                     <h2>অর্ডার ট্র্যাকিং</h2>
                     <p>আপনার অর্ডার আইডি দিয়ে বর্তমান অবস্থা জানুন</p>
                     <div class="tracking-form">
-                        <input type="text" id="trackingInput" placeholder="অর্ডার আইডি দিন (যেমন: SB-2025...)">
+                        <input type="text" id="trackingInput" placeholder="অর্ডার আইডি দিন (যেমন: SB-2026...)">
                         <button type="button" onclick="trackOrder()">ট্র্যাক করুন</button>
                     </div>
                     <div class="tracking-result" id="trackingResult"></div>

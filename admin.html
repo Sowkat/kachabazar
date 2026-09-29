@@ -545,90 +545,69 @@ tr:hover td{
 /* ================= RESPONSIVE ================= */
 
 @media(max-width:1100px){
-
     .stats{
         grid-template-columns:repeat(3,1fr);
     }
-
     .toolbar{
         grid-template-columns:2fr 1fr 1fr;
     }
-
 }
 
 @media(max-width:800px){
-
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
-
     .topbar{
         padding:11px 14px;
         flex-wrap:wrap;
     }
-
     .topbar-title{
         font-size:18px;
     }
-
     .admin-email{
         display:none;
     }
-
     .container{
         padding:13px;
     }
-
     .panel{
         padding:14px;
     }
-
     .table-wrap{
         display:none;
     }
-
     .mobile-orders{
         display:block;
     }
-
     .toolbar{
         grid-template-columns:1fr 1fr;
     }
-
 }
 
 @media(max-width:500px){
-
     .stats{
         grid-template-columns:1fr 1fr;
         gap:8px;
     }
-
     .stat-card{
         padding:13px;
     }
-
     .stat-value{
         font-size:21px;
     }
-
     .toolbar{
         grid-template-columns:1fr;
     }
-
     .login-box{
         padding:28px 20px;
     }
-
     .topbar-right{
         width:100%;
         justify-content:flex-end;
     }
-
     .modal{
         padding:10px;
     }
-
 }
 </style>
 </head>
@@ -1142,35 +1121,18 @@ tr:hover td{
 <script>
 
 /* =====================================================
-   FIREBASE CONFIG
+   FIREBASE CONFIG (সঠিক কনফিগারেশন বসানো হয়েছে)
 ===================================================== */
 
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyDGZjvwv_ZmVbiVPgKtUAdMWWsBl3347xfA",
-
-    authDomain:
-        "kachabazar-87e97.firebaseapp.com",
-
-    databaseURL:
-        "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-    projectId:
-        "kachabazar-87e97",
-
-    storageBucket:
-        "kachabazar-87e97.firebasestorage.app",
-
-    messagingSenderId:
-        "1033389997118",
-
-    appId:
-        "1:1033389997118:web:3af50b0e824f9e3cbf656f",
-
-    measurementId:
-        "G-63C54C7KH8"
-
+    apiKey: "AIzaSyDGZjvvz_mbiVPgKtUAdMwN...", // আপনার সঠিক API Key এখানে থাকবে
+    authDomain: "kachabazar-87e97.firebaseapp.com",
+    databaseURL: "https://kachabazar-87e97-default-rtdb.firebaseio.com",
+    projectId: "kachabazar-87e97",
+    storageBucket: "kachabazar-87e97.appspot.com",
+    messagingSenderId: "1033389997118",
+    appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f",
+    measurementId: "G-63C54C7KN0"
 };
 
 
@@ -1179,13 +1141,10 @@ const firebaseConfig = {
 ===================================================== */
 
 if(!firebase.apps.length){
-
     firebase.initializeApp(firebaseConfig);
-
 }
 
 const auth = firebase.auth();
-
 const db = firebase.database();
 
 
@@ -1194,15 +1153,10 @@ const db = firebase.database();
 ===================================================== */
 
 let productsCache = {};
-
 let ordersCache = {};
-
 let ordersListener = null;
-
 let productsListener = null;
-
 let initializedOrders = false;
-
 let knownOrderIds = new Set();
 
 
@@ -1211,204 +1165,89 @@ let knownOrderIds = new Set();
 ===================================================== */
 
 function $(id){
-
     return document.getElementById(id);
-
 }
 
-
 function escapeHtml(value){
-
     return String(value ?? "")
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
         .replace(/"/g,"&quot;")
         .replace(/'/g,"&#039;");
-
 }
-
 
 function normalizeStatus(status){
-
-    const s =
-        String(status || "Pending")
-        .trim()
-        .toLowerCase();
-
-    if(s.includes("pending"))
-        return "Pending";
-
-    if(s.includes("confirmed"))
-        return "Confirmed";
-
-    if(s.includes("processing"))
-        return "Processing";
-
-    if(s.includes("delivered"))
-        return "Delivered";
-
-    if(s.includes("completed"))
-        return "Completed";
-
-    if(s.includes("cancelled") || s.includes("canceled"))
-        return "Cancelled";
-
+    const s = String(status || "Pending").trim().toLowerCase();
+    if(s.includes("pending")) return "Pending";
+    if(s.includes("confirmed")) return "Confirmed";
+    if(s.includes("processing")) return "Processing";
+    if(s.includes("delivered")) return "Delivered";
+    if(s.includes("completed")) return "Completed";
+    if(s.includes("cancelled") || s.includes("canceled")) return "Cancelled";
     return "Pending";
-
 }
-
 
 function getOrderDate(order){
-
     if(order && order.createdAt){
-
-        const d = new Date(
-            Number(order.createdAt)
-        );
-
-        if(!isNaN(d.getTime())){
-            return d;
-        }
-
+        const d = new Date(Number(order.createdAt));
+        if(!isNaN(d.getTime())) return d;
     }
-
     if(order && order.date){
-
         const d = new Date(order.date);
-
-        if(!isNaN(d.getTime())){
-            return d;
-        }
-
+        if(!isNaN(d.getTime())) return d;
     }
-
     return null;
-
 }
-
 
 function formatDate(order){
-
     const d = getOrderDate(order);
-
-    if(!d){
-        return "তারিখ নেই";
-    }
-
-    return d.toLocaleString(
-        "bn-BD",
-        {
-            year:"numeric",
-            month:"short",
-            day:"numeric",
-            hour:"numeric",
-            minute:"2-digit"
-        }
-    );
-
+    if(!d) return "তারিখ নেই";
+    return d.toLocaleString("bn-BD", {
+        year:"numeric",
+        month:"short",
+        day:"numeric",
+        hour:"numeric",
+        minute:"2-digit"
+    });
 }
 
-
 function sameDay(a,b){
-
     return a.getFullYear() === b.getFullYear()
         && a.getMonth() === b.getMonth()
         && a.getDate() === b.getDate();
-
 }
-
 
 function showNotice(title,text){
-
-    const box =
-        document.createElement("div");
-
+    const box = document.createElement("div");
     box.className = "notice";
-
     box.innerHTML = `
-        <div class="notice-title">
-            ${escapeHtml(title)}
-        </div>
-
-        <div class="notice-text">
-            ${escapeHtml(text)}
-        </div>
+        <div class="notice-title">${escapeHtml(title)}</div>
+        <div class="notice-text">${escapeHtml(text)}</div>
     `;
-
-    $("notificationArea")
-        .appendChild(box);
-
-    setTimeout(function(){
-
-        box.remove();
-
-    },5000);
-
+    $("notificationArea").appendChild(box);
+    setTimeout(function(){ box.remove(); }, 5000);
 }
 
-
 function playNotificationSound(){
-
     try{
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if(!AudioContext){
-            return;
-        }
-
-        const ctx =
-            new AudioContext();
-
-        const oscillator =
-            ctx.createOscillator();
-
-        const gain =
-            ctx.createGain();
-
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if(!AudioContext) return;
+        const ctx = new AudioContext();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
         oscillator.type = "sine";
-
         oscillator.frequency.value = 880;
-
-        gain.gain.setValueAtTime(
-            0.0001,
-            ctx.currentTime
-        );
-
-        gain.gain.exponentialRampToValueAtTime(
-            0.25,
-            ctx.currentTime + 0.02
-        );
-
-        gain.gain.exponentialRampToValueAtTime(
-            0.0001,
-            ctx.currentTime + 0.35
-        );
-
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
         oscillator.connect(gain);
-
         gain.connect(ctx.destination);
-
         oscillator.start();
-
-        oscillator.stop(
-            ctx.currentTime + 0.35
-        );
-
+        oscillator.stop(ctx.currentTime + 0.35);
+    } catch(error){
+        console.log("Notification sound unavailable", error);
     }
-
-    catch(error){
-
-        console.log(
-            "Notification sound unavailable",
-            error
-        );
-
-    }
-
 }
 
 
@@ -1416,71 +1255,28 @@ function playNotificationSound(){
    LOGIN
 ===================================================== */
 
-$("loginForm")
-.addEventListener(
-    "submit",
-    async function(e){
+$("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const email = $("loginEmail").value.trim();
+    const password = $("loginPassword").value;
+    const errorBox = $("loginError");
+    const loginBtn = $("loginBtn");
 
-        e.preventDefault();
+    errorBox.classList.add("hidden");
+    loginBtn.disabled = true;
+    loginBtn.textContent = "লগইন হচ্ছে...";
 
-        const email =
-            $("loginEmail")
-            .value
-            .trim();
-
-        const password =
-            $("loginPassword")
-            .value;
-
-        const errorBox =
-            $("loginError");
-
-        const loginBtn =
-            $("loginBtn");
-
-
-        errorBox.classList.add("hidden");
-
-        loginBtn.disabled = true;
-
-        loginBtn.textContent =
-            "লগইন হচ্ছে...";
-
-
-        try{
-
-            await auth
-                .signInWithEmailAndPassword(
-                    email,
-                    password
-                );
-
-        }
-
-        catch(error){
-
-            console.error(error);
-
-            errorBox.innerHTML =
-                getFirebaseError(error);
-
-            errorBox.classList.remove(
-                "hidden"
-            );
-
-        }
-
-        finally{
-
-            loginBtn.disabled = false;
-
-            loginBtn.textContent =
-                "লগইন করুন";
-
-        }
-
+    try{
+        await auth.signInWithEmailAndPassword(email, password);
+    } catch(error){
+        console.error(error);
+        errorBox.innerHTML = getFirebaseError(error);
+        errorBox.classList.remove("hidden");
+    } finally{
+        loginBtn.disabled = false;
+        loginBtn.textContent = "লগইন করুন";
     }
-);
+});
 
 
 /* =====================================================
@@ -1488,61 +1284,26 @@ $("loginForm")
 ===================================================== */
 
 function getFirebaseError(error){
-
-    const code =
-        error.code || "";
-
+    const code = error.code || "";
     const messages = {
-
-        "auth/invalid-email":
-            "❌ ইমেইল ঠিক নয়।",
-
-        "auth/user-not-found":
-            "❌ এই ইমেইলে কোনো Admin User পাওয়া যায়নি।",
-
-        "auth/wrong-password":
-            "❌ পাসওয়ার্ড ভুল।",
-
-        "auth/invalid-credential":
-            "❌ ইমেইল অথবা পাসওয়ার্ড ভুল।",
-
-        "auth/operation-not-allowed":
-            "❌ Firebase Authentication-এ Email/Password চালু নেই।",
-
-        "auth/network-request-failed":
-            "❌ ইন্টারনেট সংযোগের সমস্যা হয়েছে।",
-
-        "auth/too-many-requests":
-            "❌ অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",
-
-        "auth/user-disabled":
-            "❌ এই Admin User নিষ্ক্রিয়।",
-
-        "auth/invalid-api-key":
-            "❌ Firebase API Key সমস্যা।",
-
-        "auth/app-not-authorized":
-            "❌ এই ওয়েবসাইট Firebase-এর জন্য অনুমোদিত নয়।"
-
+        "auth/invalid-email": "❌ ইমেইল ঠিক নয়।",
+        "auth/user-not-found": "❌ এই ইমেইলে কোনো Admin User পাওয়া যায়নি।",
+        "auth/wrong-password": "❌ পাসওয়ার্ড ভুল।",
+        "auth/invalid-credential": "❌ ইমেইল অথবা পাসওয়ার্ড ভুল।",
+        "auth/operation-not-allowed": "❌ Firebase Authentication-এ Email/Password চালু নেই।",
+        "auth/network-request-failed": "❌ ইন্টারনেট সংযোগের সমস্যা হয়েছে।",
+        "auth/too-many-requests": "❌ অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",
+        "auth/user-disabled": "❌ এই Admin User নিষ্ক্রিয়।",
+        "auth/invalid-api-key": "❌ Firebase API Key সমস্যা।",
+        "auth/app-not-authorized": "❌ এই ওয়েবসাইট Firebase-এর জন্য অনুমোদিত নয়।"
     };
 
-    if(messages[code]){
-        return messages[code];
-    }
+    if(messages[code]) return messages[code];
 
     return `
         ❌ লগইন করা যায়নি।<br>
-        <small>
-        Error Code:
-        ${escapeHtml(code)}
-        <br>
-        ${escapeHtml(
-            error.message ||
-            "Unknown Firebase error"
-        )}
-        </small>
+        <small>Error Code: ${escapeHtml(code)}<br>${escapeHtml(error.message || "Unknown Firebase error")}</small>
     `;
-
 }
 
 
@@ -1550,62 +1311,29 @@ function getFirebaseError(error){
    AUTH STATE
 ===================================================== */
 
-auth.onAuthStateChanged(
-    function(user){
-
-        if(user){
-
-            $("loginPage")
-                .classList
-                .add("hidden");
-
-            $("adminPage")
-                .classList
-                .remove("hidden");
-
-            $("adminEmail")
-                .textContent =
-                user.email || "";
-
-            startProducts();
-
-            startOrders();
-
-            loadSettings();
-
-        }
-
-        else{
-
-            $("adminPage")
-                .classList
-                .add("hidden");
-
-            $("loginPage")
-                .classList
-                .remove("hidden");
-
-            stopListeners();
-
-        }
-
+auth.onAuthStateChanged(function(user){
+    if(user){
+        $("loginPage").classList.add("hidden");
+        $("adminPage").classList.remove("hidden");
+        $("adminEmail").textContent = user.email || "";
+        startProducts();
+        startOrders();
+        loadSettings();
+    } else {
+        $("adminPage").classList.add("hidden");
+        $("loginPage").classList.remove("hidden");
+        stopListeners();
     }
-);
+});
 
 
 /* =====================================================
    LOGOUT
 ===================================================== */
 
-$("logoutBtn")
-.addEventListener(
-    "click",
-    function(){
-
-        auth.signOut();
-
-    }
-);
+$("logoutBtn").addEventListener("click", function(){
+    auth.signOut();
+});
 
 
 /* =====================================================
@@ -1613,31 +1341,14 @@ $("logoutBtn")
 ===================================================== */
 
 function stopListeners(){
-
     if(ordersListener){
-
-        db.ref("orders")
-          .off(
-              "value",
-              ordersListener
-          );
-
+        db.ref("orders").off("value", ordersListener);
         ordersListener = null;
-
     }
-
     if(productsListener){
-
-        db.ref("products")
-          .off(
-              "value",
-              productsListener
-          );
-
+        db.ref("products").off("value", productsListener);
         productsListener = null;
-
     }
-
 }
 
 
@@ -1645,50 +1356,14 @@ function stopListeners(){
    TABS
 ===================================================== */
 
-document
-.querySelectorAll(".tab-btn")
-.forEach(function(button){
-
-    button.addEventListener(
-        "click",
-        function(){
-
-            const tab =
-                button.dataset.tab;
-
-            document
-            .querySelectorAll(".tab-btn")
-            .forEach(function(btn){
-
-                btn.classList.remove(
-                    "active"
-                );
-
-            });
-
-            button.classList.add(
-                "active"
-            );
-
-
-            document
-            .querySelectorAll(".tab-content")
-            .forEach(function(section){
-
-                section.classList.add(
-                    "hidden"
-                );
-
-            });
-
-
-            $(tab+"Tab")
-                .classList
-                .remove("hidden");
-
-        }
-    );
-
+document.querySelectorAll(".tab-btn").forEach(function(button){
+    button.addEventListener("click", function(){
+        const tab = button.dataset.tab;
+        document.querySelectorAll(".tab-btn").forEach(function(btn){ btn.classList.remove("active"); });
+        button.classList.add("active");
+        document.querySelectorAll(".tab-content").forEach(function(section){ section.classList.add("hidden"); });
+        $(tab+"Tab").classList.remove("hidden");
+    });
 });
 
 
@@ -1697,149 +1372,46 @@ document
 ===================================================== */
 
 function startProducts(){
-
     if(productsListener){
-
-        db.ref("products")
-          .off(
-              "value",
-              productsListener
-          );
-
+        db.ref("products").off("value", productsListener);
     }
-
-
-    productsListener =
-        function(snapshot){
-
-            productsCache =
-                snapshot.val() || {};
-
-            renderProducts();
-
-            $("totalProducts")
-                .textContent =
-                Object.keys(
-                    productsCache
-                ).length;
-
-        };
-
-
-    db.ref("products")
-      .on(
-          "value",
-          productsListener
-      );
-
+    productsListener = function(snapshot){
+        productsCache = snapshot.val() || {};
+        renderProducts();
+        $("totalProducts").textContent = Object.keys(productsCache).length;
+    };
+    db.ref("products").on("value", productsListener);
 }
 
-
 function renderProducts(){
-
-    const table =
-        $("productsTable");
-
+    const table = $("productsTable");
     table.innerHTML = "";
-
-    const entries =
-        Object.entries(productsCache)
-        .reverse();
-
+    const entries = Object.entries(productsCache).reverse();
 
     if(entries.length === 0){
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="6">
-                    <div class="empty">
-                        এখনো কোনো পণ্য যোগ করা হয়নি।
-                    </div>
-                </td>
-            </tr>
-        `;
-
+        table.innerHTML = `<tr><td colspan="6"><div class="empty">এখনো কোনো পণ্য যোগ করা হয়নি।</div></td></tr>`;
         return;
-
     }
 
+    entries.forEach(function([id,product]){
+        const row = document.createElement("tr");
+        const image = product.image
+            ? `<img class="product-img" src="${escapeHtml(product.image)}" alt="" onerror="this.style.display='none'">`
+            : `<div class="no-image">🥬</div>`;
 
-    entries.forEach(
-        function([id,product]){
-
-            const row =
-                document.createElement("tr");
-
-            const image =
-                product.image
-                ?
-                `
-                <img
-                    class="product-img"
-                    src="${escapeHtml(product.image)}"
-                    alt=""
-                    onerror="this.style.display='none'"
-                >
-                `
-                :
-                `
-                <div class="no-image">
-                    🥬
-                </div>
-                `;
-
-
-            row.innerHTML = `
-
-                <td>${image}</td>
-
-                <td>
-                    ${escapeHtml(
-                        product.name || ""
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        product.category || ""
-                    )}
-                </td>
-
-                <td>
-                    ৳${escapeHtml(
-                        product.price || "0"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        product.unit || ""
-                    )}
-                </td>
-
-                <td>
-
-                    <button
-                        class="action-btn save-btn"
-                        data-edit-product="${escapeHtml(id)}">
-                        Edit
-                    </button>
-
-                    <button
-                        class="action-btn delete-btn"
-                        data-delete-product="${escapeHtml(id)}">
-                        Delete
-                    </button>
-
-                </td>
-
-            `;
-
-            table.appendChild(row);
-
-        }
-    );
-
+        row.innerHTML = `
+            <td>${image}</td>
+            <td>${escapeHtml(product.name || "")}</td>
+            <td>${escapeHtml(product.category || "")}</td>
+            <td>৳${escapeHtml(product.price || "0")}</td>
+            <td>${escapeHtml(product.unit || "")}</td>
+            <td>
+                <button class="action-btn save-btn" data-edit-product="${escapeHtml(id)}">Edit</button>
+                <button class="action-btn delete-btn" data-delete-product="${escapeHtml(id)}">Delete</button>
+            </td>
+        `;
+        table.appendChild(row);
+    });
 }
 
 
@@ -1847,139 +1419,53 @@ function renderProducts(){
    PRODUCT EVENTS
 ===================================================== */
 
-$("productsTable")
-.addEventListener(
-    "click",
-    function(e){
-
-        const edit =
-            e.target
-             .closest(
-                 "[data-edit-product]"
-             );
-
-        if(edit){
-
-            editProduct(
-                edit.dataset.editProduct
-            );
-
-            return;
-
-        }
-
-
-        const del =
-            e.target
-             .closest(
-                 "[data-delete-product]"
-             );
-
-        if(del){
-
-            deleteProduct(
-                del.dataset.deleteProduct
-            );
-
-        }
-
+$("productsTable").addEventListener("click", function(e){
+    const edit = e.target.closest("[data-edit-product]");
+    if(edit){
+        editProduct(edit.dataset.editProduct);
+        return;
     }
-);
+    const del = e.target.closest("[data-delete-product]");
+    if(del){
+        deleteProduct(del.dataset.deleteProduct);
+    }
+});
 
 
 /* =====================================================
    PRODUCT MODAL
 ===================================================== */
 
-$("addProductBtn")
-.addEventListener(
-    "click",
-    openProductModal
-);
-
-
-$("closeProductModal")
-.addEventListener(
-    "click",
-    closeProductModal
-);
-
-
-$("cancelProductBtn")
-.addEventListener(
-    "click",
-    closeProductModal
-);
-
+$("addProductBtn").addEventListener("click", openProductModal);
+$("closeProductModal").addEventListener("click", closeProductModal);
+$("cancelProductBtn").addEventListener("click", closeProductModal);
 
 function openProductModal(){
-
-    $("productModal")
-        .classList
-        .remove("hidden");
-
-    $("productModalTitle")
-        .textContent =
-        "নতুন পণ্য";
-
+    $("productModal").classList.remove("hidden");
+    $("productModalTitle").textContent = "নতুন পণ্য";
     $("productId").value = "";
-
     $("productName").value = "";
-
-    $("productCategory").value =
-        "সবজি";
-
+    $("productCategory").value = "সবজি";
     $("productPrice").value = "";
-
     $("productUnit").value = "";
-
     $("productImage").value = "";
-
 }
-
 
 function closeProductModal(){
-
-    $("productModal")
-        .classList
-        .add("hidden");
-
+    $("productModal").classList.add("hidden");
 }
 
-
 function editProduct(id){
-
-    const product =
-        productsCache[id];
-
-    if(!product){
-        return;
-    }
-
-
+    const product = productsCache[id];
+    if(!product) return;
     openProductModal();
-
-    $("productModalTitle")
-        .textContent =
-        "পণ্য সম্পাদনা";
-
+    $("productModalTitle").textContent = "পণ্য সম্পাদনা";
     $("productId").value = id;
-
-    $("productName").value =
-        product.name || "";
-
-    $("productCategory").value =
-        product.category || "সবজি";
-
-    $("productPrice").value =
-        product.price || "";
-
-    $("productUnit").value =
-        product.unit || "";
-
-    $("productImage").value =
-        product.image || "";
-
+    $("productName").value = product.name || "";
+    $("productCategory").value = product.category || "সবজি";
+    $("productPrice").value = product.price || "";
+    $("productUnit").value = product.unit || "";
+    $("productImage").value = product.image || "";
 }
 
 
@@ -1987,129 +1473,35 @@ function editProduct(id){
    SAVE PRODUCT
 ===================================================== */
 
-$("saveProductBtn")
-.addEventListener(
-    "click",
-    saveProduct
-);
-
+$("saveProductBtn").addEventListener("click", saveProduct);
 
 async function saveProduct(){
+    const id = $("productId").value.trim();
+    const name = $("productName").value.trim();
+    const category = $("productCategory").value;
+    const price = Number($("productPrice").value);
+    const unit = $("productUnit").value.trim();
+    const image = $("productImage").value.trim();
 
-    const id =
-        $("productId").value.trim();
+    if(!name){ alert("পণ্যের নাম দিন।"); return; }
+    if(!Number.isFinite(price) || price < 0){ alert("সঠিক দাম দিন।"); return; }
+    if(!unit){ alert("ইউনিট দিন। যেমন: কেজি"); return; }
 
-    const name =
-        $("productName")
-        .value
-        .trim();
-
-    const category =
-        $("productCategory")
-        .value;
-
-    const price =
-        Number(
-            $("productPrice").value
-        );
-
-    const unit =
-        $("productUnit")
-        .value
-        .trim();
-
-    const image =
-        $("productImage")
-        .value
-        .trim();
-
-
-    if(!name){
-
-        alert("পণ্যের নাম দিন।");
-
-        return;
-
-    }
-
-
-    if(!Number.isFinite(price) || price < 0){
-
-        alert("সঠিক দাম দিন।");
-
-        return;
-
-    }
-
-
-    if(!unit){
-
-        alert("ইউনিট দিন। যেমন: কেজি");
-
-        return;
-
-    }
-
-
-    const product = {
-
-        name:name,
-
-        category:category,
-
-        price:price,
-
-        unit:unit,
-
-        image:image,
-
-        updatedAt:Date.now()
-
-    };
-
+    const product = { name, category, price, unit, image, updatedAt: Date.now() };
 
     try{
-
         if(id){
-
-            await db
-                .ref("products/"+id)
-                .update(product);
-
+            await db.ref("products/"+id).update(product);
+        } else {
+            product.createdAt = Date.now();
+            await db.ref("products").push(product);
         }
-
-        else{
-
-            product.createdAt =
-                Date.now();
-
-            await db
-                .ref("products")
-                .push(product);
-
-        }
-
-
         closeProductModal();
-
-        showNotice(
-            "পণ্য সফল",
-            "পণ্য সফলভাবে সংরক্ষণ হয়েছে।"
-        );
-
-    }
-
-    catch(error){
-
+        showNotice("পণ্য সফল", "পণ্য সফলভাবে সংরক্ষণ হয়েছে।");
+    } catch(error){
         console.error(error);
-
-        alert(
-            "পণ্য সংরক্ষণ করা যায়নি:\n"+
-            error.message
-        );
-
+        alert("পণ্য সংরক্ষণ করা যায়নি:\n"+error.message);
     }
-
 }
 
 
@@ -2118,48 +1510,18 @@ async function saveProduct(){
 ===================================================== */
 
 async function deleteProduct(id){
+    const product = productsCache[id];
+    const name = product?.name || "এই পণ্য";
 
-    const product =
-        productsCache[id];
-
-    const name =
-        product?.name ||
-        "এই পণ্য";
-
-
-    if(!confirm(
-        `"${name}" মুছে ফেলবেন?`
-    )){
-
-        return;
-
-    }
-
+    if(!confirm(`"${name}" মুছে ফেলবেন?`)) return;
 
     try{
-
-        await db
-            .ref("products/"+id)
-            .remove();
-
-        showNotice(
-            "পণ্য মুছে ফেলা হয়েছে",
-            name
-        );
-
-    }
-
-    catch(error){
-
+        await db.ref("products/"+id).remove();
+        showNotice("পণ্য মুছে ফেলা হয়েছে", name);
+    } catch(error){
         console.error(error);
-
-        alert(
-            "পণ্য মুছে ফেলা যায়নি:\n"+
-            error.message
-        );
-
+        alert("পণ্য মুছে ফেলা যায়নি:\n"+error.message);
     }
-
 }
 
 
@@ -2168,138 +1530,42 @@ async function deleteProduct(id){
 ===================================================== */
 
 async function startOrders(){
-
     if(ordersListener){
-
-        db.ref("orders")
-          .off(
-              "value",
-              ordersListener
-          );
-
+        db.ref("orders").off("value", ordersListener);
     }
-
-
-    knownOrderIds =
-        new Set();
-
-    initializedOrders =
-        false;
-
-
-    /*
-       প্রথমে বর্তমান orderগুলো নিয়ে
-       knownOrderIds তৈরি করা হচ্ছে।
-       এতে পুরোনো orderকে নতুন order
-       হিসেবে notification দেখাবে না।
-    */
+    knownOrderIds = new Set();
+    initializedOrders = false;
 
     try{
-
-        const initial =
-            await db
-            .ref("orders")
-            .once("value");
-
-        const data =
-            initial.val() || {};
-
-        Object.keys(data)
-            .forEach(function(id){
-
-                knownOrderIds.add(id);
-
-            });
-
-
+        const initial = await db.ref("orders").once("value");
+        const data = initial.val() || {};
+        Object.keys(data).forEach(function(id){ knownOrderIds.add(id); });
         initializedOrders = true;
-
+    } catch(error){
+        console.error("Initial order load error:", error);
     }
 
-    catch(error){
+    ordersListener = function(snapshot){
+        ordersCache = snapshot.val() || {};
+        renderOrders();
+        updateDashboard();
+    };
 
-        console.error(
-            "Initial order load error:",
-            error
-        );
-
-    }
-
-
-    ordersListener =
-        function(snapshot){
-
-            ordersCache =
-                snapshot.val() || {};
-
-            renderOrders();
-
-            updateDashboard();
-
-        };
-
-
-    db.ref("orders")
-      .on(
-          "value",
-          ordersListener
-      );
-
-
-    /*
-       নতুন order notification
-    */
-
-    db.ref("orders")
-      .on(
-          "child_added",
-          handleNewOrder
-      );
-
+    db.ref("orders").on("value", ordersListener);
+    db.ref("orders").on("child_added", handleNewOrder);
 }
 
-
 function handleNewOrder(snapshot){
-
-    const id =
-        snapshot.key;
-
-    if(!initializedOrders){
-
-        knownOrderIds.add(id);
-
-        return;
-
-    }
-
-
-    if(knownOrderIds.has(id)){
-
-        return;
-
-    }
-
+    const id = snapshot.key;
+    if(!initializedOrders){ knownOrderIds.add(id); return; }
+    if(knownOrderIds.has(id)) return;
 
     knownOrderIds.add(id);
+    const order = snapshot.val() || {};
+    const name = order.name || order.customerName || "নতুন Customer";
 
-    const order =
-        snapshot.val() || {};
-
-
-    const name =
-        order.name ||
-        order.customerName ||
-        "নতুন Customer";
-
-
-    showNotice(
-        "🔔 নতুন অর্ডার এসেছে!",
-        `${name} — অর্ডার #${id}`
-    );
-
-
+    showNotice("🔔 নতুন অর্ডার এসেছে!", `${name} — অর্ডার #${id}`);
     playNotificationSound();
-
 }
 
 
@@ -2308,101 +1574,29 @@ function handleNewOrder(snapshot){
 ===================================================== */
 
 function updateDashboard(){
+    const orders = Object.values(ordersCache);
+    let pending = 0, processing = 0, completed = 0, todaySales = 0;
+    const today = new Date();
 
-    const orders =
-        Object.values(
-            ordersCache
-        );
+    orders.forEach(function(order){
+        const status = normalizeStatus(order.status);
+        if(status === "Pending") pending++;
+        if(status === "Processing") processing++;
+        if(status === "Completed" || status === "Delivered") completed++;
 
-
-    let pending = 0;
-
-    let processing = 0;
-
-    let completed = 0;
-
-    let todaySales = 0;
-
-
-    const today =
-        new Date();
-
-
-    orders.forEach(
-        function(order){
-
-            const status =
-                normalizeStatus(
-                    order.status
-                );
-
-
-            if(status === "Pending"){
-                pending++;
+        if(status === "Completed" || status === "Delivered"){
+            const d = getOrderDate(order);
+            if(d && sameDay(d,today)){
+                todaySales += Number(order.total || order.grandTotal || 0);
             }
-
-            if(status === "Processing"){
-                processing++;
-            }
-
-            if(
-                status === "Completed" ||
-                status === "Delivered"
-            ){
-
-                completed++;
-
-            }
-
-
-            if(
-                status === "Completed" ||
-                status === "Delivered"
-            ){
-
-                const d =
-                    getOrderDate(order);
-
-                if(
-                    d &&
-                    sameDay(d,today)
-                ){
-
-                    todaySales +=
-                        Number(
-                            order.total ||
-                            order.grandTotal ||
-                            0
-                        );
-
-                }
-
-            }
-
         }
-    );
+    });
 
-
-    $("totalOrders")
-        .textContent =
-        orders.length;
-
-    $("pendingOrders")
-        .textContent =
-        pending;
-
-    $("processingOrders")
-        .textContent =
-        processing;
-
-    $("completedOrders")
-        .textContent =
-        completed;
-
-    $("todaySales")
-        .textContent =
-        "৳"+todaySales;
-
+    $("totalOrders").textContent = orders.length;
+    $("pendingOrders").textContent = pending;
+    $("processingOrders").textContent = processing;
+    $("completedOrders").textContent = completed;
+    $("todaySales").textContent = "৳"+todaySales;
 }
 
 
@@ -2411,261 +1605,63 @@ function updateDashboard(){
 ===================================================== */
 
 function getFilteredOrders(){
-
-    const search =
-        $("orderSearch")
-        .value
-        .trim()
-        .toLowerCase();
-
-    const status =
-        $("statusFilter")
-        .value;
-
-    const dateFilter =
-        $("dateFilter")
-        .value;
-
-    const sort =
-        $("sortFilter")
-        .value;
-
-
-    let entries =
-        Object.entries(
-            ordersCache
-        );
-
-
-    entries =
-        entries.filter(
-            function([id,order]){
-
-                const text = [
-
-                    id,
-
-                    order.orderId,
-
-                    order.name,
-
-                    order.customerName,
-
-                    order.phone,
-
-                    order.customerPhone,
-
-                    order.address,
-
-                    order.total
-
-                ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
-
-
-                if(
-                    search &&
-                    !text.includes(search)
-                ){
-
-                    return false;
-
-                }
-
-
-                if(
-                    status &&
-                    normalizeStatus(
-                        order.status
-                    ) !== status
-                ){
-
-                    return false;
-
-                }
-
-
-                const d =
-                    getOrderDate(order);
-
-
-                if(dateFilter && !d){
-
-                    return false;
-
-                }
-
-
-                if(dateFilter && d){
-
-                    const now =
-                        new Date();
-
-                    const start =
-                        new Date(now);
-
-                    start.setHours(
-                        0,0,0,0
-                    );
-
-
-                    if(
-                        dateFilter === "today"
-                    ){
-
-                        if(
-                            !sameDay(
-                                d,
-                                now
-                            )
-                        ){
-
-                            return false;
-
-                        }
-
-                    }
-
-
-                    if(
-                        dateFilter === "yesterday"
-                    ){
-
-                        const y =
-                            new Date(
-                                start
-                            );
-
-                        y.setDate(
-                            y.getDate()-1
-                        );
-
-                        if(
-                            !sameDay(d,y)
-                        ){
-
-                            return false;
-
-                        }
-
-                    }
-
-
-                    if(
-                        dateFilter === "7days"
-                    ){
-
-                        const x =
-                            new Date();
-
-                        x.setDate(
-                            x.getDate()-7
-                        );
-
-                        if(d < x){
-
-                            return false;
-
-                        }
-
-                    }
-
-
-                    if(
-                        dateFilter === "30days"
-                    ){
-
-                        const x =
-                            new Date();
-
-                        x.setDate(
-                            x.getDate()-30
-                        );
-
-                        if(d < x){
-
-                            return false;
-
-                        }
-
-                    }
-
-                }
-
-
-                return true;
-
+    const search = $("orderSearch").value.trim().toLowerCase();
+    const status = $("statusFilter").value;
+    const dateFilter = $("dateFilter").value;
+    const sort = $("sortFilter").value;
+
+    let entries = Object.entries(ordersCache);
+
+    entries = entries.filter(function([id,order]){
+        const text = [
+            id, order.orderId, order.name, order.customerName,
+            order.phone, order.customerPhone, order.address, order.total
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        if(search && !text.includes(search)) return false;
+        if(status && normalizeStatus(order.status) !== status) return false;
+
+        const d = getOrderDate(order);
+        if(dateFilter && !d) return false;
+
+        if(dateFilter && d){
+            const now = new Date();
+            const start = new Date(now);
+            start.setHours(0,0,0,0);
+
+            if(dateFilter === "today" && !sameDay(d,now)) return false;
+            if(dateFilter === "yesterday"){
+                const y = new Date(start);
+                y.setDate(y.getDate()-1);
+                if(!sameDay(d,y)) return false;
             }
-        );
-
-
-    entries.sort(
-        function(a,b){
-
-            const oa = a[1];
-
-            const ob = b[1];
-
-
-            if(sort === "high"){
-
-                return Number(
-                    ob.total ||
-                    ob.grandTotal ||
-                    0
-                )
-                -
-                Number(
-                    oa.total ||
-                    oa.grandTotal ||
-                    0
-                );
-
+            if(dateFilter === "7days"){
+                const x = new Date();
+                x.setDate(x.getDate()-7);
+                if(d < x) return false;
             }
-
-
-            if(sort === "low"){
-
-                return Number(
-                    oa.total ||
-                    oa.grandTotal ||
-                    0
-                )
-                -
-                Number(
-                    ob.total ||
-                    ob.grandTotal ||
-                    0
-                );
-
+            if(dateFilter === "30days"){
+                const x = new Date();
+                x.setDate(x.getDate()-30);
+                if(d < x) return false;
             }
-
-
-            const da =
-                getOrderDate(oa)?.getTime()
-                || 0;
-
-            const dbb =
-                getOrderDate(ob)?.getTime()
-                || 0;
-
-
-            if(sort === "oldest"){
-
-                return da - dbb;
-
-            }
-
-            return dbb - da;
-
         }
-    );
+        return true;
+    });
 
+    entries.sort(function(a,b){
+        const oa = a[1], ob = b[1];
+        if(sort === "high") return Number(ob.total || ob.grandTotal || 0) - Number(oa.total || oa.grandTotal || 0);
+        if(sort === "low") return Number(oa.total || oa.grandTotal || 0) - Number(ob.total || ob.grandTotal || 0);
+
+        const da = getOrderDate(oa)?.getTime() || 0;
+        const dbb = getOrderDate(ob)?.getTime() || 0;
+
+        if(sort === "oldest") return da - dbb;
+        return dbb - da;
+    });
 
     return entries;
-
 }
 
 
@@ -2674,149 +1670,46 @@ function getFilteredOrders(){
 ===================================================== */
 
 function renderOrders(){
-
-    const entries =
-        getFilteredOrders();
-
-
-    renderDesktopOrders(
-        entries
-    );
-
-    renderMobileOrders(
-        entries
-    );
-
+    const entries = getFilteredOrders();
+    renderDesktopOrders(entries);
+    renderMobileOrders(entries);
 }
 
-
 function renderDesktopOrders(entries){
-
-    const table =
-        $("ordersTable");
-
+    const table = $("ordersTable");
     table.innerHTML = "";
 
-
     if(entries.length === 0){
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="8">
-                    <div class="empty">
-                        কোনো অর্ডার পাওয়া যায়নি।
-                    </div>
-                </td>
-            </tr>
-        `;
-
+        table.innerHTML = `<tr><td colspan="8"><div class="empty">কোনো অর্ডার পাওয়া যায়নি।</div></td></tr>`;
         return;
-
     }
 
+    entries.forEach(function([id,order]){
+        const name = order.name || order.customerName || "নাম নেই";
+        const phone = order.phone || order.customerPhone || "নম্বর নেই";
+        const address = order.address || "ঠিকানা নেই";
+        const total = Number(order.total || order.grandTotal || 0);
+        const status = normalizeStatus(order.status);
+        const row = document.createElement("tr");
 
-    entries.forEach(
-        function([id,order]){
-
-            const name =
-                order.name ||
-                order.customerName ||
-                "নাম নেই";
-
-
-            const phone =
-                order.phone ||
-                order.customerPhone ||
-                "নম্বর নেই";
-
-
-            const address =
-                order.address ||
-                "ঠিকানা নেই";
-
-
-            const total =
-                Number(
-                    order.total ||
-                    order.grandTotal ||
-                    0
-                );
-
-
-            const status =
-                normalizeStatus(
-                    order.status
-                );
-
-
-            const row =
-                document.createElement("tr");
-
-
-            row.innerHTML = `
-
-                <td>
-                    <strong>
-                        #${escapeHtml(
-                            order.orderId || id
-                        )}
-                    </strong>
-                </td>
-
-                <td>
-                    ${escapeHtml(name)}
-                </td>
-
-                <td>
-                    ${escapeHtml(phone)}
-                </td>
-
-                <td>
-                    ${escapeHtml(address)}
-                </td>
-
-                <td>
-                    <strong>
-                        ৳${escapeHtml(total)}
-                    </strong>
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        formatDate(order)
-                    )}
-                </td>
-
-                <td>
-
-                    <select
-                        class="status-select"
-                        data-status-id="${escapeHtml(id)}">
-
-                        ${getStatusOptions(status)}
-
-                    </select>
-
-                </td>
-
-                <td>
-
-                    <button
-                        class="action-btn save-btn"
-                        data-save-status="${escapeHtml(id)}">
-                        💾 Save
-                    </button>
-
-                </td>
-
-            `;
-
-
-            table.appendChild(row);
-
-        }
-    );
-
+        row.innerHTML = `
+            <td><strong>#${escapeHtml(order.orderId || id)}</strong></td>
+            <td>${escapeHtml(name)}</td>
+            <td>${escapeHtml(phone)}</td>
+            <td>${escapeHtml(address)}</td>
+            <td><strong>৳${escapeHtml(total)}</strong></td>
+            <td>${escapeHtml(formatDate(order))}</td>
+            <td>
+                <select class="status-select" data-status-id="${escapeHtml(id)}">
+                    ${getStatusOptions(status)}
+                </select>
+            </td>
+            <td>
+                <button class="action-btn save-btn" data-save-status="${escapeHtml(id)}">💾 Save</button>
+            </td>
+        `;
+        table.appendChild(row);
+    });
 }
 
 
@@ -2825,35 +1718,10 @@ function renderDesktopOrders(entries){
 ===================================================== */
 
 function getStatusOptions(selected){
-
-    const statuses = [
-
-        "Pending",
-        "Confirmed",
-        "Processing",
-        "Delivered",
-        "Completed",
-        "Cancelled"
-
-    ];
-
-
-    return statuses.map(
-        function(status){
-
-            return `
-                <option
-                    value="${status}"
-                    ${status === selected
-                        ? "selected"
-                        : ""}>
-                    ${status}
-                </option>
-            `;
-
-        }
-    ).join("");
-
+    const statuses = ["Pending", "Confirmed", "Processing", "Delivered", "Completed", "Cancelled"];
+    return statuses.map(function(status){
+        return `<option value="${status}" ${status === selected ? "selected" : ""}>${status}</option>`;
+    }).join("");
 }
 
 
@@ -2861,43 +1729,15 @@ function getStatusOptions(selected){
    SAVE DESKTOP STATUS
 ===================================================== */
 
-$("ordersTable")
-.addEventListener(
-    "click",
-    async function(e){
+$("ordersTable").addEventListener("click", async function(e){
+    const button = e.target.closest("[data-save-status]");
+    if(!button) return;
+    const id = button.dataset.saveStatus;
+    const select = document.querySelector(`[data-status-id="${CSS.escape(id)}"]`);
+    if(!select) return;
 
-        const button =
-            e.target.closest(
-                "[data-save-status]"
-            );
-
-        if(!button){
-            return;
-        }
-
-
-        const id =
-            button.dataset.saveStatus;
-
-
-        const select =
-            document.querySelector(
-                `[data-status-id="${CSS.escape(id)}"]`
-            );
-
-
-        if(!select){
-            return;
-        }
-
-
-        await saveOrderStatus(
-            id,
-            select.value
-        );
-
-    }
-);
+    await saveOrderStatus(id, select.value);
+});
 
 
 /* =====================================================
@@ -2905,178 +1745,35 @@ $("ordersTable")
 ===================================================== */
 
 function renderMobileOrders(entries){
-
-    const box =
-        $("mobileOrders");
-
+    const box = $("mobileOrders");
     box.innerHTML = "";
 
-
     if(entries.length === 0){
-
-        box.innerHTML = `
-            <div class="empty">
-                কোনো অর্ডার পাওয়া যায়নি।
-            </div>
-        `;
-
+        box.innerHTML = `<div class="empty">কোনো অর্ডার পাওয়া যায়নি।</div>`;
         return;
-
     }
 
+    entries.forEach(function([id,order]){
+        const name = order.name || order.customerName || "নাম নেই";
+        const phone = order.phone || order.customerPhone || "নম্বর নেই";
+        const address = order.address || "ঠিকানা নেই";
+        const total = Number(order.total || order.grandTotal || 0);
+        const status = normalizeStatus(order.status);
+        const card = document.createElement("div");
+        card.className = "order-card";
 
-    entries.forEach(
-        function([id,order]){
-
-            const name =
-                order.name ||
-                order.customerName ||
-                "নাম নেই";
-
-
-            const phone =
-                order.phone ||
-                order.customerPhone ||
-                "নম্বর নেই";
-
-
-            const address =
-                order.address ||
-                "ঠিকানা নেই";
-
-
-            const total =
-                Number(
-                    order.total ||
-                    order.grandTotal ||
-                    0
-                );
-
-
-            const status =
-                normalizeStatus(
-                    order.status
-                );
-
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "order-card";
-
-
-            card.innerHTML = `
-
-                <div class="order-row">
-
-                    <span class="order-label">
-                        অর্ডার
-                    </span>
-
-                    <span class="order-value">
-                        #${escapeHtml(
-                            order.orderId || id
-                        )}
-                    </span>
-
-                </div>
-
-
-                <div class="order-row">
-
-                    <span class="order-label">
-                        👤 Customer
-                    </span>
-
-                    <span class="order-value">
-                        ${escapeHtml(name)}
-                    </span>
-
-                </div>
-
-
-                <div class="order-row">
-
-                    <span class="order-label">
-                        📞 ফোন
-                    </span>
-
-                    <span class="order-value">
-                        ${escapeHtml(phone)}
-                    </span>
-
-                </div>
-
-
-                <div class="order-row">
-
-                    <span class="order-label">
-                        📍 ঠিকানা
-                    </span>
-
-                    <span class="order-value">
-                        ${escapeHtml(address)}
-                    </span>
-
-                </div>
-
-
-                <div class="order-row">
-
-                    <span class="order-label">
-                        💰 মোট
-                    </span>
-
-                    <span class="order-value">
-                        ৳${escapeHtml(total)}
-                    </span>
-
-                </div>
-
-
-                <div class="order-row">
-
-                    <span class="order-label">
-                        📅 সময়
-                    </span>
-
-                    <span class="order-value">
-                        ${escapeHtml(
-                            formatDate(order)
-                        )}
-                    </span>
-
-                </div>
-
-
-                <select
-                    class="mobile-status"
-                    data-mobile-status="${escapeHtml(id)}">
-
-                    ${getStatusOptions(status)}
-
-                </select>
-
-
-                <button
-                    class="primary-btn mobile-save"
-                    data-mobile-save="${escapeHtml(id)}">
-
-                    💾 Status Save
-
-                </button>
-
-            `;
-
-
-            box.appendChild(card);
-
-        }
-    );
-
+        card.innerHTML = `
+            <div class="order-row"><span class="order-label">অর্ডার</span><span class="order-value">#${escapeHtml(order.orderId || id)}</span></div>
+            <div class="order-row"><span class="order-label">👤 Customer</span><span class="order-value">${escapeHtml(name)}</span></div>
+            <div class="order-row"><span class="order-label">📞 ফোন</span><span class="order-value">${escapeHtml(phone)}</span></div>
+            <div class="order-row"><span class="order-label">📍 ঠিকানা</span><span class="order-value">${escapeHtml(address)}</span></div>
+            <div class="order-row"><span class="order-label">💰 মোট</span><span class="order-value">৳${escapeHtml(total)}</span></div>
+            <div class="order-row"><span class="order-label">📅 সময়</span><span class="order-value">${escapeHtml(formatDate(order))}</span></div>
+            <select class="mobile-status" data-mobile-status="${escapeHtml(id)}">${getStatusOptions(status)}</select>
+            <button class="primary-btn mobile-save" data-mobile-save="${escapeHtml(id)}">💾 Status Save</button>
+        `;
+        box.appendChild(card);
+    });
 }
 
 
@@ -3084,86 +1781,32 @@ function renderMobileOrders(entries){
    MOBILE STATUS SAVE
 ===================================================== */
 
-$("mobileOrders")
-.addEventListener(
-    "click",
-    async function(e){
+$("mobileOrders").addEventListener("click", async function(e){
+    const button = e.target.closest("[data-mobile-save]");
+    if(!button) return;
+    const id = button.dataset.mobileSave;
+    const select = document.querySelector(`[data-mobile-status="${CSS.escape(id)}"]`);
+    if(!select) return;
 
-        const button =
-            e.target.closest(
-                "[data-mobile-save]"
-            );
-
-        if(!button){
-            return;
-        }
-
-
-        const id =
-            button.dataset.mobileSave;
-
-
-        const select =
-            document.querySelector(
-                `[data-mobile-status="${CSS.escape(id)}"]`
-            );
-
-
-        if(!select){
-            return;
-        }
-
-
-        await saveOrderStatus(
-            id,
-            select.value
-        );
-
-    }
-);
+    await saveOrderStatus(id, select.value);
+});
 
 
 /* =====================================================
    ORDER STATUS UPDATE
 ===================================================== */
 
-async function saveOrderStatus(
-    id,
-    status
-){
-
+async function saveOrderStatus(id, status){
     try{
-
-        await db
-            .ref("orders/"+id)
-            .update({
-
-                status:status,
-
-                updatedAt:Date.now()
-
-            });
-
-
-        showNotice(
-            "Status আপডেট হয়েছে",
-            "অর্ডার #"+id+
-            " → "+status
-        );
-
-    }
-
-    catch(error){
-
+        await db.ref("orders/"+id).update({
+            status: status,
+            updatedAt: Date.now()
+        });
+        showNotice("Status আপডেট হয়েছে", "অর্ডার #"+id+" → "+status);
+    } catch(error){
         console.error(error);
-
-        alert(
-            "Status update করা যায়নি:\n"+
-            error.message
-        );
-
+        alert("Status update করা যায়নি:\n"+error.message);
     }
-
 }
 
 
@@ -3171,201 +1814,67 @@ async function saveOrderStatus(
    ORDER FILTER EVENTS
 ===================================================== */
 
-[
-    "orderSearch",
-    "statusFilter",
-    "dateFilter",
-    "sortFilter"
-]
-.forEach(
-    function(id){
-
-        $(id)
-        .addEventListener(
-            "input",
-            renderOrders
-        );
-
-        $(id)
-        .addEventListener(
-            "change",
-            renderOrders
-        );
-
-    }
-);
+["orderSearch", "statusFilter", "dateFilter", "sortFilter"].forEach(function(id){
+    $(id).addEventListener("input", renderOrders);
+    $(id).addEventListener("change", renderOrders);
+});
 
 
 /* =====================================================
    REFRESH
 ===================================================== */
 
-$("refreshOrdersBtn")
-.addEventListener(
-    "click",
-    async function(){
-
-        try{
-
-            const snapshot =
-                await db
-                .ref("orders")
-                .once("value");
-
-            ordersCache =
-                snapshot.val() || {};
-
-            renderOrders();
-
-            updateDashboard();
-
-            showNotice(
-                "Refresh",
-                "অর্ডার তালিকা আপডেট হয়েছে।"
-            );
-
-        }
-
-        catch(error){
-
-            alert(
-                "Refresh করা যায়নি:\n"+
-                error.message
-            );
-
-        }
-
+$("refreshOrdersBtn").addEventListener("click", async function(){
+    try{
+        const snapshot = await db.ref("orders").once("value");
+        ordersCache = snapshot.val() || {};
+        renderOrders();
+        updateDashboard();
+        showNotice("Refresh", "অর্ডার তালিকা আপডেট হয়েছে।");
+    } catch(error){
+        alert("Refresh করা যায়নি:\n"+error.message);
     }
-);
+});
 
 
 /* =====================================================
    CSV EXPORT
 ===================================================== */
 
-$("exportBtn")
-.addEventListener(
-    "click",
-    function(){
+$("exportBtn").addEventListener("click", function(){
+    const entries = getFilteredOrders();
+    if(entries.length === 0){ alert("Export করার মতো কোনো order নেই।"); return; }
 
-        const entries =
-            getFilteredOrders();
+    const rows = [["Order ID", "Customer", "Phone", "Address", "Total", "Date", "Status"]];
 
+    entries.forEach(function([id,order]){
+        rows.push([
+            order.orderId || id,
+            order.name || order.customerName || "",
+            order.phone || order.customerPhone || "",
+            order.address || "",
+            order.total || order.grandTotal || 0,
+            formatDate(order),
+            normalizeStatus(order.status)
+        ]);
+    });
 
-        if(entries.length === 0){
+    const csv = rows.map(function(row){
+        return row.map(function(value){
+            return `"${String(value ?? "").replace(/"/g,'""')}"`;
+        }).join(",");
+    }).join("\n");
 
-            alert(
-                "Export করার মতো কোনো order নেই।"
-            );
-
-            return;
-
-        }
-
-
-        const rows = [
-
-            [
-                "Order ID",
-                "Customer",
-                "Phone",
-                "Address",
-                "Total",
-                "Date",
-                "Status"
-            ]
-
-        ];
-
-
-        entries.forEach(
-            function([id,order]){
-
-                rows.push([
-
-                    order.orderId || id,
-
-                    order.name ||
-                    order.customerName ||
-                    "",
-
-                    order.phone ||
-                    order.customerPhone ||
-                    "",
-
-                    order.address || "",
-
-                    order.total ||
-                    order.grandTotal ||
-                    0,
-
-                    formatDate(order),
-
-                    normalizeStatus(
-                        order.status
-                    )
-
-                ]);
-
-            }
-        );
-
-
-        const csv =
-            rows
-            .map(
-                function(row){
-
-                    return row
-                    .map(
-                        function(value){
-
-                            return `"${String(
-                                value ?? ""
-                            )
-                            .replace(/"/g,'""')}"`;
-
-                        }
-                    )
-                    .join(",");
-
-                }
-            )
-            .join("\n");
-
-
-        const blob =
-            new Blob(
-                ["\ufeff"+csv],
-                {
-                    type:
-                    "text/csv;charset=utf-8"
-                }
-            );
-
-
-        const url =
-            URL.createObjectURL(blob);
-
-
-        const a =
-            document.createElement("a");
-
-        a.href = url;
-
-        a.download =
-            "kachabazar-orders.csv";
-
-        document.body.appendChild(a);
-
-        a.click();
-
-        a.remove();
-
-        URL.revokeObjectURL(url);
-
-    }
-);
+    const blob = new Blob(["\ufeff"+csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "kachabazar-orders.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+});
 
 
 /* =====================================================
@@ -3373,56 +1882,18 @@ $("exportBtn")
 ===================================================== */
 
 async function loadSettings(){
-
     try{
+        const snapshot = await db.ref("settings").once("value");
+        const settings = snapshot.val() || {};
 
-        const snapshot =
-            await db
-            .ref("settings")
-            .once("value");
-
-
-        const settings =
-            snapshot.val() || {};
-
-
-        $("shopName").value =
-            settings.shopName ||
-            "১০ নং সাতবাড়ীয়া কাঁচাবাজার";
-
-
-        $("deliveryCharge").value =
-            settings.deliveryCharge ??
-            0;
-
-
-        $("contactNumber").value =
-            settings.contactNumber ||
-            "";
-
-
-        $("whatsappNumber").value =
-            settings.whatsapp ||
-            settings.whatsappNumber ||
-            "";
-
-
-        $("facebookUrl").value =
-            settings.facebook ||
-            settings.facebookUrl ||
-            "";
-
+        $("shopName").value = settings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার";
+        $("deliveryCharge").value = settings.deliveryCharge ?? 0;
+        $("contactNumber").value = settings.contactNumber || "";
+        $("whatsappNumber").value = settings.whatsapp || settings.whatsappNumber || "";
+        $("facebookUrl").value = settings.facebook || settings.facebookUrl || "";
+    } catch(error){
+        console.error("Settings load error:", error);
     }
-
-    catch(error){
-
-        console.error(
-            "Settings load error:",
-            error
-        );
-
-    }
-
 }
 
 
@@ -3430,74 +1901,25 @@ async function loadSettings(){
    SAVE SETTINGS
 ===================================================== */
 
-$("saveSettingsBtn")
-.addEventListener(
-    "click",
-    saveSettings
-);
-
+$("saveSettingsBtn").addEventListener("click", saveSettings);
 
 async function saveSettings(){
-
     const settings = {
-
-        shopName:
-            $("shopName")
-            .value
-            .trim(),
-
-        deliveryCharge:
-            Number(
-                $("deliveryCharge")
-                .value || 0
-            ),
-
-        contactNumber:
-            $("contactNumber")
-            .value
-            .trim(),
-
-        whatsapp:
-            $("whatsappNumber")
-            .value
-            .trim(),
-
-        facebook:
-            $("facebookUrl")
-            .value
-            .trim(),
-
-        updatedAt:
-            Date.now()
-
+        shopName: $("shopName").value.trim(),
+        deliveryCharge: Number($("deliveryCharge").value || 0),
+        contactNumber: $("contactNumber").value.trim(),
+        whatsapp: $("whatsappNumber").value.trim(),
+        facebook: $("facebookUrl").value.trim(),
+        updatedAt: Date.now()
     };
 
-
     try{
-
-        await db
-            .ref("settings")
-            .set(settings);
-
-
-        showNotice(
-            "সেটিংস সংরক্ষিত",
-            "ওয়েবসাইট সেটিংস সফলভাবে আপডেট হয়েছে।"
-        );
-
-    }
-
-    catch(error){
-
+        await db.ref("settings").set(settings);
+        showNotice("সেটিংস সংরক্ষিত", "ওয়েবসাইট সেটিংস সফলভাবে আপডেট হয়েছে।");
+    } catch(error){
         console.error(error);
-
-        alert(
-            "সেটিংস সংরক্ষণ করা যায়নি:\n"+
-            error.message
-        );
-
+        alert("সেটিংস সংরক্ষণ করা যায়নি:\n"+error.message);
     }
-
 }
 
 
@@ -3505,42 +1927,22 @@ async function saveSettings(){
    MODAL OUTSIDE CLICK
 ===================================================== */
 
-$("productModal")
-.addEventListener(
-    "click",
-    function(e){
-
-        if(e.target === $("productModal")){
-
-            closeProductModal();
-
-        }
-
+$("productModal").addEventListener("click", function(e){
+    if(e.target === $("productModal")){
+        closeProductModal();
     }
-);
+});
 
 
 /* =====================================================
    ESC KEY
 ===================================================== */
 
-document.addEventListener(
-    "keydown",
-    function(e){
-
-        if(
-            e.key === "Escape" &&
-            !$("productModal")
-                .classList
-                .contains("hidden")
-        ){
-
-            closeProductModal();
-
-        }
-
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !$("productModal").classList.contains("hidden")){
+        closeProductModal();
     }
-);
+});
 
 </script>
 

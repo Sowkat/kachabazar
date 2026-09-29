@@ -16,6 +16,7 @@
         /* Admin Panel Custom Styles */
         body {
             background-color: #f1f5f9;
+            font-family: 'Hind Siliguri', sans-serif;
         }
         .admin-header {
             background: #064e3b;
@@ -107,6 +108,22 @@
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -114,14 +131,14 @@
     <!-- ADMIN HEADER -->
     <header class="admin-header">
         <div class="container header-inner">
-            <div class="logo">
-                <div class="logo-icon"><i class="fa-solid fa-user-shield"></i></div>
+            <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+                <div class="logo-icon" style="font-size: 24px;"><i class="fa-solid fa-user-shield"></i></div>
                 <div class="logo-text">
-                    <strong style="color: #fff;">এডমিন কন্ট্রোল প্যানেল</strong>
-                    <small style="color: #a7f3d0;">১০ নং সাতবাড়ীয়া কাঁচাবাজার</small>
+                    <strong style="color: #fff; display: block;">১০ নং সাতবাড়ীয়া</strong>
+                    <small style="color: #a7f3d0;">কাঁচাবাজার Admin Panel</small>
                 </div>
             </div>
-            <button class="cart-button" id="logoutBtn" style="display:none; background:#dc2626;" onclick="adminLogout()">
+            <button class="cart-button" id="logoutBtn" style="display:none; background:#dc2626; border:none; color:#fff; padding:8px 15px; border-radius:6px; cursor:pointer;" onclick="adminLogout()">
                 <i class="fa-solid fa-right-from-bracket"></i> লগআউট
             </button>
         </div>
@@ -133,16 +150,20 @@
             <h2 style="text-align: center; margin-bottom: 20px; color: #15803d;">এডমিন লগইন</h2>
             <form id="adminLoginForm">
                 <div class="form-group">
+                    <label>Admin Email</label>
+                    <input type="email" id="adminEmail" placeholder="যেমন: sowkat420@gmail.com" value="sowkat420@gmail.com" required>
+                </div>
+                <div class="form-group">
                     <label>পাসওয়ার্ড</label>
                     <input type="password" id="adminPassword" placeholder="এডমিন পাসওয়ার্ড লিখুন" required>
                 </div>
-                <button type="submit" class="place-order-button">লগইন করুন</button>
+                <button type="submit" class="place-order-button" style="width: 100%; padding: 12px; background: #15803d; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">লগইন করুন</button>
             </form>
         </div>
     </div>
 
     <!-- MAIN ADMIN CONTENT -->
-    <div class="container hidden" id="adminContent">
+    <div class="container hidden" id="adminContent" style="display:none;">
         <!-- Navigation -->
         <div class="admin-nav">
             <button class="admin-nav-btn active" onclick="switchTab('ordersTab')"><i class="fa-solid fa-list-check"></i> অর্ডারসমূহ</button>
@@ -177,7 +198,7 @@
         </div>
 
         <!-- PRODUCTS TAB -->
-        <div id="productsTab" class="tab-content hidden">
+        <div id="productsTab" class="tab-content" style="display:none;">
             <div class="admin-card">
                 <h3>নতুন পণ্য যোগ করুন</h3>
                 <form id="addProductForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
@@ -206,7 +227,7 @@
                         <input type="url" id="pImage" placeholder="https://...">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <button type="submit" class="place-order-button" style="margin: 0;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
+                        <button type="submit" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
                     </div>
                 </form>
             </div>
@@ -235,7 +256,7 @@
         </div>
 
         <!-- SETTINGS TAB -->
-        <div id="settingsTab" class="tab-content hidden">
+        <div id="settingsTab" class="tab-content" style="display:none;">
             <div class="admin-card" style="max-width: 600px;">
                 <h3>দোকানের তথ্য ও সেটআপ</h3>
                 <form id="saveSettingsForm" style="margin-top: 15px;">
@@ -263,21 +284,17 @@
                         <label>ঠিকানা</label>
                         <textarea id="sAddress" rows="2"></textarea>
                     </div>
-                    <button type="submit" class="place-order-button"><i class="fa-solid fa-floppy-disk"></i> পরিবর্তন সেভ করুন</button>
+                    <button type="submit" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-floppy-disk"></i> পরিবর্তন সেভ করুন</button>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- TOAST NOTIFICATION -->
-    <div class="site-toast" id="siteToast"></div>
 
     <!-- Firebase compatibility SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <script>
-        // UPDATED FIREBASE CONFIG WITH VALID API KEY
         const firebaseConfig = {
             apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWWsBl3347xfA",
             authDomain: "kachabazar-87e97.firebaseapp.com",
@@ -292,31 +309,34 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // ADMIN AUTH (Default Pass: admin123)
+        // DEFAULT CREDENTIALS
+        const ADMIN_EMAIL = "sowkat420@gmail.com";
         const ADMIN_PASS = "admin123";
 
         document.getElementById('adminLoginForm').addEventListener('submit', function(e){
             e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPassword').value;
-            if(pass === ADMIN_PASS){
+            
+            if(email === ADMIN_EMAIL && pass === ADMIN_PASS){
                 localStorage.setItem('admin_logged', 'true');
                 checkAuth();
             } else {
-                alert('ভুল পাসওয়ার্ড!');
+                alert('ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে!');
             }
         });
 
         function checkAuth(){
             if(localStorage.getItem('admin_logged') === 'true'){
-                document.getElementById('loginSection').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                document.getElementById('logoutBtn').style.display = 'flex';
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
                 loadAdminOrders();
                 loadAdminProducts();
                 loadAdminSettings();
             } else {
-                document.getElementById('loginSection').classList.remove('hidden');
-                document.getElementById('adminContent').classList.add('hidden');
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('adminContent').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'none';
             }
         }
@@ -327,9 +347,9 @@
         }
 
         function switchTab(tabId){
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.admin-nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).style.display = 'block';
             event.currentTarget.classList.add('active');
         }
 

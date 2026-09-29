@@ -3,542 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>১০ নং সাতবাড়ীয়া কাঁচাবাজার</title>
-
-    <meta name="description"
-          content="১০ নং সাতবাড়ীয়া ইউনিয়নের অনলাইন কাঁচাবাজার। তাজা কাঁচামাল অর্ডার করুন, ঘরে ডেলিভারি নিন।">
-
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS Link -->
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header class="site-header">
-
-    <div class="container header-inner">
-
-        <a href="#" class="logo">
-            <div class="logo-icon">
-                <i class="fa-solid fa-basket-shopping"></i>
-            </div>
-
-            <div class="logo-text">
-                <strong id="headerShopName">
-                    ১০ নং সাতবাড়ীয়া কাঁচাবাজার
-                </strong>
-
-                <small>
-                    অনলাইন কাঁচাবাজার
-                </small>
-            </div>
-        </a>
-
-        <button class="cart-button"
-                type="button"
-                onclick="openCart()">
-
-            <i class="fa-solid fa-cart-shopping"></i>
-
-            <span>
-                কার্ট
-            </span>
-
-            <b id="cartCount">0</b>
-
-        </button>
-
-    </div>
-
-</header>
-
-
-<main>
-
-    <!-- HERO -->
-
-    <section class="hero">
-
-        <div class="container hero-inner">
-
-            <div class="hero-text">
-
-                <div class="hero-badge">
-                    <i class="fa-solid fa-truck-fast"></i>
-                    ইউনিয়নের ভিতরে হোম ডেলিভারি
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+                <div class="logo-text">
+                    <strong id="headerShopName">১০ নং সাতবাড়ীয়া কাঁচাবাজার</strong>
+                    <small id="deliveryInfo">ইউনিয়নের ভিতরে</small>
                 </div>
-
-                <h1>
-                    তাজা কাঁচামাল<br>
-                    এখন আপনার ঘরে
-                </h1>
-
-                <p id="heroDescription">
-                    তাজা কাঁচামাল সহজেই অর্ডার করুন।
-                </p>
-
-                <button class="hero-button"
-                        type="button"
-                        onclick="scrollToProducts()">
-
-                    <i class="fa-solid fa-basket-shopping"></i>
-                    বাজার করুন
-
-                </button>
-
             </div>
-
-            <div class="hero-icon">
-                <i class="fa-solid fa-basket-shopping"></i>
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- SHOP INFO -->
-
-    <section class="shop-info-section">
-
-        <div class="container">
-
-            <div class="shop-info-grid">
-
-                <div class="shop-info-item">
-                    <div class="info-icon">
-                        <i class="fa-solid fa-location-dot"></i>
-                    </div>
-
-                    <div>
-                        <small>ঠিকানা</small>
-                        <strong id="shopAddress">
-                            ১০ নং সাতবাড়ীয়া ইউনিয়ন
-                        </strong>
-                    </div>
-                </div>
-
-
-                <div class="shop-info-item">
-                    <div class="info-icon">
-                        <i class="fa-solid fa-phone"></i>
-                    </div>
-
-                    <div>
-                        <small>ফোন</small>
-                        <strong id="shopPhone">
-                            -
-                        </strong>
-                    </div>
-                </div>
-
-
-                <div class="shop-info-item">
-                    <div class="info-icon">
-                        <i class="fa-solid fa-truck"></i>
-                    </div>
-
-                    <div>
-                        <small>ডেলিভারি</small>
-                        <strong id="deliveryInfo">
-                            ইউনিয়নের ভিতরে
-                        </strong>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- PRODUCTS -->
-
-    <section class="products-section"
-             id="productsSection">
-
-        <div class="container">
-
-            <div class="section-header">
-
-                <div>
-                    <span class="section-kicker">
-                        Fresh & Quality
-                    </span>
-
-                    <h2>
-                        আমাদের পণ্য
-                    </h2>
-
-                    <p>
-                        পছন্দের পণ্য কার্টে যোগ করে অর্ডার করুন।
-                    </p>
-                </div>
-
-                <span id="productCount"
-                      class="product-count">
-                    0টি পণ্য
-                </span>
-
-            </div>
-
-
-            <!-- SEARCH -->
-
-            <div class="search-box">
-
-                <i class="fa-solid fa-magnifying-glass"></i>
-
-                <input
-                    type="search"
-                    id="searchInput"
-                    placeholder="পণ্যের নাম দিয়ে খুঁজুন..."
-                    autocomplete="off">
-
-                <button
-                    type="button"
-                    id="clearSearch"
-                    onclick="clearSearch()">
-
-                    <i class="fa-solid fa-xmark"></i>
-
-                </button>
-
-            </div>
-
-
-            <!-- CATEGORY -->
-
-            <div id="categoryList"
-                 class="category-list">
-
-                <button class="category-btn active"
-                        data-category="all">
-                    সব
-                </button>
-
-            </div>
-
-
-            <div id="productsLoading"
-                 class="products-loading">
-
-                <i class="fa-solid fa-spinner fa-spin"></i>
-
-                <span>
-                    পণ্য লোড হচ্ছে...
-                </span>
-
-            </div>
-
-
-            <div id="productList"
-                 class="product-grid">
-            </div>
-
-
-            <div id="noProducts"
-                 class="no-products hidden">
-
-                <i class="fa-solid fa-box-open"></i>
-
-                <h3>
-                    কোনো পণ্য পাওয়া যায়নি
-                </h3>
-
-                <p>
-                    অন্য নামে খুঁজে দেখুন।
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ORDER TRACKING -->
-
-    <section class="tracking-section">
-
-        <div class="container">
-
-            <div class="tracking-card">
-
-                <div class="tracking-icon">
-                    <i class="fa-solid fa-location-crosshairs"></i>
-                </div>
-
-                <div class="tracking-content">
-
-                    <h2>
-                        অর্ডার ট্র্যাক করুন
-                    </h2>
-
-                    <p>
-                        আপনার Order ID দিয়ে অর্ডারের বর্তমান অবস্থা দেখুন।
-                    </p>
-
-                    <div class="tracking-form">
-
-                        <input
-                            type="text"
-                            id="trackingInput"
-                            placeholder="যেমন: SB-20260929-1234">
-
-                        <button
-                            type="button"
-                            onclick="trackOrder()">
-
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            ট্র্যাক
-
-                        </button>
-
-                    </div>
-
-                    <div id="trackingResult"></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- DIRECT ORDER -->
-
-    <section class="alternative-order-section">
-
-        <div class="container">
-
-            <div class="alternative-order">
-
-                <p>
-                    অথবা সরাসরি যোগাযোগ করুন
-                </p>
-
-                <div class="direct-order-buttons">
-
-                    <button
-                        type="button"
-                        id="whatsappOrderButton"
-                        class="direct-order-btn whatsapp-btn"
-                        onclick="openCheckout('whatsapp')">
-
-                        <i class="fa-brands fa-whatsapp"></i>
-                        WhatsApp-এ অর্ডার
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        id="smsOrderButton"
-                        class="direct-order-btn sms-btn"
-                        onclick="openCheckout('sms')">
-
-                        <i class="fa-solid fa-comment-sms"></i>
-                        SMS-এ অর্ডার
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        id="callOrderButton"
-                        class="direct-order-btn call-btn"
-                        onclick="openCheckout('call')">
-
-                        <i class="fa-solid fa-phone"></i>
-                        কল করে অর্ডার
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<!-- CART OVERLAY -->
-
-<div id="cartOverlay"
-     class="cart-overlay"
-     onclick="closeCart()"></div>
-
-
-<!-- CART -->
-
-<aside id="cartSidebar"
-       class="cart-sidebar">
-
-    <div class="cart-header">
-
-        <div>
-            <h2>
+            <button class="cart-button" onclick="openCart()">
                 <i class="fa-solid fa-cart-shopping"></i>
-                আপনার কার্ট
-            </h2>
-
-            <small id="cartItemCount">
-                0টি পণ্য
-            </small>
-        </div>
-
-        <button
-            type="button"
-            class="cart-close"
-            onclick="closeCart()">
-
-            <i class="fa-solid fa-xmark"></i>
-
-        </button>
-
-    </div>
-
-
-    <div id="cartItems"
-         class="cart-items">
-
-        <div class="empty-cart">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <p>কার্ট খালি</p>
-        </div>
-
-    </div>
-
-
-    <div class="cart-footer">
-
-        <div class="cart-total-row">
-            <span>পণ্যের মূল্য</span>
-            <strong id="cartSubtotal">৳0</strong>
-        </div>
-
-        <div class="cart-total-row">
-            <span>ডেলিভারি চার্জ</span>
-            <strong id="cartDelivery">৳0</strong>
-        </div>
-
-        <div class="cart-total-row total">
-            <span>সর্বমোট</span>
-            <strong id="cartTotal">৳0</strong>
-        </div>
-
-        <button
-            type="button"
-            class="checkout-button"
-            onclick="openCheckout()">
-
-            <i class="fa-solid fa-bag-shopping"></i>
-            অর্ডার করুন
-
-        </button>
-
-    </div>
-
-</aside>
-
-
-<!-- CHECKOUT MODAL -->
-
-<div id="checkoutModal"
-     class="modal-overlay">
-
-    <div class="checkout-modal">
-
-        <div class="modal-header">
-
-            <div>
-                <h2>
-                    <i class="fa-solid fa-file-invoice"></i>
-                    অর্ডার তথ্য
-                </h2>
-
-                <p>
-                    আপনার তথ্য দিয়ে অর্ডার সম্পন্ন করুন।
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeCheckout()">
-
-                <i class="fa-solid fa-xmark"></i>
-
+                <span>কার্ট</span>
+                <b id="cartCount">0</b>
             </button>
-
         </div>
+    </header>
 
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-leaf"></i> ১০০% তাজা ও খাটি কাঁচামাল
+                </div>
+                <h1>ঘরে বসেই পান তাজা কাঁচাবাজার</h1>
+                <p id="heroDescription">তাজা কাঁচামাল সহজেই অর্ডার করুন।</p>
+                <button class="hero-button" onclick="scrollToProducts()">
+                    <i class="fa-solid fa-store"></i> কেনাকাটা শুরু করুন
+                </button>
+            </div>
+            <div class="hero-icon">
+                <i class="fa-solid fa-carrot"></i>
+            </div>
+        </div>
+    </section>
 
-        <form id="checkoutForm">
+    <!-- SHOP INFO SECTION -->
+    <section class="shop-info-section">
+        <div class="container shop-info-grid">
+            <div class="shop-info-item">
+                <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div>
+                    <small>ঠিকানা</small>
+                    <strong id="shopAddress">১০ নং সাতবাড়ীয়া ইউনিয়ন</strong>
+                </div>
+            </div>
+            <div class="shop-info-item">
+                <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                <div>
+                    <small>হেল্পলাইন</small>
+                    <strong id="shopPhone">যোগাযোগ করুন</strong>
+                </div>
+            </div>
+            <div class="shop-info-item">
+                <div class="info-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                    <small>ডেলিভারি</small>
+                    <strong>দ্রুত হোম ডেলিভারি</strong>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <div class="form-group">
-
-                <label for="customerName">
-                    আপনার নাম *
-                </label>
-
-                <input
-                    type="text"
-                    id="customerName"
-                    placeholder="আপনার নাম"
-                    required>
-
+    <!-- PRODUCTS SECTION -->
+    <section class="products-section" id="productsSection">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <span class="section-kicker">বাজার তালিকা</span>
+                    <h2>আমাদের সকল পণ্য</h2>
+                    <p>আপনার প্রয়োজনীয় পণ্যটি বেছে নিন</p>
+                </div>
+                <span class="product-count" id="productCount">০টি পণ্য</span>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="customerPhone">
-                    মোবাইল নম্বর *
-                </label>
-
-                <input
-                    type="tel"
-                    id="customerPhone"
-                    inputmode="numeric"
-                    maxlength="11"
-                    placeholder="01XXXXXXXXX"
-                    required>
-
+            <!-- Search Box -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="পণ্য খুঁজুন (যেমন: আলু, পেঁয়াজ, টমেটো)...">
+                <button type="button" onclick="clearSearch()"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="customerAddress">
-                    ডেলিভারি ঠিকানা *
-                </label>
-
-                <textarea
-                    id="customerAddress"
-                    rows="3"
-                    placeholder="গ্রাম, ওয়ার্ড, বাজার/ল্যান্ডমার্ক"
-                    required></textarea>
-
+            <!-- Categories -->
+            <div class="category-list" id="categoryList">
+                <button class="category-btn active" onclick="selectCategory('all')">সব</button>
             </div>
 
+            <!-- Products Loading -->
+            <div class="products-loading" id="productsLoading">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>পণ্য লোড হচ্ছে...</span>
+            </div>
 
-            <div class="form-group">
+            <!-- Product Grid -->
+            <div class="product-grid" id="productList"></div>
 
-                <label
+            <!-- No Products Found -->
+            <div class="no-products hidden" id="noProducts">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h3>কোনো পণ্য পাওয়া যায়নি</h3>
+                <p>অন্য কোনো নামে সার্চ বা ফিল্টার করার চেষ্টা করুন।</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORDER TRACKING SECTION -->
+    <section class="tracking-section">
+        <div class="container">
+            <div class="tracking-card">
+                <div class="tracking-icon">
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                </div>
+                <div class="tracking-content">
+                    <h2>অর্ডার ট্র্যাকিং</h2>
+                    <p>আপনার অর্ডার আইডি দিয়ে বর্তমান অবস্থা জানুন</p>
+                    <div class="tracking-form">
+                        <input type="text" id="trackingInput" placeholder="অর্ডার আইডি দিন (যেমন: SB-2025...)">
+                        <button type="button" onclick="trackOrder()">ট্র্যাক করুন</button>
+                    </div>
+                    <div class="tracking-result" id="trackingResult"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ALTERNATIVE ORDER SECTION -->
+    <section class="alternative-order-section">
+        <div class="container">
+            <div class="alternative-order">
+                <h3>সরাসরি যোগাযোগ করে অর্ডার করতে চান?</h3>
+                <p>নিচের বাটনগুলোতে ক্লিক করে মেসেজ বা কল দিয়ে সহজেই অর্ডার নিশ্চিত করুন</p>
+                <div class="direct-order-buttons">
+                    <button class="direct-order-btn whatsapp-btn" onclick="openCheckout('whatsapp')">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp অর্ডার
+                    </button>
+                    <button class="direct-order-btn sms-btn" onclick="openCheckout('sms')">
+                        <i class="fa-solid fa-comment-sms"></i> SMS অর্ডার
+                    </button>
+                    <button class="direct-order-btn call-btn" onclick="openCheckout('call')">
+                        <i class="fa-solid fa-phone"></i> সরাসরি কল করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLOATING CONTACT BUTTONS -->
+    <div class="floating-buttons">
+        <a href="#" id="floatingWhatsApp" class="floating-button whatsapp" target="_blank" style="display:none;">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="#" id="floatingCall" class="floating-button call" style="display:none;">
+            <i class="fa-solid fa-phone"></i>
+        </a>
+        <a href="#" id="floatingFacebook" class="floating-button facebook" target="_blank" style="display:none;">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+    </div>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <div>
+                <h2>আপনার কার্ট</h2>
+                <small id="cartItemCount">০টি পণ্য</small>
+            </div>
+            <button class="cart-close" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total-row">
+                <span>পণ্যের মোট দাম:</span>
+                <span id="cartSubtotal">৳০</span>
+            </div>
+            <div class="cart-total-row">
+                <span>ডেলিভারি চার্জ:</span>
+                <span id="cartDelivery">৳০</span>
+            </div>
+            <div class="cart-total-row total">
+                <span>সর্বমোট:</span>
+                <span id="cartTotal">৳০</span>
+            </div>
+            <button class="checkout-button" onclick="openCheckout()">
+                অর্ডার নিশ্চিত করতে এগিয়ে যান <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="checkout-modal">
+            <div class="modal-header">
+                <div>
+                    <h2>অর্ডার তথ্য পূরণ করুন</h2>
+                    <p>আপনার ঠিকানা ও বিস্তারিত তথ্য দিয়ে অর্ডার সম্পূর্ণ করুন</p>
+                </div>
+                <button class="modal-close" onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="customerName">আপনার নাম *</label>
+                    <input type="text" id="customerName" placeholder="আপনার নাম লিখুন" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">মোবাইল নম্বর *</label>
+                    <input type="tel" id="customerPhone" placeholder="01XXXXXXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">ডেলিভারি ঠিকানা *</label>
+                    <textarea id="customerAddress" rows="2" placeholder="গ্রাম/পাড়া/বাড়ির নাম..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="customerNote">অতিরিক্ত তথ্য (ঐচ্ছিক)</label>
+                    <textarea id="customerNote" rows="2" placeholder="পণ্য বা ডেলিভারি নিয়ে বিশেষ কোনো নির্দেশনা..."></textarea>
+                </div>
+                <div class="payment-box">
+                    <label><strong>পেমেন্ট পদ্ধতি:</strong></label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="Cash on Delivery" checked> ক্যাশ অন ডেলিভারি (পণ্য পেয়ে টাকা দিন)
+                    </label>
+                </div>
+                <div class="checkout-summary">
+                    <div><span>পণ্যের মূল্য:</span><span id="checkoutSubtotal">৳০</span></div>
+                    <div><span>ডেলিভারি চার্জ:</span><span id="checkoutDelivery">৳০</span></div>
+                    <div class="grand-total"><span>সর্বমোট:</span><strong id="checkoutTotal">৳০</strong></div>
+                </div>
+                <button type="submit" class="place-order-button" id="placeOrderButton">
+                    <i class="fa-solid fa-check"></i> অর্ডার নিশ্চিত করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div class="modal-overlay" id="successModal">
+        <div class="success-modal">
+            <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <h2>অর্ডার সফল হয়েছে!</h2>
+            <p>আপনার অর্ডার আইডি:</p>
+            <strong id="successOrderId">SB-0000</strong>
+            <p class="success-note">আপনার সাথে খুব শীঘ্রই যোগাযোগ করা হবে।</p>
+            <button class="success-button" onclick="closeSuccess()">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="site-toast" id="siteToast"></div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <h3 id="footerShopName">১০ নং সাতবাড়ীয়া কাঁচাবাজার</h3>
+                <p id="footerDescription">তাজা কাঁচামাল সহজেই আপনার ঘরে।</p>
+            </div>
+            <div>
+                <h4>যোগাযোগ</h4>
+                <p><i class="fa-solid fa-location-dot"></i> <span id="footerAddress">১০ নং সাতবাড়ীয়া ইউনিয়ন</span></p>
+                <p><i class="fa-solid fa-phone"></i> <span id="footerPhone">-</span></p>
+            </div>
+            <div>
+                <h4>সোশ্যাল লিংক</h4>
+                <a href="#" id="footerFacebook" target="_blank" style="display:none;"><i class="fa-brands fa-facebook"></i> ফেসবুক পেইজ</a><br>
+                <a href="#" id="footerWhatsApp" target="_blank" style="display:none;"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপ</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; <span id="currentYear"></span> <span id="copyrightName">১০ নং সাতবাড়ীয়া কাঁচাবাজার</span>। সর্বস্বত্ব সংরক্ষিত।
+        </div>
+    </footer>
+
+    <!-- Firebase compatibility SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- JavaScript Link -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -89,6 +89,15 @@
         .badge-processing { background: #e0f2fe; color: #0369a1; }
         .badge-delivered { background: #dcfce7; color: #15803d; }
         .badge-cancelled { background: #fee2e2; color: #b91c1c; }
+        .time-badge {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 3px;
+        }
         .action-btn {
             padding: 5px 10px;
             border: none;
@@ -99,6 +108,7 @@
         }
         .btn-edit { background: #0284c7; color: #fff; }
         .btn-delete { background: #dc2626; color: #fff; }
+        .btn-wa { background: #25d366; color: #fff; font-weight: bold; }
         .login-card {
             max-width: 400px;
             margin: 80px auto;
@@ -122,6 +132,14 @@
             border-radius: 8px;
             outline: none;
             box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input {
+            width: auto;
         }
     </style>
 </head>
@@ -167,7 +185,7 @@
         <div class="admin-nav">
             <button class="admin-nav-btn active" onclick="switchTab('ordersTab', this)"><i class="fa-solid fa-list-check"></i> অর্ডারসমূহ</button>
             <button class="admin-nav-btn" onclick="switchTab('productsTab', this)"><i class="fa-solid fa-box-open"></i> পণ্য ব্যবস্থাপনা</button>
-            <button class="admin-nav-btn" onclick="switchTab('settingsTab', this)"><i class="fa-solid fa-sliders"></i> দোকান সেটআপ</button>
+            <button class="admin-nav-btn" onclick="switchTab('settingsTab', this)"><i class="fa-solid fa-sliders"></i> দোকান সেটআপ ও নোটিশ</button>
         </div>
 
         <!-- ORDERS TAB -->
@@ -178,12 +196,12 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>অর্ডার আইডি</th>
+                                <th>অর্ডার আইডি ও সময়</th>
                                 <th>গ্রাহক</th>
                                 <th>ফোন</th>
                                 <th>ঠিকানা</th>
                                 <th>পণ্যসমূহ</th>
-                                <th>মোট টাকা</th>
+                                <th>বিল বিবরণ</th>
                                 <th>অবস্থা</th>
                                 <th>অ্যাকশন</th>
                             </tr>
@@ -257,7 +275,7 @@
         <!-- SETTINGS TAB -->
         <div id="settingsTab" class="tab-content" style="display:none;">
             <div class="admin-card" style="max-width: 600px;">
-                <h3>দোকানের তথ্য ও সেটআপ</h3>
+                <h3>দোকানের তথ্য, নোটিশ ও ডেলিভারি সেটআপ</h3>
                 <form id="saveSettingsForm" style="margin-top: 15px;">
                     <div class="form-group">
                         <label>দোকানের নাম</label>
@@ -276,8 +294,20 @@
                         <input type="url" id="sFacebook">
                     </div>
                     <div class="form-group">
-                        <label>ডেলিভারি চার্জ (টাকা)</label>
-                        <input type="number" id="sDelivery">
+                        <label>সাধারণ ডেলিভারি চার্জ (টাকা)</label>
+                        <input type="number" id="sDelivery" value="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ফ্রি ডেলিভারির জন্য সর্বনিম্ন অর্ডার মূল্য (টাকা)</label>
+                        <input type="number" id="sFreeDeliveryMin" value="300" required>
+                    </div>
+                    <div class="form-group">
+                        <label>চলমান নোটিশের বার্তা (Notice Text)</label>
+                        <input type="text" id="sNoticeText" placeholder="যেমন: ৩০০ টাকার কেনাকাটায় ডেলিভারি একদম ফ্রি!">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="sNoticeActive">
+                        <label for="sNoticeActive" style="margin:0; cursor:pointer;">চলমান নোটিশ চালু রাখুন (On / Off)</label>
                     </div>
                     <div class="form-group">
                         <label>ঠিকানা</label>
@@ -309,6 +339,11 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const auth = firebase.auth();
+
+        // Audio Sound for New Order Alert
+        const alertAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        let previousOrderCount = 0;
+        let isFirstLoad = true;
 
         // Firebase Auth Login
         document.getElementById('adminLoginForm').addEventListener('submit', function(e){
@@ -359,36 +394,73 @@
             if(btn) btn.classList.add('active');
         }
 
-        // LOAD ORDERS
+        // Time-Ago Calculator
+        function formatTimeAgo(timestamp) {
+            if(!timestamp) return "এখনই";
+            const date = new Date(timestamp);
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return `${seconds} সেকেণ্ড আগে`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} মিনিট আগে`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} ঘণ্টা আগে`;
+            return `${Math.floor(hours / 24)} দিন আগে`;
+        }
+
+        // LOAD ORDERS (With Sound Alert & Time-Ago)
         function loadAdminOrders(){
             db.ref('orders').on('value', snapshot => {
                 const data = snapshot.val() || {};
                 const tbody = document.getElementById('adminOrdersList');
                 const keys = Object.keys(data).reverse();
+
+                // Sound notification on new order
+                if(!isFirstLoad && keys.length > previousOrderCount) {
+                    alertAudio.play().catch(e => console.log('Autoplay blocked'));
+                }
+                previousOrderCount = keys.length;
+                isFirstLoad = false;
+
                 if(!keys.length){
                     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
                     return;
                 }
+
                 tbody.innerHTML = keys.map(id => {
                     const o = data[id];
                     const itemsStr = o.items ? (Array.isArray(o.items) ? o.items.map(i => `${i.name || i.title} (${i.quantity || 1})`).join(', ') : 'পণ্য আছে') : '';
+                    const timeAgo = formatTimeAgo(o.createdAt);
+                    const phone = o.phone || o.customerPhone || 'N/A';
+                    const name = o.name || o.customerName || 'N/A';
+                    const grandTotal = o.total || o.grandTotal || 0;
+                    const delivery = o.deliveryCharge !== undefined ? o.deliveryCharge : 0;
+
                     return `
                         <tr>
-                            <td><strong>${id}</strong></td>
-                            <td>${o.name || o.customerName || 'N/A'}</td>
-                            <td>${o.phone || o.customerPhone || 'N/A'}</td>
+                            <td>
+                                <strong>${id}</strong><br>
+                                <span class="time-badge">${timeAgo}</span>
+                            </td>
+                            <td>${name}</td>
+                            <td>${phone}</td>
                             <td>${o.address || o.customerAddress || 'N/A'}</td>
                             <td><small>${itemsStr}</small></td>
-                            <td>৳${o.total || 0}</td>
+                            <td>
+                                <b>৳${grandTotal}</b><br>
+                                <small style="color:#64748b;">ডেলিভারি: ৳${delivery}</small>
+                            </td>
                             <td><span class="badge badge-${o.status || 'pending'}">${o.status || 'pending'}</span></td>
                             <td>
-                                <select onchange="updateOrderStatus('${id}', this.value)">
+                                <select onchange="updateOrderStatus('${id}', this.value)" style="padding:3px; margin-bottom:5px;">
                                     <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
                                     <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
                                     <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
                                     <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
                                     <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
-                                </select>
+                                </select><br>
+                                <button class="action-btn btn-wa" onclick="openWhatsAppCustomer('${phone}', '${name}', '${id}', ${grandTotal})">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                </button>
                             </td>
                         </tr>
                     `;
@@ -400,6 +472,13 @@
 
         function updateOrderStatus(id, status){
             db.ref('orders/' + id).update({ status: status });
+        }
+
+        function openWhatsAppCustomer(phone, name, orderId, total) {
+            let cleanPhone = phone.replace(/\D/g, '');
+            if(cleanPhone.startsWith('0')) cleanPhone = '88' + cleanPhone;
+            let msg = `হ্যালো ${name}, ১০ নং সাতবাড়ীয়া কাঁচাবাজার থেকে আপনার অর্ডার (#${orderId}) গ্রহণ করা হয়েছে। সর্বমোট বিল: ৳${total}। ধন্যবাদ!`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         // PRODUCTS MANAGEMENT
@@ -468,7 +547,10 @@
                 document.getElementById('sPhone').value = s.shopPhone || '';
                 document.getElementById('sWhatsapp').value = s.shopWhatsApp || '';
                 document.getElementById('sFacebook').value = s.shopFacebook || '';
-                document.getElementById('sDelivery').value = s.deliveryCharge || 0;
+                document.getElementById('sDelivery').value = s.deliveryCharge !== undefined ? s.deliveryCharge : 20;
+                document.getElementById('sFreeDeliveryMin').value = s.freeDeliveryMin !== undefined ? s.freeDeliveryMin : 300;
+                document.getElementById('sNoticeText').value = s.noticeText || '';
+                document.getElementById('sNoticeActive').checked = s.isNoticeActive || false;
                 document.getElementById('sAddress').value = s.shopAddress || '';
             });
         }
@@ -481,10 +563,13 @@
                 shopWhatsApp: document.getElementById('sWhatsapp').value,
                 shopFacebook: document.getElementById('sFacebook').value,
                 deliveryCharge: Number(document.getElementById('sDelivery').value),
+                freeDeliveryMin: Number(document.getElementById('sFreeDeliveryMin').value),
+                noticeText: document.getElementById('sNoticeText').value,
+                isNoticeActive: document.getElementById('sNoticeActive').checked,
                 shopAddress: document.getElementById('sAddress').value
             };
             db.ref('settings').update(settings).then(() => {
-                alert('সেটিং সেভ করা হয়েছে!');
+                alert('সেটিং ও নোটিশ সফলভাবে সেভ করা হয়েছে!');
             });
         });
     </script>

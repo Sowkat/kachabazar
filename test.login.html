@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Firebase Login Test</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f1f5f9;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .box {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.12);
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 8px;
+      background: #16a34a;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+    }
+
+    #result {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      word-break: break-word;
+    }
+
+    .success {
+      display: block !important;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .error {
+      display: block !important;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h2>🔐 Firebase Login Test</h2>
+
+  <input
+    type="email"
+    id="email"
+    placeholder="Admin Email"
+    autocomplete="email"
+  >
+
+  <input
+    type="password"
+    id="password"
+    placeholder="Password"
+    autocomplete="current-password"
+  >
+
+  <button id="loginBtn">
+    Login Test
+  </button>
+
+  <div id="result"></div>
+
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+
+  // ==========================================
+  // FIREBASE CONFIG
+  // ==========================================
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDGZjvwv_ZmVbiVPgKtUAdMWWsBl3347xfA",
+    authDomain: "kachabazar-87e97.firebaseapp.com",
+    databaseURL: "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kachabazar-87e97",
+    storageBucket: "kachabazar-87e97.firebasestorage.app",
+    messagingSenderId: "1033389997118",
+    appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f",
+    measurementId: "G-63C54C7KH8"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+
+  const loginBtn = document.getElementById("loginBtn");
+  const result = document.getElementById("result");
+
+  function showResult(message, type) {
+    result.textContent = message;
+    result.className = type;
+  }
+
+  loginBtn.addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    result.className = "";
+    result.style.display = "none";
+
+    if (!email || !password) {
+      showResult("ইমেইল এবং পাসওয়ার্ড দিন।", "error");
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Login হচ্ছে...";
+
+    try {
+
+      const userCredential =
+        await auth.signInWithEmailAndPassword(email, password);
+
+      const user = userCredential.user;
+
+      showResult(
+        "✅ LOGIN SUCCESS!\n\nEmail: " + user.email +
+        "\nUID: " + user.uid,
+        "success"
+      );
+
+      console.log("Firebase Login Success:", user);
+
+    } catch (error) {
+
+      console.error("Firebase Login Error:", error);
+
+      showResult(
+        "❌ LOGIN FAILED\n\n" +
+        "Code: " + error.code +
+        "\nMessage: " + error.message,
+        "error"
+      );
+
+    } finally {
+
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Login Test";
+
+    }
+
+  });
+
+</script>
+
+</body>
+</html>

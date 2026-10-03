@@ -41,19 +41,27 @@
         <div class="ticker-text" id="tickerContent"></div>
     </div>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="container hero-inner">
-            <div class="hero-text">
-                <div class="hero-badge">
-                    <i class="fa-solid fa-leaf"></i> ১০০% তাজা ও খাটি কাঁচামাল
-                </div>
-                <h1>ঘরে বসেই পান তাজা কাঁচাবাজার</h1>
-                <p id="heroDescription">তাজা কাঁচামাল সহজেই অর্ডার করুন।</p>
-                <button class="hero-button" onclick="scrollToProducts()">
-                    <i class="fa-solid fa-store"></i> কেনাকাটা শুরু করুন
-                </button>
+    <!-- হিরো ব্যানার সেকশন -->
+<div class="hero-banner-area">
+    <div class="hero-text-content">
+        <span class="badge-tag">🌿 ১০০% তাজা ও খাটি কাঁচামাল</span>
+        <h1>ঘরে বসে পান তাজা কাঁচাবাজার</h1>
+        <p>তাজা কাঁচামাল সহজেই অর্ডার করুন।</p>
+        <a href="#productSection" class="hero-btn">কেনাকাটা শুরু করুন</a>
+    </div>
+
+    <!-- স্লাইডশো সেকশন (লাল দাগ দেওয়া জায়গায় দেখানোর জন্য) -->
+    <div class="hero-slider-container">
+        <div class="hero-slides" id="heroSlidesWrapper">
+            <div class="hero-slide active">
+                <img src="https://via.placeholder.com/300x250?text=Kachabazar" alt="Product">
             </div>
+        </div>
+        <!-- স্লাইড ডট বা ইন্ডিকেটর -->
+        <div class="slider-dots" id="sliderDots"></div>
+    </div>
+</div>
+
             <div class="hero-icon">
                 <i class="fa-solid fa-carrot"></i>
             </div>

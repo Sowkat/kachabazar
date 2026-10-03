@@ -164,7 +164,9 @@ a {
 
 /* =========================
    HERO
-========================= /* মূল ব্যানার সেকশন */
+========================= */
+
+/* মূল ব্যানার সেকশন */
 .hero-banner-area {
     display: flex;
     flex-direction: column; /* মোবাইলের জন্য নিচে নিচে দেখাবে */
@@ -183,6 +185,14 @@ a {
         flex-direction: row;
         justify-content: space-between;
     }
+    
+    .hero-text-content {
+        width: 55%; /* বড় স্ক্রিনে টেক্সটের জায়গা নির্দিষ্ট করে দেওয়া হলো */
+    }
+    
+    .hero-slider-container {
+        margin: 0; /* বড় স্ক্রিনে সেন্টারিং বাদ দিয়ে ডানে বসবে */
+    }
 }
 
 .hero-text-content {
@@ -200,6 +210,7 @@ a {
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     background: #fff;
     margin: 0 auto;
+    display: block; /* মোবাইল মোডে যেন নিশ্চিতভাবে শো করে */
 }
 
 .hero-slides {
@@ -252,6 +263,7 @@ a {
     width: 15px;
     border-radius: 3px;
 }
+
 
 
 

@@ -439,228 +439,106 @@ function applyProductFilter() {
 
 
 /* =========================================================
-   RENDER PRODUCTS (সহ প্রোডাক্ট কার্ডে পরিমানের লজিক)
+   RENDER PRODUCTS (স্লাইডার, পরিমাণ ও ইউনিট সিলেকশন সহ)
 ========================================================= */
 
-function changeCardQty(pId, amount) {
-    if (!cardQuantities[pId]) cardQuantities[pId] = 1;
+// + বা - বাটনে চাপ দিলে পরিমাণ পরিবর্তনের লজিক
+function changeQty(productId, amount) {
+    let qtyInput = document.getElementById(`qty-${productId}`);
+    if (!qtyInput) return;
 
-    let current = cardQuantities[pId] + amount;
-    if (current < 1) current = 1;
+    let currentQty = parseFloat(qtyInput.value) || 1;
+    
+    // গ্রাম সিলেক্ট করা থাকলে ১০০ গ্রাম করে বাড়বে/কমবে, কেজি বা পিস থাকলে ০.৫ করে
+    let unitSelect = document.getElementById(`unit-${productId}`);
+    let step = (unitSelect && unitSelect.value === 'gram') ? 100 : 0.5;
 
-    const product = allProducts[pId];
-    if (product) {
-        const stockKnown = product.stock !== null && product.stock !== undefined && product.stock !== "";
-        if (stockKnown && current > Number(product.stock)) {
-            current = Number(product.stock);
-            showToast("স্টকের বেশি নেওয়া যাবে না।", "error");
-        }
+    let newQty = currentQty + (amount * step);
+    if (newQty > 0) {
+        qtyInput.value = newQty;
     }
-
-    cardQuantities[pId] = current;
-    const qtyEl = document.getElementById(`card-qty-${pId}`);
-    if (qtyEl) qtyEl.innerText = formatNumber(current);
 }
 
 function renderProducts() {
-
-    const container =
-        document.getElementById("productList");
-
-    const noProducts =
-        document.getElementById("noProducts");
-
-    const ids =
-        Object.keys(filteredProducts);
-
-    document.getElementById("productCount").textContent =
-        ids.length + "টি পণ্য";
-
+    const container = document.getElementById("productList");
+    const noProducts = document.getElementById("noProducts");
+    const ids = Object.keys(filteredProducts);
+    
+    document.getElementById("productCount").textContent = ids.length + "টি পণ্য";
 
     if (!ids.length) {
-
         container.innerHTML = "";
-
         noProducts.classList.remove("hidden");
-
         return;
-
     }
 
     noProducts.classList.add("hidden");
 
     container.innerHTML = ids.map(function (id) {
-
-        const product =
-            filteredProducts[id];
-
-        const available =
-            product.available !== false;
-
-        const stockKnown =
-            product.stock !== null &&
-            product.stock !== undefined &&
-            product.stock !== "";
-
-        const stock =
-            stockKnown
-                ? Number(product.stock)
-                : null;
-
-        const soldOut =
-            !available ||
-            (stockKnown && stock <= 0);
-
-        const image =
-            product.productImage ||
-            product.image ||
-            "";
-
-        const safeName =
-            escapeHtml(product.name || "");
-
-        const price =
-            Number(product.price || 0);
-
-        const unit =
-            escapeHtml(product.unit || "কেজি");
-
-        const category =
-            escapeHtml(product.category || "অন্যান্য");
-
-        const description =
-            escapeHtml(product.description || "");
-
-        const currentQty = cardQuantities[id] || 1;
+        const product = filteredProducts[id];
+        const available = product.available !== false;
+        const stockKnown = product.stock !== null && product.stock !== undefined && product.stock !== "";
+        const stock = stockKnown ? Number(product.stock) : null;
+        const soldOut = !available || (stockKnown && stock <= 0);
+        
+        const image = product.productImage || product.image || "";
+        const safeName = escapeHtml(product.name || "");
+        const price = Number(product.price || 0);
+        const unit = escapeHtml(product.unit || "কেজি");
 
         return `
-
             <article class="product-card">
-
-                <div class="product-image-wrap">
-
-                    ${
-                        image
-                        ?
-                        `
-                        <img
-                            src="${escapeHtml(image)}"
-                            class="product-image"
-                            alt="${safeName}"
-                            loading="lazy"
-                            onerror="this.parentElement.innerHTML='<div class=&quot;product-image-placeholder&quot;><i class=&quot;fa-solid fa-image&quot;></i></div>'">
-                        `
-                        :
-                        `
-                        <div class="product-image-placeholder">
-                            <i class="fa-solid fa-image"></i>
-                        </div>
-                        `
+                <!-- প্রোডাক্টের ছবি (স্লাইডারের জন্য প্রস্তুত করা) -->
+                <div class="image-slider">
+                    ${image ? 
+                        `<img src="${escapeHtml(image)}" alt="${safeName}" style="width:100%; border-radius:8px; height:180px; object-fit:cover;">` : 
+                        `<div class="product-image-placeholder" style="height:180px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:8px;"><i class="fa-solid fa-image"></i></div>`
                     }
+                </div>
+                
+                <h3 style="margin: 10px 0 5px 0; font-size: 16px;">${safeName}</h3>
+                <p style="margin: 0 0 10px 0; color: #555; font-size: 14px;">দাম: ৳${formatNumber(price)} / ${unit}</p>
 
-                    <span class="product-availability ${soldOut ? "off" : ""}">
-                        ${soldOut ? "স্টক নেই" : "Available"}
-                    </span>
-
+                <!-- + / - এবং পরিমাণ নির্বাচন -->
+                <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 5px;">
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 5px 12px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff;">-</button>
+                    
+                    <input type="number" id="qty-${id}" class="qty-input" value="1" min="0.1" step="0.1" style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    
+                    <select id="unit-${id}" class="unit-select" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                        <option value="kg">কেজি</option>
+                        <option value="gram">গ্রাম</option>
+                        <option value="piece">পিস</option>
+                    </select>
+                    
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 5px 12px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff;">+</button>
                 </div>
 
-
-                <div class="product-card-content">
-
-                    <div class="product-category">
-                        ${category}
-                    </div>
-
-                    <div class="product-name">
-                        ${safeName}
-                    </div>
-
-                    <div class="product-description">
-                        ${description || "&nbsp;"}
-                    </div>
-
-                    <div class="product-bottom">
-
-                        <div class="product-price">
-                            ৳${formatNumber(price)}
-                            <span class="product-unit">
-                                / ${unit}
-                            </span>
-                        </div>
-
-                    </div>
-
-                    <!-- কার্ডে পরিমাণ পরিবর্তন (- 1 +) -->
-                    <div class="card-qty-control">
-                        <button type="button" class="card-qty-btn" onclick="changeCardQty('${id}', -1)" ${soldOut ? "disabled" : ""}>−</button>
-                        <span class="card-qty-val" id="card-qty-${id}">${formatNumber(currentQty)}</span>
-                        <button type="button" class="card-qty-btn" onclick="changeCardQty('${id}', 1)" ${soldOut ? "disabled" : ""}>+</button>
-                    </div>
-
-                    <button
-                        type="button"
-                        class="add-to-cart-btn"
-                        onclick="addToCart('${id}')"
-                        ${soldOut ? "disabled" : ""}>
-
-                        <i class="fa-solid fa-cart-plus"></i>
-                        ${soldOut ? "স্টক নেই" : "কার্টে দিন"}
-
-                    </button>
-
-
-                    ${
-                        stockKnown
-                        ?
-                        `
-                        <div class="stock-info ${
-                            stock <= 0
-                                ? "out-of-stock"
-                                : ""
-                        }">
-
-                            ${
-                                stock > 0
-                                ? "স্টক: " + formatNumber(stock) + " " + unit
-                                : "বর্তমানে স্টক নেই"
-                            }
-
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                </div>
-
+                <button
+                    type="button"
+                    class="add-to-cart-btn"
+                    onclick="addToCart('${id}')"
+                    ${soldOut ? "disabled" : ""}
+                    style="width: 100%; padding: 10px; border: none; background: ${soldOut ? '#ccc' : '#ff5722'}; color: #fff; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    <i class="fa-solid fa-cart-plus"></i>
+                    ${soldOut ? "স্টক নেই" : "কার্টে যোগ করুন"}
+                </button>
             </article>
-
         `;
-
     }).join("");
-
 }
-
 
 /* =========================================================
    CART
 ========================================================= */
 
 function saveCart() {
-
-    localStorage.setItem(
-        "kachabazar_cart",
-        JSON.stringify(cart)
-    );
-
+    localStorage.setItem("kachabazar_cart", JSON.stringify(cart));
 }
 
-
 function addToCart(id) {
-
-    const product =
-        allProducts[id];
-
+    const product = allProducts[id];
+    
     if (!product) {
         showToast("পণ্য পাওয়া যায়নি।", "error");
         return;
@@ -669,6 +547,41 @@ function addToCart(id) {
     if (product.available === false) {
         showToast("এই পণ্যটি বর্তমানে বন্ধ।", "error");
         return;
+    }
+
+    // ইনপুট ফিল্ড থেকে পরিমাণ এবং ইউনিট নেওয়া
+    const qtyInput = document.getElementById(`qty-${id}`);
+    const unitSelect = document.getElementById(`unit-${id}`);
+    
+    let qtyToAdd = qtyInput ? parseFloat(qtyInput.value) : 1;
+    let selectedUnit = unitSelect ? unitSelect.value : "kg";
+
+    // কাস্টমার গ্রাম সিলেক্ট করলে কার্টের হিসাবের সুবিধার জন্য কেজিতে রূপান্তর (যেমন ৫০০ গ্রাম = ০.৫ কেজি)
+    if (selectedUnit === "gram") {
+        qtyToAdd = qtyToAdd / 1000;
+    }
+
+    const stockKnown = product.stock !== null && product.stock !== undefined && product.stock !== "";
+    const stock = stockKnown ? Number(product.stock) : null;
+    const currentQty = Number(cart[id] || 0);
+
+    if (stockKnown && (currentQty + qtyToAdd) > stock) {
+        showToast("স্টকের বেশি নেওয়া যাবে না।", "error");
+        return;
+    }
+
+    // কার্টে নতুন পরিমাণ যোগ করা
+    cart[id] = currentQty + qtyToAdd;
+
+    // কার্টে যোগ হওয়ার পর ইনপুট আবার আগের অবস্থায় (১ কেজি) ফিরিয়ে নেওয়া
+    if(qtyInput) qtyInput.value = "1";
+    if(unitSelect) unitSelect.value = "kg";
+
+    saveCart();
+    updateCart();
+    showToast("কার্টে যোগ হয়েছে।", "success");
+}
+
     }
 
     const stockKnown =

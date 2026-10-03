@@ -810,68 +810,99 @@ function getCartSubtotal() {
 // ডেলিভারি চার্জের অটোমেটিক হিসাব (৳৩০০+ হলে ফ্রি, নয়তো ৳২০)
 function calculateDeliveryCharge(subtotal) {
     if (subtotal === 0) return 0;
-
     const minFree = Number(shopSettings.freeDeliveryMin || 300);
     const baseFee = Number(shopSettings.deliveryCharge || 20);
-
     return subtotal >= minFree ? 0 : baseFee;
 }
 
+// কার্টের সাবটোটাল হিসাব
+function getCartSubtotal() {
+    return getCartItems().reduce(function (sum, item) {
+        return sum + Number(item.product.price || 0) * item.quantity;
+    }, 0);
+}
 
+// কার্ট আপডেট করার মেইন ফাংশন (যেখানে প্রগ্রেস বার যোগ করা হয়েছে)
 function updateCart() {
+    const items = getCartItems();
+    
+    // আইটেম সংখ্যা হিসাব
+    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    const distinctCount = items.length;
 
-    const items =
-        getCartItems();
+    // কার্ট আইকন আপডেট
+    document.getElementById("cartCount").textContent = distinctCount;
+    document.getElementById("cartItemCount").textContent = itemCount + "টি পণ্য";
 
-    const itemCount =
-        items.reduce(
-            (sum, item) =>
-                sum + item.quantity,
-            0
-        );
+    const cartItems = document.getElementById("cartItems");
 
-    const distinctCount =
-        items.length;
-
-    document.getElementById("cartCount").textContent =
-        distinctCount;
-
-    document.getElementById("cartItemCount").textContent =
-        itemCount + "টি পণ্য";
-
-
-    const cartItems =
-        document.getElementById("cartItems");
-
+    // ১. কার্টে পণ্য দেখানো বা খালি কার্ট দেখানো
     if (!items.length) {
-
         cartItems.innerHTML = `
             <div class="empty-cart">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <p>কার্ট খালি</p>
             </div>
         `;
-
     } else {
+        cartItems.innerHTML = items.map(function (item) {
+            const product = item.product;
+            const image = product.productImage || product.image || "";
+            const total = Number(product.price || 0) * item.quantity;
 
-        cartItems.innerHTML =
-            items.map(function (item) {
+            // কার্ট আইটেমের ডিজাইন
+            return `
+                <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 10px 0;">
+                    <img src="${image}" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                    <div style="flex-grow: 1; margin-left: 10px;">
+                        <h4 style="margin: 0; font-size: 14px;">${product.name || "পণ্য"}</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #555;">৳${product.price} x ${item.quantity}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; font-weight: bold; color: #ff5722;">৳${total}</p>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
 
-                const product =
-                    item.product;
+    // ২. বিলের হিসাব করা
+    const subtotal = getCartSubtotal();
+    const deliveryCharge = calculateDeliveryCharge(subtotal);
+    const grandTotal = subtotal + deliveryCharge;
 
-                const image =
-                    product.productImage ||
-                    product.image ||
-                    "";
+    // ৩. ফ্রি ডেলিভারি প্রগ্রেস বার আপডেট লজিক
+    const freeDeliveryThreshold = Number(shopSettings.freeDeliveryMin || 300);
+    let progressText = document.getElementById("progress-text");
+    let progressBar = document.getElementById("progress-bar");
 
-                const total =
-                    Number(product.price || 0) *
-                    item.quantity;
+    if (progressText && progressBar) {
+        if (subtotal === 0) {
+            progressText.innerHTML = `৳${freeDeliveryThreshold} টাকার বাজার করলে <b>ফ্রি ডেলিভারি!</b>`;
+            progressBar.style.width = "0%";
+        } else if (subtotal >= freeDeliveryThreshold) {
+            progressText.innerHTML = "🎉 অভিনন্দন! আপনি <b>ফ্রি ডেলিভারি</b> পেয়েছেন!";
+            progressBar.style.width = "100%";
+            progressBar.style.backgroundColor = "#4CAF50"; // সবুজ রঙ
+        } else {
+            let needed = freeDeliveryThreshold - subtotal;
+            let percent = (subtotal / freeDeliveryThreshold) * 100;
+            progressText.innerHTML = `আর মাত্র <b>৳${needed}</b> টাকার বাজার করলে ফ্রি ডেলিভারি!`;
+            progressBar.style.width = `${percent}%`;
+            progressBar.style.backgroundColor = "#ff9800"; // কমলা রঙ
+        }
+    }
 
-                return `
+    // ৪. HTML-এ বিলের পরিমাণ আপডেট করা
+    let cartTotalEl = document.getElementById("cart-total");
+    let deliveryChargeEl = document.getElementById("delivery-charge");
+    let grandTotalEl = document.getElementById("grand-total");
 
-                    <div class="cart-item">
+    if(cartTotalEl) cartTotalEl.innerText = `৳${subtotal}`;
+    if(deliveryChargeEl) deliveryChargeEl.innerText = deliveryCharge === 0 ? "ফ্রি" : `৳${deliveryCharge}`;
+    if(grandTotalEl) grandTotalEl.innerText = `৳${grandTotal}`;
+}
+
 
                         ${
                             image

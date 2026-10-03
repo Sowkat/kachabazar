@@ -681,39 +681,59 @@ function closeCart() {
    CHECKOUT
 ========================================================= */
 
-function openCheckout(action = null) {
+function openCheckoutWithValidation(action) {
     const items = getCartItems();
     if (!items.length) {
         showToast("আগে কার্টে অন্তত একটি পণ্য যোগ করুন।", "error");
         return;
     }
 
-    directOrderAction = action;
-
+    // ফর্ম বা চেকআউট থেকে কাস্টমার বা দোকানদারের ফিল্ড চেক করা
+    const name = document.getElementById("customerName")?.value.trim() || "";
+    const phone = document.getElementById("customerPhone")?.value.trim() || "";
+    const address = document.getElementById("customerAddress")?.value.trim() || "";
+    const note = document.getElementById("special-note")?.value.trim() || "";
+    
     const subtotal = getCartSubtotal();
     const delivery = calculateDeliveryCharge(subtotal);
     const total = subtotal + delivery;
 
-    safeSetText("checkoutSubtotal", "৳" + formatNumber(subtotal));
-    safeSetText("checkoutDelivery", delivery === 0 ? "ফ্রি (Free)" : "৳" + formatNumber(delivery));
-    safeSetText("checkoutTotal", "৳" + formatNumber(total));
+    // যদি ইউজার নাম-ঠিকানা পূরণ না করেই ডাইরেক্ট হোয়াটসঅ্যাপ বাটন চাপেন, তবে চেকআউট ফর্ম ওপেন করে আগে নাম-ঠিকানা দিতে বলা ভালো
+    if (action === "whatsapp" && (!name || !phone || !address)) {
+        showToast("দয়া করে নাম, মোবাইল নম্বর এবং ঠিকানা পূরণ করুন।", "error");
+        openCheckout(action); // চেকআউট ফর্ম পপআপ ওপেন করবে
+        return;
+    }
 
-    const checkoutModal = document.getElementById("checkoutModal");
-    if (checkoutModal) checkoutModal.classList.add("show");
-    document.body.style.overflow = "hidden";
-}
+    let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\nঅর্ডার বিবরণ:\n\n";
+    items.forEach(function (item, index) {
+        message += (index + 1) + ". " + item.product.name + " × " + item.quantity + " " + (item.product.unit || "কেজি") + "\n";
+    });
+    
+    message += "\nপণ্যের মূল্য: ৳" + formatNumber(subtotal) + "\n";
+    message += "ডেলিভারি চার্জ: ৳" + formatNumber(delivery) + "\n";
+    message += "সর্বমোট: ৳" + formatNumber(total) + "\n\n";
+    
+    if (name) message += "নাম: " + name + "\n";
+    if (phone) message += "মোবাইল: " + phone + "\n";
+    if (address) message += "ঠিকানা: " + address + "\n";
+    if (note) message += "নোট: " + note + "\n";
 
-function closeCheckout() {
-    const checkoutModal = document.getElementById("checkoutModal");
-    const cartSidebar = document.getElementById("cartSidebar");
-
-    if (checkoutModal) checkoutModal.classList.remove("show");
-    directOrderAction = null;
-
-    if (cartSidebar && !cartSidebar.classList.contains("show")) {
-        document.body.style.overflow = "";
+    if (action === "whatsapp") {
+        let targetWhatsApp = shopSettings.shopWhatsApp || shopSettings.shopPhone || "8801960174982";
+        const whatsapp = cleanWhatsApp(targetWhatsApp);
+        const url = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
+        window.open(url, "_blank");
+    } else if (action === "sms") {
+        const phoneNo = cleanPhone(shopSettings.shopPhone || "8801960174982");
+        const url = "sms:" + phoneNo + "?body=" + encodeURIComponent(message);
+        window.location.href = url;
+    } else if (action === "call") {
+        const phoneNo = cleanPhone(shopSettings.shopPhone || "8801960174982");
+        window.location.href = "tel:" + phoneNo;
     }
 }
+
 
 /* =========================================================
    PLACE ORDER (FIXED)

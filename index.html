@@ -264,16 +264,24 @@
                     </label>
                 </div>
                 <div class="checkout-summary">
-                    <div><span>পণ্যের মূল্য:</span><span id="checkoutSubtotal">৳০</span></div>
-                    <div><span>ডেলিভারি চার্জ:</span><span id="checkoutDelivery">৳০</span></div>
-                    <div class="grand-total"><span>সর্বমোট:</span><strong id="checkoutTotal">৳০</strong></div>
-                </div>
-                <button type="submit" class="place-order-button" id="placeOrderButton">
-                    <i class="fa-solid fa-check"></i> অর্ডার নিশ্চিত করুন
-                </button>
-            </form>
-        </div>
+                    <div class="order-slip">
+    <div class="order-slip-title">
+        <i class="fa-solid fa-receipt"></i> মেমো / বিল
     </div>
+    <div class="order-slip-row">
+        <span>মোট মূল্য:</span>
+        <span id="checkoutSubtotal">৳০</span>
+    </div>
+    <div class="order-slip-row">
+        <span>ডেলিভারি চার্জ:</span>
+        <span id="checkoutDelivery">৳০</span>
+    </div>
+    <div class="order-slip-row total">
+        <span>সর্বমোট:</span>
+        <span id="checkoutTotal">৳০</span>
+    </div>
+</div>
+
 
     <!-- SUCCESS MODAL -->
 <div class="modal-overlay" id="successModal">

@@ -653,7 +653,7 @@ function updateCart() {
 }
 
 /* =========================================================
-   CART OPEN/CLOSE
+   CART & CHECKOUT OPEN/CLOSE (FIXED)
 ========================================================= */
 
 function openCart() {
@@ -677,8 +677,25 @@ function closeCart() {
     }
 }
 
+function openCheckout() {
+    closeCart(); // কার্ট বন্ধ করে চেকআউট ওপেন হবে
+    const checkoutModal = document.getElementById("checkoutModal");
+    if (checkoutModal) {
+        checkoutModal.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+}
+
+function closeCheckout() {
+    const checkoutModal = document.getElementById("checkoutModal");
+    if (checkoutModal) {
+        checkoutModal.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+}
+
 /* =========================================================
-   CHECKOUT
+   CHECKOUT WITH WHATSAPP VALIDATION (FIXED)
 ========================================================= */
 
 function openCheckoutWithValidation(action) {
@@ -688,22 +705,22 @@ function openCheckoutWithValidation(action) {
         return;
     }
 
-    // ফর্ম বা চেকআউট থেকে কাস্টমার বা দোকানদারের ফিল্ড চেক করা
+    // চেকআউট ফর্মের ইনপুট চেক করা হচ্ছে
     const name = document.getElementById("customerName")?.value.trim() || "";
     const phone = document.getElementById("customerPhone")?.value.trim() || "";
     const address = document.getElementById("customerAddress")?.value.trim() || "";
     const note = document.getElementById("special-note")?.value.trim() || "";
     
+    // যদি নাম, ফোন বা ঠিকানা ফাঁকা থাকে, তবে চেকআউট ফর্ম ওপেন করে পূরণ করতে বলবে
+    if (!name || !phone || !address) {
+        showToast("দয়া করে আপনার নাম, মোবাইল নম্বর এবং ঠিকানা পূরণ করুন।", "error");
+        openCheckout(); 
+        return;
+    }
+
     const subtotal = getCartSubtotal();
     const delivery = calculateDeliveryCharge(subtotal);
     const total = subtotal + delivery;
-
-    // যদি ইউজার নাম-ঠিকানা পূরণ না করেই ডাইরেক্ট হোয়াটসঅ্যাপ বাটন চাপেন, তবে চেকআউট ফর্ম ওপেন করে আগে নাম-ঠিকানা দিতে বলা ভালো
-    if (action === "whatsapp" && (!name || !phone || !address)) {
-        showToast("দয়া করে নাম, মোবাইল নম্বর এবং ঠিকানা পূরণ করুন।", "error");
-        openCheckout(action); // চেকআউট ফর্ম পপআপ ওপেন করবে
-        return;
-    }
 
     let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\nঅর্ডার বিবরণ:\n\n";
     items.forEach(function (item, index) {
@@ -714,9 +731,10 @@ function openCheckoutWithValidation(action) {
     message += "ডেলিভারি চার্জ: ৳" + formatNumber(delivery) + "\n";
     message += "সর্বমোট: ৳" + formatNumber(total) + "\n\n";
     
-    if (name) message += "নাম: " + name + "\n";
-    if (phone) message += "মোবাইল: " + phone + "\n";
-    if (address) message += "ঠিকানা: " + address + "\n";
+    message += "কাস্টমারের তথ্য:\n";
+    message += "নাম: " + name + "\n";
+    message += "মোবাইল: " + phone + "\n";
+    message += "ঠিকানা: " + address + "\n";
     if (note) message += "নোট: " + note + "\n";
 
     if (action === "whatsapp") {
@@ -736,7 +754,7 @@ function openCheckoutWithValidation(action) {
 
 
 /* =========================================================
-   PLACE ORDER (FIXED)
+   PLACE ORDER (FIREBASE)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -866,7 +884,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* =========================================================
-   ORDER ID & MESSAGE
+   ORDER ID & MESSAGE GENERATION
 ========================================================= */
 
 function generateOrderId() {
@@ -876,38 +894,6 @@ function generateOrderId() {
     const day = String(now.getDate()).padStart(2, "0");
     const random = Math.floor(1000 + Math.random() * 9000);
     return "SB-" + year + month + day + "-" + random;
-}
-
-function openCheckoutWithValidation(action) {
-    const items = getCartItems();
-    if (!items.length) {
-        showToast("আগে কার্টে অন্তত একটি পণ্য যোগ করুন।", "error");
-        return;
-    }
-
-    const subtotal = getCartSubtotal();
-    const delivery = calculateDeliveryCharge(subtotal);
-    const total = subtotal + delivery;
-
-    let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\nসরাসরি অর্ডার:\n\n";
-    items.forEach(function (item, index) {
-        message += (index + 1) + ". " + item.product.name + " × " + item.quantity + " " + (item.product.unit || "কেজি") + "\n";
-    });
-    message += "\nসর্বমোট: ৳" + formatNumber(total);
-
-    if (action === "whatsapp") {
-        let targetWhatsApp = shopSettings.shopWhatsApp || shopSettings.shopPhone || "8801960174982";
-        const whatsapp = cleanWhatsApp(targetWhatsApp);
-        const url = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
-        window.open(url, "_blank");
-    } else if (action === "sms") {
-        const phone = cleanPhone(shopSettings.shopPhone || "8801960174982");
-        const url = "sms:" + phone + "?body=" + encodeURIComponent(message);
-        window.location.href = url;
-    } else if (action === "call") {
-        const phone = cleanPhone(shopSettings.shopPhone || "8801960174982");
-        window.location.href = "tel:" + phone;
-    }
 }
 
 function closeSuccess() {

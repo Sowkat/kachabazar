@@ -437,5 +437,71 @@
     border-radius: 3px;
 }
 
+<script>
+    // স্লাইডশো এবং ফায়ারবেস থেকে প্রোডাক্ট এনে স্লাইড করানোর কোড এখানে বসবে
+    function setupProductSlider(productsData) {
+        const sliderWrapper = document.getElementById('heroSlidesWrapper');
+        const dotsWrapper = document.getElementById('sliderDots');
+        if (!sliderWrapper || !dotsWrapper) return;
+
+        let slideImages = [];
+        if (productsData) {
+            Object.values(productsData).forEach(p => {
+                let imgUrl = p.productImage || p.image;
+                if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
+                    slideImages.push(imgUrl);
+                }
+            });
+        }
+
+        if (slideImages.length === 0) {
+            slideImages = [
+                'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500',
+                'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=500'
+            ];
+        }
+
+        sliderWrapper.innerHTML = slideImages.map((img, index) => `
+            <div class="hero-slide ${index === 0 ? 'active' : ''}">
+                <img src="${img}" alt="Slide">
+            </div>
+        `).join('');
+
+        dotsWrapper.innerHTML = slideImages.map((_, index) => `
+            <div class="slider-dot ${index === 0 ? 'active' : ''}" onclick="currentSlide(${index})"></div>
+        `).join('');
+
+        startSlideInterval(slideImages.length);
+    }
+
+    let currentSlideIndex = 0;
+    let slideInterval;
+
+    function startSlideInterval(totalSlides) {
+        if (slideInterval) clearInterval(slideInterval);
+        slideInterval = setInterval(() => {
+            currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+            showSlide(currentSlideIndex);
+        }, 3000);
+    }
+
+    function showSlide(index) {
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        if(slides.length === 0) return;
+
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+
+        currentSlideIndex = index;
+        if(slides[currentSlideIndex]) slides[currentSlideIndex].classList.add('active');
+        if(dots[currentSlideIndex]) dots[currentSlideIndex].classList.add('active');
+    }
+
+    function currentSlide(index) {
+        showSlide(index);
+    }
+</script>
+
 </body>
 </html>

@@ -1,4 +1,337 @@
-    <script>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>১০ নং সাতবাড়ীয়া কাঁচাবাজার</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+                <div class="logo-text">
+                    <strong id="headerShopName">১০ নং সাতবাড়ীয়া কাঁচাবাজার</strong>
+                    <small id="deliveryInfo">ইউনিয়নের ভিতরে</small>
+                </div>
+            </div>
+            <button class="cart-button" onclick="openCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>কার্ট</span>
+                <b id="cartCount">0</b>
+            </button>
+        </div>
+    </header>
+
+    <!-- NOTICE TICKER -->
+    <div id="noticeTicker" class="ticker-wrap" style="display: none;">
+        <div class="ticker-text" id="tickerContent"></div>
+    </div>
+
+    <!-- HERO BANNER AREA -->
+    <section class="hero-banner-area">
+        <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; width: 100%;">
+            <div class="hero-text-content" style="flex: 1; min-width: 250px;">
+                <span class="badge-tag" style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 13px;">🌿 ১০০% তাজা ও খাঁটি কাঁচামাল</span>
+                <h1 style="font-size: 28px; margin: 10px 0;">ঘরে বসে পান তাজা কাঁচাবাজার</h1>
+                <p id="heroDescription">তাজা কাঁচামাল সহজেই অর্ডার করুন।</p>
+                <a href="#productsSection" class="hero-btn" style="display: inline-block; background: #fff; color: #15803d; padding: 8px 16px; border-radius: 6px; font-weight: bold; margin-top: 10px; text-decoration: none;">কেনাকাটা শুরু করুন</a>
+            </div>
+
+            <!-- স্লাইডশো কন্টেইনার -->
+            <div class="hero-slider-container" style="flex: 0 0 280px; margin-top: 15px;">
+                <div class="hero-slides" id="heroSlidesWrapper">
+                    <div class="hero-slide active">
+                        <img src="https://via.placeholder.com/300x250?text=Kachabazar" alt="Product">
+                    </div>
+                </div>
+                <!-- স্লাইড ডট ইন্ডিকেটর -->
+                <div class="slider-dots" id="sliderDots"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHOP INFO SECTION -->
+    <section class="shop-info-section" style="padding: 20px 0; background: #fff; border-bottom: 1px solid #e2e8f0;">
+        <div class="container shop-info-grid" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;">
+            <div class="shop-info-item" style="display: flex; align-items: center; gap: 10px;">
+                <div class="info-icon" style="color: #15803d; font-size: 20px;"><i class="fa-solid fa-location-dot"></i></div>
+                <div>
+                    <small style="color: #64748b; display: block;">ঠিকানা</small>
+                    <strong id="shopAddress">১০ নং সাতবাড়ীয়া ইউনিয়ন</strong>
+                </div>
+            </div>
+            <div class="shop-info-item" style="display: flex; align-items: center; gap: 10px;">
+                <div class="info-icon" style="color: #15803d; font-size: 20px;"><i class="fa-solid fa-phone"></i></div>
+                <div>
+                    <small style="color: #64748b; display: block;">হেল্পলাইন</small>
+                    <strong id="shopPhone">যোগাযোগ করুন</strong>
+                </div>
+            </div>
+            <div class="shop-info-item" style="display: flex; align-items: center; gap: 10px;">
+                <div class="info-icon" style="color: #15803d; font-size: 20px;"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                    <small style="color: #64748b; display: block;">ডেলিভারি</small>
+                    <strong id="shopDeliveryBadge">দ্রুত হোম ডেলিভারি</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section class="products-section" id="productsSection">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <span class="section-kicker">বাজার তালিকা</span>
+                    <h2>আমাদের সকল পণ্য</h2>
+                    <p>আপনার প্রয়োজনীয় পণ্যটি বেছে নিন</p>
+                </div>
+                <span class="product-count" id="productCount">০টি পণ্য</span>
+            </div>
+
+            <!-- Search Box -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="পণ্য খুঁজুন (যেমন: আলু, পেঁয়াজ, টমেটো)...">
+                <button type="button" onclick="clearSearch()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Categories -->
+            <div class="category-list" id="categoryList">
+                <button class="category-btn active" onclick="selectCategory('all')">সব</button>
+            </div>
+
+            <!-- Products Loading -->
+            <div class="products-loading" id="productsLoading">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>পণ্য লোড হচ্ছে...</span>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="product-grid" id="productList"></div>
+
+            <!-- No Products Found -->
+            <div class="no-products hidden" id="noProducts">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h3>কোনো পণ্য পাওয়া যায়নি</h3>
+                <p>অন্য কোনো নামে সার্চ বা ফিল্টার করার চেষ্টা করুন।</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORDER TRACKING SECTION -->
+    <section class="tracking-section">
+        <div class="container">
+            <div class="tracking-card">
+                <div class="tracking-icon">
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                </div>
+                <div class="tracking-content">
+                    <h2>অর্ডার ট্র্যাকিং</h2>
+                    <p>আপনার অর্ডার আইডি দিয়ে বর্তমান অবস্থা জানুন</p>
+                    <div class="tracking-form">
+                        <input type="text" id="trackingInput" placeholder="অর্ডার আইডি দিন (যেমন: SB-2026...)">
+                        <button type="button" onclick="trackOrder()">ট্র্যাক করুন</button>
+                    </div>
+                    <div class="tracking-result" id="trackingResult"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ALTERNATIVE ORDER SECTION -->
+    <section class="alternative-order-section">
+        <div class="container">
+            <div class="alternative-order">
+                <h3>সরাসরি যোগাযোগ করে অর্ডার করতে চান?</h3>
+                <p>নিচের বাটনগুলোতে ক্লিক করে মেসেজ বা কল দিয়ে সহজেই অর্ডার নিশ্চিত করুন</p>
+                <div class="direct-order-buttons">
+                    <button type="button" class="direct-order-btn whatsapp-btn" onclick="openCheckoutWithValidation('whatsapp')">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp অর্ডার
+                    </button>
+                    <button type="button" class="direct-order-btn sms-btn" onclick="openCheckoutWithValidation('sms')">
+                        <i class="fa-solid fa-comment-sms"></i> SMS অর্ডার
+                    </button>
+                    <button type="button" class="direct-order-btn call-btn" onclick="openCheckoutWithValidation('call')">
+                        <i class="fa-solid fa-phone"></i> সরাসরি কল করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLOATING CONTACT BUTTONS -->
+    <div class="floating-buttons">
+        <a href="#" id="floatingWhatsApp" class="floating-button whatsapp" target="_blank" style="display:none;">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="#" id="floatingCall" class="floating-button call" style="display:none;">
+            <i class="fa-solid fa-phone"></i>
+        </a>
+        <a href="#" id="floatingFacebook" class="floating-button facebook" target="_blank" style="display:none;">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+    </div>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <div>
+                <h2>আপনার কার্ট</h2>
+                <small id="cartItemCount">০টি পণ্য</small>
+            </div>
+            <button class="cart-close" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="cart-items" id="cartItems"></div>
+        
+        <div class="cart-footer">
+            <!-- ফ্রি ডেলিভারি প্রগ্রেস বার -->
+            <div id="delivery-progress-section" style="margin-bottom: 10px;">
+                <div class="progress-text" id="progress-text" style="font-size: 13px; margin-bottom: 5px;">৳৩০০ টাকার বাজার করলে ফ্রি ডেলিভারি!</div>
+                <div class="progress-container" style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div class="progress-bar" id="progress-bar" style="background: #15803d; width: 0%; height: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="cart-total-row">
+                <span>পণ্যের মোট দাম:</span>
+                <span id="cartSubtotal">৳০</span>
+            </div>
+            <div class="cart-total-row">
+                <span>ডেলিভারি চার্জ:</span>
+                <span id="cartDelivery">৳০</span>
+            </div>
+            <div class="cart-total-row total" style="font-weight: bold; font-size: 16px; margin-top: 5px; border-top: 1px solid #cbd5e1; padding-top: 5px;">
+                <span>সর্বমোট:</span>
+                <span id="cartTotal">৳০</span>
+            </div>
+            <button class="checkout-button" onclick="openCheckout()" style="width: 100%; margin-top: 10px; background: #15803d; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: bold;">
+                অর্ডার নিশ্চিত করতে এগিয়ে যান <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="checkout-modal" style="background: #fff; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; margin: 50px auto; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;">
+                <div>
+                    <h2>অর্ডার তথ্য পূরণ করুন</h2>
+                    <p style="font-size: 13px; color: #64748b;">আপনার ঠিকানা ও বিস্তারিত তথ্য দিয়ে অর্ডার সম্পূর্ণ করুন</p>
+                </div>
+                <button class="modal-close" onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="checkoutForm">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="customerName" style="display: block; margin-bottom: 5px; font-weight: 600;">আপনার নাম *</label>
+                    <input type="text" id="customerName" placeholder="আপনার নাম লিখুন" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="customerPhone" style="display: block; margin-bottom: 5px; font-weight: 600;">মোবাইল নম্বর *</label>
+                    <input type="tel" id="customerPhone" placeholder="01XXXXXXXXX" required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="customerAddress" style="display: block; margin-bottom: 5px; font-weight: 600;">ডেলিভারি ঠিকানা *</label>
+                    <textarea id="customerAddress" rows="2" placeholder="গ্রাম/পাড়া/বাড়ির নাম..." required style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+                </div>
+                <!-- স্পেশাল নোট -->
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="special-note" style="display: block; margin-bottom: 5px; font-weight: 600;">অর্ডারের বিশেষ নির্দেশনা (ঐচ্ছিক)</label>
+                    <textarea id="special-note" class="special-note-input" placeholder="যেমন: মাছ পরিষ্কার করে দেবেন, বা ছোট সাইজের পেঁয়াজ দেবেন" rows="2" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+                </div>
+                <div class="payment-box" style="margin-bottom: 12px;">
+                    <label style="display: block; margin-bottom: 5px;"><strong>পেমেন্ট পদ্ধতি:</strong></label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="Cash on Delivery" checked> ক্যাশ অন ডেলিভারি (পণ্য পেয়ে টাকা দিন)
+                    </label>
+                </div>
+                <div class="checkout-summary" style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                    <div class="order-slip-title" style="font-weight: bold; margin-bottom: 5px;">
+                        <i class="fa-solid fa-receipt"></i> মেমো / বিল
+                    </div>
+                    <div class="order-slip-row" style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span>মোট মূল্য:</span>
+                        <span id="checkoutSubtotal">৳০</span>
+                    </div>
+                    <div class="order-slip-row" style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span>ডেলিভারি চার্জ:</span>
+                        <span id="checkoutDelivery">৳০</span>
+                    </div>
+                    <div class="order-slip-row total" style="display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; border-top: 1px solid #cbd5e1; margin-top: 5px; padding-top: 5px;">
+                        <span>সর্বমোট:</span>
+                        <span id="checkoutTotal">৳০</span>
+                    </div>
+                </div>
+                <button type="submit" id="placeOrderButton" style="width: 100%; background: #15803d; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 15px;">
+                    <i class="fa-solid fa-check"></i> অর্ডার নিশ্চিত করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div class="modal-overlay" id="successModal">
+        <div class="success-modal" style="background: #fff; padding: 25px; border-radius: 10px; max-width: 400px; width: 90%; margin: 100px auto; text-align: center;">
+            <div class="success-icon" style="color: #15803d; font-size: 45px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i></div>
+            <h2>অর্ডার সফল হয়েছে!</h2>
+            <p style="margin: 10px 0 5px;">আপনার অর্ডার আইডি:</p>
+            <strong id="successOrderId" style="font-size: 18px; color: #15803d;">SB-0000</strong>
+            <p class="success-note" style="font-size: 13px; color: #64748b; margin: 10px 0;">আপনার অর্ডারটি এডমিন প্যানেলে জমা হয়েছে। নিশ্চিত করতে নিচের বাটনে ক্লিক করে WhatsApp-এ মেসেজ পাঠান:</p>
+            
+            <a id="successWhatsAppBtn" href="#" target="_blank" class="direct-order-btn whatsapp-btn" style="display:none; text-decoration:none; margin-bottom:12px; padding:10px 15px; font-size:15px; background: #25d366; color: #fff; border-radius: 6px; font-weight: bold; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp-এ বিবরণ পাঠান
+            </a><br>
+
+            <button class="success-button" onclick="closeSuccess()" style="background: #64748b; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="site-toast" id="siteToast"></div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer" style="background: #1e293b; color: #cbd5e1; padding: 30px 0 15px; margin-top: 40px;">
+        <div class="container footer-grid" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <h3 id="footerShopName" style="color: #fff; margin-bottom: 5px;">১০ নং সাতবাড়ীয়া কাঁচাবাজার</h3>
+                <p id="footerDescription" style="font-size: 13px;">তাজা কাঁচামাল সহজেই আপনার ঘরে।</p>
+            </div>
+            <div>
+                <h4 style="color: #fff; margin-bottom: 5px;">যোগাযোগ</h4>
+                <p style="font-size: 13px;"><i class="fa-solid fa-location-dot"></i> <span id="footerAddress">১০ নং সাতবাড়ীয়া ইউনিয়ন</span></p>
+                <p style="font-size: 13px;"><i class="fa-solid fa-phone"></i> <span id="footerPhone">-</span></p>
+            </div>
+            <div>
+                <h4 style="color: #fff; margin-bottom: 5px;">সোশ্যাল লিংক</h4>
+                <a href="#" id="footerFacebook" target="_blank" style="display:none; font-size: 13px; color: #93c5fd;"><i class="fa-brands fa-facebook"></i> ফেসবুক পেইজ</a><br>
+                <a href="#" id="footerWhatsApp" target="_blank" style="display:none; font-size: 13px; color: #86efac;"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপ</a>
+            </div>
+        </div>
+        <div class="copyright" style="text-align: center; border-top: 1px solid #334155; padding-top: 15px; font-size: 12px;">
+            &copy; <span id="currentYear"></span> <span id="copyrightName">১০ নং সাতবাড়ীয়া কাঁচাবাজার</span>। সর্বস্বত্ব সংরক্ষিত।
+        </div>
+    </footer>
+
+    <!-- Firebase compatibility SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- JavaScript Link -->
+    <script src="script.js"></script>
+
+        <script>
         // স্লাইডশো এবং ফায়ারবেস থেকে প্রোডাক্ট এনে স্লাইড করানোর ফাংশন
         function setupProductSlider(productsData) {
             const sliderWrapper = document.getElementById('heroSlidesWrapper');
@@ -63,3 +396,5 @@
             showSlide(index);
         }
     </script>
+</body>
+</html>

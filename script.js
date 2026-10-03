@@ -205,7 +205,7 @@ function loadProducts() {
         
         renderCategories();
         applyProductFilter();
-        setupProductSlider(allProducts); // এখানে স্লাইডশো কল করা হয়েছে
+        setupProductSlider(allProducts);
     }, function (error) {
         console.error(error);
         const loadingEl = document.getElementById("productsLoading");
@@ -219,7 +219,7 @@ function loadProducts() {
 }
 
 /* =========================================================
-   PRODUCT SLIDER (স্লাইডশো ফাংশন)
+   PRODUCT SLIDER
 ========================================================= */
 
 function setupProductSlider(productsData) {
@@ -259,14 +259,17 @@ function setupProductSlider(productsData) {
     startSlideInterval(slideImages.length);
 }
 
-let currentSlideIndex = 0;
-let slideInterval;
+if (typeof window.currentSlideIndex === 'undefined') {
+    window.currentSlideIndex = 0;
+}
+if (typeof window.slideInterval !== 'undefined') {
+    clearInterval(window.slideInterval);
+}
 
 function startSlideInterval(totalSlides) {
-    if (slideInterval) clearInterval(slideInterval);
-    slideInterval = setInterval(() => {
-        currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
-        showSlide(currentSlideIndex);
+    window.slideInterval = setInterval(() => {
+        window.currentSlideIndex = (window.currentSlideIndex + 1) % totalSlides;
+        showSlide(window.currentSlideIndex);
     }, 3000);
 }
 
@@ -278,9 +281,9 @@ function showSlide(index) {
     slides.forEach(s => s.classList.remove('active'));
     dots.forEach(d => d.classList.remove('active'));
 
-    currentSlideIndex = index;
-    if(slides[currentSlideIndex]) slides[currentSlideIndex].classList.add('active');
-    if(dots[currentSlideIndex]) dots[currentSlideIndex].classList.add('active');
+    window.currentSlideIndex = index;
+    if(slides[window.currentSlideIndex]) slides[window.currentSlideIndex].classList.add('active');
+    if(dots[window.currentSlideIndex]) dots[window.currentSlideIndex].classList.add('active');
 }
 
 function currentSlide(index) {

@@ -1416,3 +1416,78 @@ a {
         padding: 16px;
     }
 }
+/* --- Free Delivery Progress Bar CSS --- */
+#delivery-progress-section {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+}
+.progress-text {
+    font-size: 13px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 8px;
+}
+.progress-container {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background-color: #4CAF50;
+    width: 0%;
+    transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+/* --- Quantity Selector (Kg/Gram/Piece) CSS --- */
+.qty-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px 0;
+}
+.qty-btn {
+    background: #ff5722;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.qty-btn:active {
+    background: #e64a19;
+}
+.qty-input {
+    width: 60px;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.unit-select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+}
+
+/* --- Checkout Special Note --- */
+.special-note-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
+    resize: vertical;
+}

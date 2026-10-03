@@ -724,15 +724,33 @@ if (checkoutForm) {
     checkoutForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
+        // ব্রাউজারের নিজস্ব ইনপুট ভ্যালিডেশন চেক করা (যেমন: required ফিল্ডগুলো পূরণ আছে কিনা)
+        const nameInput = document.getElementById("customerName");
+        const phoneInput = document.getElementById("customerPhone");
+        const addressInput = document.getElementById("customerAddress");
+
+        if (nameInput && !nameInput.checkValidity()) {
+            nameInput.reportValidity();
+            return;
+        }
+        if (phoneInput && !phoneInput.checkValidity()) {
+            phoneInput.reportValidity();
+            return;
+        }
+        if (addressInput && !addressInput.checkValidity()) {
+            addressInput.reportValidity();
+            return;
+        }
+
         const items = getCartItems();
         if (!items.length) {
             showToast("কার্ট খালি।", "error");
             return;
         }
 
-        const name = document.getElementById("customerName")?.value.trim() || "";
-        const phone = document.getElementById("customerPhone")?.value.trim() || "";
-        const address = document.getElementById("customerAddress")?.value.trim() || "";
+        const name = nameInput?.value.trim() || "";
+        const phone = phoneInput?.value.trim() || "";
+        const address = addressInput?.value.trim() || "";
         const note = document.getElementById("customerNote")?.value.trim() || "";
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Cash on Delivery";
 

@@ -54,11 +54,10 @@ a {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(255,255,255,.96);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid #e5eee8;
-    box-shadow: 0 3px 18px rgba(0,0,0,.05);
+    background: #ffffff; /* হেডারের ব্যাকগ্রাউন্ড কালার (আপনার সাইটের ডিজাইন অনুযায়ী প্রয়োজনে পরিবর্তন করতে পারেন) */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* স্ক্রল করার সময় নিচে হালকা শ্যাডো দেখানোর জন্য */
 }
+
 
 .header-inner {
     min-height: 70px;

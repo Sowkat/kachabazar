@@ -716,7 +716,7 @@ function closeCheckout() {
 }
 
 /* =========================================================
-   PLACE ORDER (CLEAN & FIXED)
+   PLACE ORDER (FIXED)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -734,7 +734,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const name = document.getElementById("customerName")?.value.trim() || "";
             const phone = document.getElementById("customerPhone")?.value.trim() || "";
             const address = document.getElementById("customerAddress")?.value.trim() || "";
-            const note = document.getElementById("customerNote")?.value.trim() || "";
+            const note = document.getElementById("special-note")?.value.trim() || "";
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Cash on Delivery";
 
             if (!name) {
@@ -813,9 +813,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 closeCheckout();
                 closeCart();
 
+                // ডাইনামিক অর্ডার আইডি পপআপে সেট করা হলো
                 safeSetText("successOrderId", orderId);
                 const waBtn = document.getElementById("successWhatsAppBtn");
-                const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
+                
+                // হোয়াটসঅ্যাপ নম্বর নিশ্চিত করা
+                let targetWhatsApp = shopSettings.shopWhatsApp || shopSettings.shopPhone || "8801960174982";
+                const whatsapp = cleanWhatsApp(targetWhatsApp);
 
                 if (whatsapp && waBtn) {
                     waBtn.href = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
@@ -841,8 +845,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
-
 /* =========================================================
    ORDER ID & MESSAGE
 ========================================================= */
@@ -856,60 +858,34 @@ function generateOrderId() {
     return "SB-" + year + month + day + "-" + random;
 }
 
-function buildOrderMessage(orderId, order) {
-    let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\n";
-    message += "অর্ডার বিবরণ:\n\n";
-
-    order.items.forEach(function (item, index) {
-        message += (index + 1) + ". " + item.name + " × " + item.quantity + " " + item.unit + "\n";
-    });
-
-    message += "\n";
-    message += "পণ্যের মূল্য: ৳" + formatNumber(order.subtotal) + "\n";
-    message += "ডেলিভারি চার্জ: ৳" + formatNumber(order.deliveryCharge) + "\n";
-    message += "সর্বমোট: ৳" + formatNumber(order.total) + "\n\n";
-    message += "অর্ডার আইডি: " + orderId + "\n";
-    message += "নাম: " + order.customerName + "\n";
-    message += "মোবাইল: " + order.customerPhone + "\n";
-    message += "ঠিকানা: " + order.customerAddress + "\n";
-
-    if (order.customerNote) {
-        message += "অতিরিক্ত তথ্য: " + order.customerNote + "\n";
+function openCheckoutWithValidation(action) {
+    const items = getCartItems();
+    if (!items.length) {
+        showToast("আগে কার্টে অন্তত একটি পণ্য যোগ করুন।", "error");
+        return;
     }
-    message += "পেমেন্ট: " + order.paymentMethod;
 
-    return message;
-}
+    const subtotal = getCartSubtotal();
+    const delivery = calculateDeliveryCharge(subtotal);
+    const total = subtotal + delivery;
 
-function openDirectOrderAction(action, message) {
+    let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\nসরাসরি অর্ডার:\n\n";
+    items.forEach(function (item, index) {
+        message += (index + 1) + ". " + item.product.name + " × " + item.quantity + " " + (item.product.unit || "কেজি") + "\n";
+    });
+    message += "\nসর্বমোট: ৳" + formatNumber(total);
+
     if (action === "whatsapp") {
-        const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
-        if (!whatsapp) {
-            showToast("WhatsApp নম্বর সেট করা হয়নি।", "error");
-            return;
-        }
+        let targetWhatsApp = shopSettings.shopWhatsApp || shopSettings.shopPhone || "8801960174982";
+        const whatsapp = cleanWhatsApp(targetWhatsApp);
         const url = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
         window.open(url, "_blank");
-        return;
-    }
-
-    if (action === "sms") {
-        const phone = cleanPhone(shopSettings.shopPhone);
-        if (!phone) {
-            showToast("দোকানের ফোন নম্বর সেট করা হয়নি।", "error");
-            return;
-        }
+    } else if (action === "sms") {
+        const phone = cleanPhone(shopSettings.shopPhone || "8801960174982");
         const url = "sms:" + phone + "?body=" + encodeURIComponent(message);
         window.location.href = url;
-        return;
-    }
-
-    if (action === "call") {
-        const phone = cleanPhone(shopSettings.shopPhone);
-        if (!phone) {
-            showToast("দোকানের ফোন নম্বর সেট করা হয়নি।", "error");
-            return;
-        }
+    } else if (action === "call") {
+        const phone = cleanPhone(shopSettings.shopPhone || "8801960174982");
         window.location.href = "tel:" + phone;
     }
 }

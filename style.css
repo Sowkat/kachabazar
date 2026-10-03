@@ -51,12 +51,15 @@ a {
 ========================= */
 
 .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 1000;
-    background: #ffffff; /* হেডারের ব্যাকগ্রাউন্ড কালার (আপনার সাইটের ডিজাইন অনুযায়ী প্রয়োজনে পরিবর্তন করতে পারেন) */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* স্ক্রল করার সময় নিচে হালকা শ্যাডো দেখানোর জন্য */
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    background: #ffffff; /* আপনার হেডারের ব্যাকগ্রাউন্ড কালার */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
+
 
 
 .header-inner {
@@ -1597,4 +1600,8 @@ a {
     background: #fff;
     width: 15px;
     border-radius: 3px;
+}
+
+body {
+    padding-top: 70px; /* হেডারের উচ্চতা অনুযায়ী এটি কন্টেন্টকে নিচে নামিয়ে রাখবে */
 }

@@ -957,6 +957,31 @@ function showToast(message, type = "") {
         toast.classList.remove("show");
     }, 3000);
 }
+let editingProductId = null;
+
+function openEditProductModal(id) {
+    const product = allProducts[id];
+    if (!product) return;
+
+    editingProductId = id;
+
+    // ফর্মের ফিল্ডগুলোতে আগের ডাটা বসিয়ে দেওয়া
+    document.getElementById("productName").value = product.name || "";
+    document.getElementById("productCategory").value = product.category || "";
+    document.getElementById("productPrice").value = product.price || "";
+    document.getElementById("productUnit").value = product.unit || "কেজি";
+    document.getElementById("productStock").value = product.stock !== undefined ? product.stock : "";
+    document.getElementById("productImage").value = product.productImage || product.image || "";
+
+    // সাবমিট বাটন বা টেক্সট পরিবর্তন করা (যদি চান)
+    const submitBtn = document.getElementById("productSubmitBtn");
+    if (submitBtn) {
+        submitBtn.textContent = "পণ্য আপডেট করুন";
+    }
+    
+    // ফর্মের দিকে স্ক্রল করা
+    document.getElementById("productName").scrollIntoView({ behavior: "smooth" });
+}
 
 /* =========================================================
    ENTER KEY FOR TRACKING

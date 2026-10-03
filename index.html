@@ -167,18 +167,17 @@
                 <h3>সরাসরি যোগাযোগ করে অর্ডার করতে চান?</h3>
                 <p>নিচের বাটনগুলোতে ক্লিক করে মেসেজ বা কল দিয়ে সহজেই অর্ডার নিশ্চিত করুন</p>
                 <div class="direct-order-buttons">
-                    <button class="direct-order-btn whatsapp-btn" onclick="openCheckout('whatsapp')">
-                        <i class="fa-brands fa-whatsapp"></i> WhatsApp অর্ডার
-                    </button>
-                    <button class="direct-order-btn sms-btn" onclick="openCheckout('sms')">
-                        <i class="fa-solid fa-comment-sms"></i> SMS অর্ডার
-                    </button>
-                    <button class="direct-order-btn call-btn" onclick="openCheckout('call')">
-                        <i class="fa-solid fa-phone"></i> সরাসরি কল করুন
-                    </button>
-                </div>
-            </div>
-        </div>
+    <button type="button" class="direct-order-btn whatsapp-btn" onclick="openCheckoutWithValidation('whatsapp')">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp অর্ডার
+    </button>
+    <button type="button" class="direct-order-btn sms-btn" onclick="openCheckoutWithValidation('sms')">
+        <i class="fa-solid fa-comment-sms"></i> SMS অর্ডার
+    </button>
+    <button type="button" class="direct-order-btn call-btn" onclick="openCheckoutWithValidation('call')">
+        <i class="fa-solid fa-phone"></i> সরাসরি কল করুন
+    </button>
+</div>
+
     </section>
 
     <!-- FLOATING CONTACT BUTTONS -->

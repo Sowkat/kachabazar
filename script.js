@@ -716,7 +716,7 @@ function closeCheckout() {
 }
 
 /* =========================================================
-   PLACE ORDER
+   PLACE ORDER (FIXED)
 ========================================================= */
 
 const checkoutForm = document.getElementById("checkoutForm");
@@ -724,46 +724,36 @@ if (checkoutForm) {
     checkoutForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        // ব্রাউজারের নিজস্ব ইনপুট ভ্যালিডেশন চেক করা (যেমন: required ফিল্ডগুলো পূরণ আছে কিনা)
-        const nameInput = document.getElementById("customerName");
-        const phoneInput = document.getElementById("customerPhone");
-        const addressInput = document.getElementById("customerAddress");
-
-        if (nameInput && !nameInput.checkValidity()) {
-            nameInput.reportValidity();
-            return;
-        }
-        if (phoneInput && !phoneInput.checkValidity()) {
-            phoneInput.reportValidity();
-            return;
-        }
-        if (addressInput && !addressInput.checkValidity()) {
-            addressInput.reportValidity();
-            return;
-        }
-
         const items = getCartItems();
         if (!items.length) {
             showToast("কার্ট খালি।", "error");
             return;
         }
 
-        const name = nameInput?.value.trim() || "";
-        const phone = phoneInput?.value.trim() || "";
-        const address = addressInput?.value.trim() || "";
+        const nameInput = document.getElementById("customerName");
+        const phoneInput = document.getElementById("customerPhone");
+        const addressInput = document.getElementById("customerAddress");
+
+        const name = nameInput ? nameInput.value.trim() : "";
+        const phone = phoneInput ? phoneInput.value.trim() : "";
+        const address = addressInput ? addressInput.value.trim() : "";
         const note = document.getElementById("customerNote")?.value.trim() || "";
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Cash on Delivery";
 
+        // শক্তভাবে ফিল্ডগুলো চেক করা হচ্ছে
         if (!name) {
-            showToast("আপনার নাম দিন।", "error");
+            showToast("অনুগ্রহ করে আপনার নাম লিখুন।", "error");
+            if (nameInput) nameInput.focus();
             return;
         }
-        if (!/^01[3-9]\d{8}$/.test(phone)) {
-            showToast("সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।", "error");
+        if (!phone || !/^01[3-9]\d{8}$/.test(phone)) {
+            showToast("সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন: 017xxxxxxxx)।", "error");
+            if (phoneInput) phoneInput.focus();
             return;
         }
         if (!address) {
-            showToast("ডেলিভারি ঠিকানা দিন।", "error");
+            showToast("অনুগ্রহ করে ডেলিভারি ঠিকানা লিখুন।", "error");
+            if (addressInput) addressInput.focus();
             return;
         }
 
@@ -849,6 +839,7 @@ if (checkoutForm) {
         }
     });
 }
+
 
 /* =========================================================
    ORDER ID & MESSAGE

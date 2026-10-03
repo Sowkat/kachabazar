@@ -3,7 +3,6 @@
    CUSTOMER WEBSITE SCRIPT
 ========================================================= */
 
-
 /* =========================================================
    FIREBASE CONFIG
 ========================================================= */
@@ -19,13 +18,11 @@ const firebaseConfig = {
     measurementId: "G-63C54C7KH8"
 };
 
-
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
 const db = firebase.database();
-
 
 /* =========================================================
    GLOBAL VARIABLES
@@ -33,7 +30,6 @@ const db = firebase.database();
 
 let allProducts = {};
 let filteredProducts = {};
-
 let selectedCategory = "all";
 
 let cart = JSON.parse(
@@ -56,7 +52,6 @@ let shopSettings = {
 
 let directOrderAction = null;
 
-
 /* =========================================================
    INITIALIZE
 ========================================================= */
@@ -73,7 +68,6 @@ function initializeSite() {
     loadProducts();
     updateCart();
 }
-
 
 /* =========================================================
    SETTINGS
@@ -172,7 +166,6 @@ function applySettings() {
     }
 }
 
-
 /* =========================================================
    PRODUCTS
 ========================================================= */
@@ -191,7 +184,6 @@ function loadProducts() {
             `;
     });
 }
-
 
 /* =========================================================
    CATEGORIES
@@ -236,7 +228,6 @@ function selectCategory(category) {
     applyProductFilter();
 }
 
-
 /* =========================================================
    SEARCH
 ========================================================= */
@@ -275,7 +266,6 @@ function applyProductFilter() {
     renderProducts();
 }
 
-
 /* =========================================================
    RENDER PRODUCTS (স্লাইডার, পরিমাণ ও ইউনিট সিলেকশন সহ)
 ========================================================= */
@@ -295,7 +285,7 @@ function changeQty(productId, amount) {
     }
 }
 
-function renderProducts() function renderProducts() {
+function renderProducts() {
     const container = document.getElementById("productList");
     const noProducts = document.getElementById("noProducts");
     const ids = Object.keys(filteredProducts);
@@ -361,7 +351,6 @@ function renderProducts() function renderProducts() {
         `;
     }).join("");
 }
-
 
 /* =========================================================
    CART
@@ -557,7 +546,6 @@ function updateCart() {
     if (totalEl) totalEl.textContent = "৳" + formatNumber(grandTotal);
 }
 
-
 /* =========================================================
    CART OPEN/CLOSE
 ========================================================= */
@@ -576,7 +564,6 @@ function closeCart() {
         document.body.style.overflow = "";
     }
 }
-
 
 /* =========================================================
    CHECKOUT
@@ -611,7 +598,6 @@ function closeCheckout() {
         document.body.style.overflow = "";
     }
 }
-
 
 /* =========================================================
    PLACE ORDER
@@ -722,7 +708,6 @@ document.getElementById("checkoutForm").addEventListener("submit", async functio
     }
 });
 
-
 /* =========================================================
    ORDER ID
 ========================================================= */
@@ -735,7 +720,6 @@ function generateOrderId() {
     const random = Math.floor(1000 + Math.random() * 9000);
     return "SB-" + year + month + day + "-" + random;
 }
-
 
 /* =========================================================
    ORDER MESSAGE
@@ -765,7 +749,6 @@ function buildOrderMessage(orderId, order) {
 
     return message;
 }
-
 
 /* =========================================================
    DIRECT ORDER ACTION (WhatsApp API ছাড়া ফ্রি মেসেজিং)
@@ -804,7 +787,6 @@ function openDirectOrderAction(action, message) {
     }
 }
 
-
 /* =========================================================
    SUCCESS MODAL
 ========================================================= */
@@ -813,7 +795,6 @@ function closeSuccess() {
     document.getElementById("successModal").classList.remove("show");
     document.body.style.overflow = "";
 }
-
 
 /* =========================================================
    ORDER TRACKING
@@ -872,7 +853,6 @@ async function trackOrder() {
     }
 }
 
-
 /* =========================================================
    STATUS TEXT
 ========================================================= */
@@ -887,7 +867,6 @@ function getStatusText(status) {
     };
     return statuses[status] || "অর্ডার গ্রহণ করা হয়েছে";
 }
-
 
 /* =========================================================
    MODAL EVENTS
@@ -915,7 +894,6 @@ function setupModalEvents() {
     });
 }
 
-
 /* =========================================================
    SCROLL
 ========================================================= */
@@ -925,7 +903,6 @@ function scrollToProducts() {
         behavior: "smooth"
     });
 }
-
 
 /* =========================================================
    HELPERS
@@ -960,7 +937,6 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
-
 /* =========================================================
    TOAST
 ========================================================= */
@@ -981,7 +957,6 @@ function showToast(message, type = "") {
         toast.classList.remove("show");
     }, 3000);
 }
-
 
 /* =========================================================
    ENTER KEY FOR TRACKING

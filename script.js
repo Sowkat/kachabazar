@@ -716,129 +716,131 @@ function closeCheckout() {
 }
 
 /* =========================================================
-   PLACE ORDER (FIXED)
+   PLACE ORDER (CLEAN & FIXED)
 ========================================================= */
 
-const checkoutForm = document.getElementById("checkoutForm");
-if (checkoutForm) {
-    checkoutForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    const checkoutForm = document.getElementById("checkoutForm");
+    if (checkoutForm) {
+        checkoutForm.onsubmit = async function (event) {
+            event.preventDefault();
 
-        const items = getCartItems();
-        if (!items.length) {
-            showToast("কার্ট খালি।", "error");
-            return;
-        }
+            const items = getCartItems();
+            if (!items.length) {
+                showToast("কার্ট খালি। অনুগ্রহ করে পণ্য যোগ করুন।", "error");
+                return;
+            }
 
-        const nameInput = document.getElementById("customerName");
-        const phoneInput = document.getElementById("customerPhone");
-        const addressInput = document.getElementById("customerAddress");
+            const name = document.getElementById("customerName")?.value.trim() || "";
+            const phone = document.getElementById("customerPhone")?.value.trim() || "";
+            const address = document.getElementById("customerAddress")?.value.trim() || "";
+            const note = document.getElementById("customerNote")?.value.trim() || "";
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Cash on Delivery";
 
-        const name = nameInput ? nameInput.value.trim() : "";
-        const phone = phoneInput ? phoneInput.value.trim() : "";
-        const address = addressInput ? addressInput.value.trim() : "";
-        const note = document.getElementById("customerNote")?.value.trim() || "";
-        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || "Cash on Delivery";
+            if (!name) {
+                showToast("অনুগ্রহ করে আপনার নাম লিখুন।", "error");
+                return;
+            }
+            if (!phone || !/^01[3-9]\d{8}$/.test(phone)) {
+                showToast("সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।", "error");
+                return;
+            }
+            if (!address) {
+                showToast("অনুগ্রহ করে ডেলিভারি ঠিকানা লিখুন।", "error");
+                return;
+            }
 
-        // শক্তভাবে ফিল্ডগুলো চেক করা হচ্ছে
-        if (!name) {
-            showToast("অনুগ্রহ করে আপনার নাম লিখুন।", "error");
-            if (nameInput) nameInput.focus();
-            return;
-        }
-        if (!phone || !/^01[3-9]\d{8}$/.test(phone)) {
-            showToast("সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন: 017xxxxxxxx)।", "error");
-            if (phoneInput) phoneInput.focus();
-            return;
-        }
-        if (!address) {
-            showToast("অনুগ্রহ করে ডেলিভারি ঠিকানা লিখুন।", "error");
-            if (addressInput) addressInput.focus();
-            return;
-        }
+            const orderItems = items.map(function (item) {
+                return {
+                    productId: item.id,
+                    name: item.product.name || "",
+                    price: Number(item.product.price || 0),
+                    unit: item.product.unit || "কেজি",
+                    quantity: item.quantity
+                };
+            });
 
-        const orderItems = items.map(function (item) {
-            return {
-                productId: item.id,
-                name: item.product.name || "",
-                price: Number(item.product.price || 0),
-                unit: item.product.unit || "কেজি",
-                quantity: item.quantity
+            const subtotal = getCartSubtotal();
+            const delivery = calculateDeliveryCharge(subtotal);
+            const total = subtotal + delivery;
+            
+            const now = new Date();
+            const orderId = "SB-" + now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + "-" + Math.floor(1000 + Math.random() * 9000);
+
+            const orderData = {
+                orderId: orderId,
+                customerName: name,
+                customerPhone: phone,
+                customerAddress: address,
+                customerNote: note,
+                paymentMethod: paymentMethod,
+                items: orderItems,
+                subtotal: subtotal,
+                deliveryCharge: delivery,
+                total: total,
+                status: "pending",
+                createdAt: firebase.database.ServerValue.TIMESTAMP
             };
-        });
 
-        const subtotal = getCartSubtotal();
-        const delivery = calculateDeliveryCharge(subtotal);
-        const total = subtotal + delivery;
-        const orderId = generateOrderId();
-
-        const orderData = {
-            orderId: orderId,
-            customerName: name,
-            customerPhone: phone,
-            customerAddress: address,
-            customerNote: note,
-            paymentMethod: paymentMethod,
-            items: orderItems,
-            subtotal: subtotal,
-            deliveryCharge: delivery,
-            total: total,
-            status: "pending",
-            createdAt: firebase.database.ServerValue.TIMESTAMP
-        };
-
-        const button = document.getElementById("placeOrderButton");
-        if (button) {
-            button.disabled = true;
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> অর্ডার পাঠানো হচ্ছে...';
-        }
-
-        try {
-            await db.ref("orders/" + orderId).set(orderData);
-            const message = buildOrderMessage(orderId, orderData);
-
-            cart = {};
-            saveCart();
-            updateCart();
-            checkoutForm.reset();
-
-            closeCheckout();
-            closeCart();
-
-            safeSetText("successOrderId", orderId);
-            const waBtn = document.getElementById("successWhatsAppBtn");
-            const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
-
-            if (whatsapp && waBtn) {
-                const waUrl = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
-                waBtn.href = waUrl;
-                waBtn.style.display = "inline-flex";
-            } else if (waBtn) {
-                waBtn.style.display = "none";
-            }
-
-            const successModal = document.getElementById("successModal");
-            if (successModal) successModal.classList.add("show");
-            document.body.style.overflow = "hidden";
-
-            if (directOrderAction) {
-                setTimeout(function () {
-                    openDirectOrderAction(directOrderAction, message);
-                }, 500);
-            }
-            directOrderAction = null;
-
-        } catch (error) {
-            console.error(error);
-            showToast("অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।", "error");
-        } finally {
+            const button = document.getElementById("placeOrderButton");
             if (button) {
-                button.disabled = false;
-                button.innerHTML = '<i class="fa-solid fa-check"></i> অর্ডার নিশ্চিত করুন';
+                button.disabled = true;
+                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> অর্ডার পাঠানো হচ্ছে...';
             }
-        }
-    });
-}
+
+            try {
+                await db.ref("orders/" + orderId).set(orderData);
+                
+                let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\nঅর্ডার বিবরণ:\n\n";
+                orderData.items.forEach(function (item, index) {
+                    message += (index + 1) + ". " + item.name + " × " + item.quantity + " " + item.unit + "\n";
+                });
+                message += "\nপণ্যের মূল্য: ৳" + formatNumber(subtotal) + "\n";
+                message += "ডেলিভারি চার্জ: ৳" + formatNumber(delivery) + "\n";
+                message += "সর্বমোট: ৳" + formatNumber(total) + "\n\n";
+                message += "অর্ডার আইডি: " + orderId + "\n";
+                message += "নাম: " + name + "\n";
+                message += "মোবাইল: " + phone + "\n";
+                message += "ঠিকানা: " + address + "\n";
+                if (note) message += "নোট: " + note + "\n";
+                message += "পেমেন্ট: " + paymentMethod;
+
+                cart = {};
+                saveCart();
+                updateCart();
+                checkoutForm.reset();
+
+                closeCheckout();
+                closeCart();
+
+                safeSetText("successOrderId", orderId);
+                const waBtn = document.getElementById("successWhatsAppBtn");
+                const whatsapp = cleanWhatsApp(shopSettings.shopWhatsApp);
+
+                if (whatsapp && waBtn) {
+                    waBtn.href = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
+                    waBtn.style.display = "inline-flex";
+                } else if (waBtn) {
+                    waBtn.style.display = "none";
+                }
+
+                const successModal = document.getElementById("successModal");
+                if (successModal) successModal.classList.add("show");
+                document.body.style.overflow = "hidden";
+
+            } catch (error) {
+                console.error(error);
+                showToast("অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।", "error");
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fa-solid fa-check"></i> অর্ডার নিশ্চিত করুন';
+                }
+            }
+        };
+    }
+});
+
 
 
 /* =========================================================

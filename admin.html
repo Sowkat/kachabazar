@@ -105,6 +105,7 @@
             cursor: pointer;
             font-size: 12px;
             margin-right: 4px;
+            margin-bottom: 4px;
         }
         .btn-edit { background: #0284c7; color: #fff; }
         .btn-delete { background: #dc2626; color: #fff; }
@@ -217,7 +218,7 @@
         <!-- PRODUCTS TAB -->
         <div id="productsTab" class="tab-content" style="display:none;">
             <div class="admin-card">
-                <h3>নতুন পণ্য যোগ করুন</h3>
+                <h3 id="formTitle">নতুন পণ্য যোগ করুন</h3>
                 <form id="addProductForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
                     <div class="form-group">
                         <label>পণ্যের নাম *</label>
@@ -243,8 +244,9 @@
                         <label>ছবি লিংক (URL)</label>
                         <input type="url" id="pImage" placeholder="https://...">
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <button type="submit" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
+                    <div class="form-group" style="grid-column: 1 / -1; display: flex; gap: 10px;">
+                        <button type="submit" id="productSubmitBtn" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
+                        <button type="button" id="cancelEditBtn" onclick="cancelEdit()" style="display:none; padding: 10px 20px; background: #64748b; color: white; border: none; border-radius: 6px; cursor: pointer;">বাতিল</button>
                     </div>
                 </form>
             </div>
@@ -345,6 +347,10 @@
         let previousOrderCount = 0;
         let isFirstLoad = true;
 
+        // Global Products Cache for Edit
+        let allAdminProducts = {};
+        let editingProductId = null;
+
         // Firebase Auth Login
         document.getElementById('adminLoginForm').addEventListener('submit', function(e){
             e.preventDefault();
@@ -407,14 +413,13 @@
             return `${Math.floor(hours / 24)} দিন আগে`;
         }
 
-        // LOAD ORDERS (With Sound Alert & Time-Ago)
+        // LOAD ORDERS
         function loadAdminOrders(){
             db.ref('orders').on('value', snapshot => {
                 const data = snapshot.val() || {};
                 const tbody = document.getElementById('adminOrdersList');
                 const keys = Object.keys(data).reverse();
 
-                // Sound notification on new order
                 if(!isFirstLoad && keys.length > previousOrderCount) {
                     alertAudio.play().catch(e => console.log('Autoplay blocked'));
                 }
@@ -465,8 +470,6 @@
                         </tr>
                     `;
                 }).join('');
-            }, error => {
-                document.getElementById('adminOrdersList').innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">ডাটা পড়তে সমস্যা হচ্ছে: ' + error.message + '</td></tr>';
             });
         }
 
@@ -481,11 +484,10 @@
             window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // PRODUCTS MANAGEMENT
+        // PRODUCTS MANAGEMENT (Add & Update)
         document.getElementById('addProductForm').addEventListener('submit', function(e){
             e.preventDefault();
-            const newKey = db.ref('products').push().key;
-            const product = {
+            const productData = {
                 name: document.getElementById('pName').value,
                 category: document.getElementById('pCategory').value,
                 price: Number(document.getElementById('pPrice').value),
@@ -494,23 +496,38 @@
                 productImage: document.getElementById('pImage').value,
                 available: true
             };
-            db.ref('products/' + newKey).set(product).then(() => {
-                alert('পণ্য যোগ করা হয়েছে!');
-                document.getElementById('addProductForm').reset();
-            });
+
+            if(editingProductId) {
+                // Update existing product
+                db.ref('products/' + editingProductId).update(productData).then(() => {
+                    alert('পণ্য সফলভাবে আপডেট করা হয়েছে!');
+                    cancelEdit();
+                });
+            } else {
+                // Add new product
+                const newKey = db.ref('products').push().key;
+                db.ref('products/' + newKey).set(productData).then(() => {
+                    alert('নতুন পণ্য যুক্ত করা হয়েছে!');
+                    document.getElementById('addProductForm').reset();
+                });
+            }
         });
 
         function loadAdminProducts(){
             db.ref('products').on('value', snapshot => {
                 const data = snapshot.val() || {};
+                allAdminProducts = data; // Cache data globally
                 const tbody = document.getElementById('adminProductsList');
                 const keys = Object.keys(data);
+                
                 if(!keys.length){
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">কোনো পণ্য পাওয়া যায়নি।</td></tr>';
                     return;
                 }
+
                 tbody.innerHTML = keys.map(id => {
                     const p = data[id];
+                    const isAvailable = p.available !== false;
                     return `
                         <tr>
                             <td><img src="${p.productImage || 'https://via.placeholder.com/40'}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td>
@@ -518,11 +535,11 @@
                             <td>${p.category || ''}</td>
                             <td>৳${p.price || 0} / ${p.unit || ''}</td>
                             <td>${p.stock !== null && p.stock !== undefined ? p.stock : 'N/A'}</td>
-                            <td>${p.available !== false ? 'চালু' : 'বন্ধ'}</td>
+                            <td>${isAvailable ? 'চালু' : 'বন্ধ'}</td>
                             <td>
-                                <button class="action-btn btn-edit" onclick="toggleProduct('${id}', ${p.available === false})">${p.available === false ? 'চালু করুন' : 'বন্ধ করুন'}</button>
-          <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')" style="background: #4CAF50; color: #fff; margin-right: 5px;">এডিট</button>
-                      <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button>
+                                <button class="action-btn" style="background:${isAvailable ? '#f59e0b' : '#10b981'}; color:#fff;" onclick="toggleProduct('${id}', ${isAvailable})">${isAvailable ? 'বন্ধ করুন' : 'চালু করুন'}</button>
+                                <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')">এডিট</button>
+                                <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button>
                             </td>
                         </tr>
                     `;
@@ -530,8 +547,36 @@
             });
         }
 
+        function openEditProductModal(id) {
+            const p = allAdminProducts[id];
+            if(!p) return;
+
+            editingProductId = id;
+            document.getElementById('pName').value = p.name || '';
+            document.getElementById('pCategory').value = p.category || '';
+            document.getElementById('pPrice').value = p.price || '';
+            document.getElementById('pUnit').value = p.unit || 'কেজি';
+            document.getElementById('pStock').value = p.stock !== null && p.stock !== undefined ? p.stock : '';
+            document.getElementById('pImage').value = p.productImage || '';
+
+            document.getElementById('formTitle').innerText = 'পণ্য এডিট করুন';
+            document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট করুন';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+            // Scroll up to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingProductId = null;
+            document.getElementById('addProductForm').reset();
+            document.getElementById('formTitle').innerText = 'নতুন পণ্য যোগ করুন';
+            document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
         function toggleProduct(id, currentStatus){
-            db.ref('products/' + id).update({ available: currentStatus });
+            db.ref('products/' + id).update({ available: !currentStatus });
         }
 
         function deleteProduct(id){

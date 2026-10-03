@@ -295,7 +295,7 @@ function changeQty(productId, amount) {
     }
 }
 
-function renderProducts() {
+function renderProducts() function renderProducts() {
     const container = document.getElementById("productList");
     const noProducts = document.getElementById("noProducts");
     const ids = Object.keys(filteredProducts);
@@ -323,29 +323,29 @@ function renderProducts() {
         const unit = escapeHtml(product.unit || "কেজি");
 
         return `
-            <article class="product-card">
+            <article class="product-card" style="padding: 8px; border: 1px solid #eee; border-radius: 8px; background: #fff;">
                 <div class="image-slider">
                     ${image ? 
-                        `<img src="${escapeHtml(image)}" alt="${safeName}" style="width:100%; border-radius:8px; height:180px; object-fit:cover;">` : 
-                        `<div class="product-image-placeholder" style="height:180px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:8px;"><i class="fa-solid fa-image"></i></div>`
+                        `<img src="${escapeHtml(image)}" alt="${safeName}" style="width:100%; border-radius:6px; height:120px; object-fit:cover;">` : 
+                        `<div class="product-image-placeholder" style="height:120px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:6px;"><i class="fa-solid fa-image"></i></div>`
                     }
                 </div>
                 
-                <h3 style="margin: 10px 0 5px 0; font-size: 16px;">${safeName}</h3>
-                <p style="margin: 0 0 10px 0; color: #555; font-size: 14px;">দাম: ৳${formatNumber(price)} / ${unit}</p>
+                <h3 style="margin: 6px 0 2px 0; font-size: 14px; font-weight: bold; line-height: 1.2;">${safeName}</h3>
+                <p style="margin: 0 0 6px 0; color: #555; font-size: 12px;">দাম: ৳${formatNumber(price)} / ${unit}</p>
 
-                <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 5px;">
-                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 5px 12px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff;">-</button>
+                <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 3px;">
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 3px 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: 13px;">-</button>
                     
-                    <input type="number" id="qty-${id}" class="qty-input" value="1" min="0.1" step="0.1" style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="number" id="qty-${id}" class="qty-input" value="1" min="0.1" step="0.1" style="width: 40px; text-align: center; padding: 3px 2px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;">
                     
-                    <select id="unit-${id}" class="unit-select" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <select id="unit-${id}" class="unit-select" style="padding: 3px 2px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px;">
                         <option value="kg">কেজি</option>
                         <option value="gram">গ্রাম</option>
                         <option value="piece">পিস</option>
                     </select>
                     
-                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 5px 12px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff;">+</button>
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 3px 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: 13px;">+</button>
                 </div>
 
                 <button
@@ -353,7 +353,7 @@ function renderProducts() {
                     class="add-to-cart-btn"
                     onclick="addToCart('${id}')"
                     ${soldOut ? "disabled" : ""}
-                    style="width: 100%; padding: 10px; border: none; background: ${soldOut ? '#ccc' : '#ff5722'}; color: #fff; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    style="width: 100%; padding: 7px; border: none; background: ${soldOut ? '#ccc' : '#ff5722'}; color: #fff; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px;">
                     <i class="fa-solid fa-cart-plus"></i>
                     ${soldOut ? "স্টক নেই" : "কার্টে যোগ করুন"}
                 </button>
@@ -361,6 +361,7 @@ function renderProducts() {
         `;
     }).join("");
 }
+
 
 /* =========================================================
    CART

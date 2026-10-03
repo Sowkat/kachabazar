@@ -652,7 +652,7 @@ function updateCart() {
     safeSetText("checkoutDelivery", deliveryCharge === 0 && subtotal > 0 ? "ফ্রি" : "৳" + formatNumber(deliveryCharge));
     safeSetText("checkoutTotal", "৳" + formatNumber(grandTotal));
 
-
+}
 /* =========================================================
    CART & CHECKOUT OPEN/CLOSE (FIXED)
 ========================================================= */

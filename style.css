@@ -50,15 +50,28 @@ a {
    HEADER
 ========================= */
 
+/* হেডারকে একদম ফিক্সড ও পারফেক্ট করার জন্য */
 .site-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 9999;
-    background: #ffffff; /* আপনার হেডারের ব্যাকগ্রাউন্ড কালার */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* মোবাইল ও ডেক্সটপে হেডার ফিক্সড থাকার কারণে কন্টেন্ট যেন উপরে চলে না যায় */
+body {
+    padding-top: 65px; /* মোবাইল স্ক্রিনের জন্য হেডারের সঠিক উচ্চতা */
+}
+
+@media (min-width: 768px) {
+    body {
+        padding-top: 75px; /* বড় স্ক্রিনের জন্য */
+    }
+}
+
 
 
 

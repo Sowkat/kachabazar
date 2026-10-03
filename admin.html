@@ -521,7 +521,8 @@
                             <td>${p.available !== false ? 'চালু' : 'বন্ধ'}</td>
                             <td>
                                 <button class="action-btn btn-edit" onclick="toggleProduct('${id}', ${p.available === false})">${p.available === false ? 'চালু করুন' : 'বন্ধ করুন'}</button>
-                                <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button>
+          <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')" style="background: #4CAF50; color: #fff; margin-right: 5px;">এডিট</button>
+                      <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button>
                             </td>
                         </tr>
                     `;

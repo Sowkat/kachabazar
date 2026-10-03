@@ -1491,3 +1491,54 @@ a {
     font-family: inherit;
     resize: vertical;
 }
+
+/* প্রফেশনাল অর্ডার স্লিপ ডিজাইন */
+.order-slip {
+    background: #fdfbf7; /* হালকা মেমোর মতো রঙ */
+    border: 1px dashed #999; /* ড্যাশ বর্ডার */
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    color: #333;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+/* মেমোর উপরের খাঁজকাটা ডিজাইন (ঐচ্ছিক) */
+.order-slip::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background-size: 12px 100%;
+    background-image: radial-gradient(circle at 6px 0, transparent 6px, #fdfbf7 7px);
+}
+
+.order-slip-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    color: #4CAF50;
+}
+
+.order-slip-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.order-slip-row.total {
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #ff5722;
+}

@@ -643,14 +643,15 @@ function updateCart() {
         }
     }
 
-    safeSetText("cart-total", `৳${formatNumber(subtotal)}`);
-    safeSetText("delivery-charge", deliveryCharge === 0 ? "ফ্রি" : `৳${formatNumber(deliveryCharge)}`);
-    safeSetText("grand-total", `৳${formatNumber(grandTotal)}`);
-
-    safeSetText("cartSubtotal", "৳" + formatNumber(subtotal));
+        safeSetText("cartSubtotal", "৳" + formatNumber(subtotal));
     safeSetText("cartDelivery", deliveryCharge === 0 && subtotal > 0 ? "ফ্রি (Free)" : "৳" + formatNumber(deliveryCharge));
     safeSetText("cartTotal", "৳" + formatNumber(grandTotal));
-}
+
+    // এই তিনটি লাইন চেকআউট পপআপের মেমোর জন্য যুক্ত করতে হবে:
+    safeSetText("checkoutSubtotal", "৳" + formatNumber(subtotal));
+    safeSetText("checkoutDelivery", deliveryCharge === 0 && subtotal > 0 ? "ফ্রি" : "৳" + formatNumber(deliveryCharge));
+    safeSetText("checkoutTotal", "৳" + formatNumber(grandTotal));
+
 
 /* =========================================================
    CART & CHECKOUT OPEN/CLOSE (FIXED)

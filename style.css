@@ -1542,3 +1542,86 @@ a {
     font-size: 18px;
     color: #ff5722;
 }
+
+/* ব্যানার লেআউট */
+.hero-banner-area {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    background: #15803d; /* আপনার ওয়েবসাইটের সবুজ রঙ */
+    color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 10px;
+    gap: 15px;
+}
+
+.hero-text-content {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* স্লাইডশো বক্সের সাইজ (লাল দাগ দেওয়া জায়গার জন্য) */
+.hero-slider-container {
+    flex: 1;
+    min-width: 150px;
+    max-width: 220px; /* আপনার প্রয়োজনমতো বাড়াতে বা কমাতে পারেন */
+    height: 180px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    background: #fff;
+}
+
+.hero-slides {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ডট স্টাইল */
+.slider-dots {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    z-index: 2;
+}
+
+.slider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    cursor: pointer;
+}
+
+.slider-dot.active {
+    background: #fff;
+    width: 15px;
+    border-radius: 3px;
+}

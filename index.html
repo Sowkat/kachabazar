@@ -156,6 +156,11 @@
             <div class="alternative-order">
                 <h3>সরাসরি যোগাযোগ করে অর্ডার করতে চান?</h3>
                 <p>নিচের বাটনগুলোতে ক্লিক করে মেসেজ বা কল দিয়ে সহজেই অর্ডার নিশ্চিত করুন</p>
+    <!-- নতুন অর্ডার নাও বাটন -->
+    <button type="button" class="direct-order-btn" onclick="if(Object.keys(cart).length === 0) { showToast('আগে কার্টে অন্তত একটি পণ্য যোগ করুন।', 'error'); } else { openCheckout(); }" style="background: #ea580c; color: white;">
+        <i class="fa-solid fa-bag-shopping"></i> সরাসরি অর্ডার নাও
+    </button>
+
                 <div class="direct-order-buttons">
                     <button type="button" class="direct-order-btn whatsapp-btn" onclick="openCheckoutWithValidation('whatsapp')">
                         <i class="fa-brands fa-whatsapp"></i> WhatsApp অর্ডার

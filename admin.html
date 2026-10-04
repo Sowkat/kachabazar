@@ -142,7 +142,83 @@
         .checkbox-group input {
             width: auto;
         }
-    </style>
+   /* Product Search */
+.product-search-box {
+    display: grid;
+    grid-template-columns: 1fr 180px 160px auto;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.search-input-wrap {
+    position: relative;
+}
+
+.search-input-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.search-input-wrap input {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+.search-input-wrap input:focus,
+.product-search-box select:focus {
+    border-color: #15803d;
+    box-shadow: 0 0 0 2px rgba(21,128,61,0.1);
+}
+
+.product-search-box select {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    outline: none;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+.clear-search-btn {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #64748b;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: 600;
+}
+
+.clear-search-btn:hover {
+    background: #475569;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .product-search-box {
+        grid-template-columns: 1fr;
+    }
+
+    .product-search-box select,
+    .clear-search-btn {
+        width: 100%;
+    }
+}
+ </style>
+
 </head>
 <body>
 

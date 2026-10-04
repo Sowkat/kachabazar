@@ -253,7 +253,35 @@
 
             <div class="admin-card">
                 <h3>সকল পণ্যের তালিকা</h3>
-                <div class="admin-table-wrap">
+  <!-- PRODUCT SEARCH & FILTER -->
+<div class="product-search-box">
+    <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+            type="text"
+            id="productSearch"
+            placeholder="পণ্যের নাম বা ক্যাটাগরি লিখে খুঁজুন..."
+            oninput="searchAdminProducts()"
+        >
+    </div>
+
+    <select id="productCategoryFilter" onchange="searchAdminProducts()">
+        <option value="">সব ক্যাটাগরি</option>
+    </select>
+
+    <select id="productStockFilter" onchange="searchAdminProducts()">
+        <option value="">সব পণ্য</option>
+        <option value="available">চালু পণ্য</option>
+        <option value="unavailable">বন্ধ পণ্য</option>
+    </select>
+
+    <button type="button" onclick="clearProductSearch()" class="clear-search-btn">
+        <i class="fa-solid fa-rotate-left"></i> রিসেট
+    </button>
+</div>
+
+<div id="productSearchCount" style="margin:10px 0; color:#64748b; font-size:14px;"></div>             
+ <div class="admin-table-wrap">
                     <table class="admin-table">
                         <thead>
                             <tr>

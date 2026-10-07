@@ -1688,7 +1688,6 @@ body {
 .cart-total-row {
     font-size: 13px !important;
 }
-
 /* কার্ট স্লাইড ওপেন হলে হেডারসহ পুরো স্ক্রিন ঢেকে ফেলার ফিক্স */
 .cart-overlay {
     position: fixed !important;
@@ -1707,4 +1706,9 @@ body {
     height: 100vh !important;
     z-index: 99999 !important; /* সবার উপরে থাকবে */
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2) !important;
+}
+/* কার্ট সাইডবারের চওড়া (Width) ছোট করার সিএসএস */
+.cart-sidebar {
+    width: 85% !important; /* মোবাইলে স্ক্রিনের ৮৫% জায়গা নেবে */
+    max-width: 320px !important; /* সর্বোচ্চ ৩২০ পিক্সেল চওড়া হবে */
 }

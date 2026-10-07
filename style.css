@@ -1653,3 +1653,38 @@ body {
     margin: 0 !important;
     font-size: 18px;
 }
+
+/* কার্ট সাইডবার ও অর্ডার বাটন ফিক্স */
+.cart-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+/* প্রোডাক্টের লিস্ট স্ক্রোল হবে */
+.cart-items {
+    flex: 1 !important;
+    overflow-y: auto !important;
+}
+
+/* নিচের টোটাল বিল ও অর্ডার বাটন ফিক্স */
+.cart-footer {
+    padding: 10px 15px 30px 15px !important; /* নিচে ৩০px জায়গা রাখা হয়েছে যাতে বাটন কেটে না যায় */
+    background: #fff !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+.cart-footer .checkout-button {
+    padding: 10px !important;
+    font-size: 14px !important;
+    margin-top: 8px !important;
+}
+
+#delivery-progress-section {
+    margin-bottom: 6px !important;
+}
+
+.cart-total-row {
+    font-size: 13px !important;
+}

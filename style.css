@@ -1618,3 +1618,38 @@ body {
 body {
     padding-top: 70px; /* হেডারের উচ্চতা অনুযায়ী এটি কন্টেন্টকে নিচে নামিয়ে রাখবে */
 }
+/* কার্ট পপ-আপের বাটনগুলোর জন্য ফিক্স */
+.direct-order-buttons {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 8px !important;
+    margin-top: 15px !important;
+    padding-bottom: 20px !important; /* নিচের দিকে স্ক্রিনে যাতে লেগে না যায় */
+}
+
+/* প্রথম বাটনটি (সরাসরি অর্ডার) পুরো লাইন জুড়ে থাকবে */
+.direct-order-buttons button:first-child {
+    grid-column: 1 / -1 !important;
+    padding: 12px !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+}
+
+/* নিচের ৩টি বাটন (WhatsApp, SMS, Call) পাশাপাশি ৩ ভাগে থাকবে */
+.direct-order-btn:not(:first-child) {
+    padding: 8px 5px !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* আইকনের সাইজ ঠিক করা */
+.direct-order-btn:not(:first-child) i {
+    margin: 0 !important;
+    font-size: 18px;
+}

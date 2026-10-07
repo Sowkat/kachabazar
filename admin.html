@@ -3,39 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>এডমিন প্যানেল - ১০ নং সাতবাড়ীয়া কাঁচাবাজার</title>
-
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Main CSS -->
+    <!-- CSS Link -->
     <link rel="stylesheet" href="style.css">
-
     <style>
         body {
             background-color: #f1f5f9;
             font-family: 'Hind Siliguri', sans-serif;
         }
-
         .admin-header {
             background: #064e3b;
             color: #fff;
             padding: 15px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-
         .admin-header .header-inner {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
         .admin-nav {
             display: flex;
             gap: 10px;
@@ -44,7 +36,6 @@
             padding-bottom: 10px;
             overflow-x: auto;
         }
-
         .admin-nav-btn {
             background: #fff;
             border: 1px solid #cbd5e1;
@@ -56,14 +47,11 @@
             transition: 0.2s;
             white-space: nowrap;
         }
-
-        .admin-nav-btn.active,
-        .admin-nav-btn:hover {
+        .admin-nav-btn.active, .admin-nav-btn:hover {
             background: #15803d;
             color: #fff;
             border-color: #15803d;
         }
-
         .admin-card {
             background: #fff;
             border-radius: 12px;
@@ -71,63 +59,36 @@
             margin-top: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
         .admin-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
-
-        .admin-table th,
-        .admin-table td {
+        .admin-table th, .admin-table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #e2e8f0;
             font-size: 14px;
         }
-
         .admin-table th {
             background: #f8fafc;
             color: #475569;
             font-weight: 700;
         }
-
         .admin-table-wrap {
             overflow-x: auto;
         }
-
         .badge {
             padding: 4px 8px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: 600;
         }
-
-        .badge-pending {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .badge-confirmed {
-            background: #e0e7ff;
-            color: #4338ca;
-        }
-
-        .badge-processing {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .badge-delivered {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .badge-cancelled {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-confirmed { background: #e0e7ff; color: #4338ca; }
+        .badge-processing { background: #e0f2fe; color: #0369a1; }
+        .badge-delivered { background: #dcfce7; color: #15803d; }
+        .badge-cancelled { background: #fee2e2; color: #b91c1c; }
         .time-badge {
             display: inline-block;
             background: #e2e8f0;
@@ -137,7 +98,6 @@
             border-radius: 4px;
             margin-top: 3px;
         }
-
         .action-btn {
             padding: 5px 10px;
             border: none;
@@ -145,25 +105,10 @@
             cursor: pointer;
             font-size: 12px;
             margin-right: 4px;
-            margin-bottom: 4px;
         }
-
-        .btn-edit {
-            background: #0284c7;
-            color: #fff;
-        }
-
-        .btn-delete {
-            background: #dc2626;
-            color: #fff;
-        }
-
-        .btn-wa {
-            background: #25d366;
-            color: #fff;
-            font-weight: bold;
-        }
-
+        .btn-edit { background: #0284c7; color: #fff; }
+        .btn-delete { background: #dc2626; color: #fff; }
+        .btn-wa { background: #25d366; color: #fff; font-weight: bold; }
         .login-card {
             max-width: 400px;
             margin: 80px auto;
@@ -172,20 +117,15 @@
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-
         .form-group {
             margin-bottom: 15px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
         }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #cbd5e1;
@@ -193,499 +133,73 @@
             outline: none;
             box-sizing: border-box;
         }
-
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .checkbox-group input {
             width: auto;
         }
-
-        /* =========================================
-           PRODUCT SEARCH & FILTER
-        ========================================= */
-
-        .product-search-box {
-            display: grid;
-            grid-template-columns: 1fr 180px 160px auto;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-        }
-
-        .search-input-wrap {
-            position: relative;
-        }
-
-        .search-input-wrap i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-        }
-
-        .search-input-wrap input {
-            width: 100%;
-            padding: 10px 12px 10px 38px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            box-sizing: border-box;
-            font-family: 'Hind Siliguri', sans-serif;
-        }
-
-        .search-input-wrap input:focus,
-        .product-search-box select:focus {
-            border-color: #15803d;
-            box-shadow: 0 0 0 2px rgba(21,128,61,0.1);
-        }
-
-        .product-search-box select {
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: #fff;
-            outline: none;
-            font-family: 'Hind Siliguri', sans-serif;
-        }
-
-        .clear-search-btn {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 8px;
-            background: #64748b;
-            color: #fff;
-            cursor: pointer;
-            font-family: 'Hind Siliguri', sans-serif;
-            font-weight: 600;
-        }
-
-        .clear-search-btn:hover {
-            background: #475569;
-        }
-
-        .product-count-box {
-            margin: 10px 0;
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-
-            .product-search-box {
-                grid-template-columns: 1fr;
-            }
-
-            .product-search-box select,
-            .clear-search-btn {
-                width: 100%;
-            }
-
-            .admin-card {
-                padding: 15px;
-            }
-
-            .admin-table th,
-            .admin-table td {
-                padding: 8px;
-                font-size: 13px;
-            }
-        }
+    
+        .admin-product-tools{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:8px;margin-top:12px;align-items:center}.admin-product-tools input,.admin-product-tools select{padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;outline:none;font-family:inherit}.admin-product-tools button{padding:9px 12px;border:0;border-radius:8px;background:#64748b;color:#fff;cursor:pointer}.admin-product-tools span{font-size:13px;color:#64748b;white-space:nowrap}@media(max-width:760px){.admin-product-tools{grid-template-columns:1fr 1fr}.admin-product-tools input{grid-column:1/-1}.admin-product-tools span{grid-column:1/-1}}
+    
+        .admin-dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.dash-card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}.dash-card span{display:block;color:#64748b;font-size:12px}.dash-card b{font-size:22px;color:#15803d}@media(max-width:760px){.admin-dashboard{grid-template-columns:repeat(2,1fr)}}
     </style>
 </head>
-
 <body>
 
-    <!-- =========================================
-         ADMIN HEADER
-    ========================================== -->
-
+    <!-- ADMIN HEADER -->
     <header class="admin-header">
-
         <div class="container header-inner">
-
-            <div class="logo" style="display:flex; align-items:center; gap:10px;">
-
-                <div class="logo-icon" style="font-size:24px;">
-                    <i class="fa-solid fa-user-shield"></i>
-                </div>
-
+            <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+                <div class="logo-icon" style="font-size: 24px;"><i class="fa-solid fa-user-shield"></i></div>
                 <div class="logo-text">
-
-                    <strong style="color:#fff; display:block;">
-                        ১০ নং সাতবাড়ীয়া
-                    </strong>
-
-                    <small style="color:#a7f3d0;">
-                        কাঁচাবাজার Admin Panel
-                    </small>
-
+                    <strong style="color: #fff; display: block;">১০ নং সাতবাড়ীয়া</strong>
+                    <small style="color: #a7f3d0;">কাঁচাবাজার Admin Panel</small>
                 </div>
-
             </div>
-
-            <button
-                class="cart-button"
-                id="logoutBtn"
-                style="display:none; background:#dc2626; border:none; color:#fff; padding:8px 15px; border-radius:6px; cursor:pointer;"
-                onclick="adminLogout()"
-            >
-                <i class="fa-solid fa-right-from-bracket"></i>
-                লগআউট
+            <button class="cart-button" id="logoutBtn" style="display:none; background:#dc2626; border:none; color:#fff; padding:8px 15px; border-radius:6px; cursor:pointer;" onclick="adminLogout()">
+                <i class="fa-solid fa-right-from-bracket"></i> লগআউট
             </button>
-
         </div>
-
     </header>
 
-
-    <!-- =========================================
-         LOGIN FORM
-    ========================================== -->
-
+    <!-- LOGIN FORM -->
     <div class="container" id="loginSection">
-
         <div class="login-card">
-
-            <h2 style="text-align:center; margin-bottom:20px; color:#15803d;">
-                এডমিন লগইন
-            </h2>
-
+            <h2 style="text-align: center; margin-bottom: 20px; color: #15803d;">এডমিন লগইন</h2>
             <form id="adminLoginForm">
-
                 <div class="form-group">
-
-                    <label>
-                        Admin Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="adminEmail"
-                        value="sowkat420@gmail.com"
-                        required
-                    >
-
+                    <label>Admin Email</label>
+                    <input type="email" id="adminEmail" value="sowkat420@gmail.com" required>
                 </div>
-
-
                 <div class="form-group">
-
-                    <label>
-                        পাসওয়ার্ড
-                    </label>
-
-                    <input
-                        type="password"
-                        id="adminPassword"
-                        placeholder="আপনার পাসওয়ার্ড দিন"
-                        required
-                    >
-
+                    <label>পাসওয়ার্ড</label>
+                    <input type="password" id="adminPassword" placeholder="আপনার পাসওয়ার্ড দিন" required>
                 </div>
-
-
-                <button
-                    type="submit"
-                    id="loginBtn"
-                    style="width:100%; padding:12px; background:#15803d; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"
-                >
-                    লগইন করুন
-                </button>
-
+                <button type="submit" id="loginBtn" style="width: 100%; padding: 12px; background: #15803d; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">লগইন করুন</button>
             </form>
-
         </div>
-
     </div>
 
-
-    <!-- =========================================
-         MAIN ADMIN CONTENT
-    ========================================== -->
-
+    <!-- MAIN ADMIN CONTENT -->
     <div class="container" id="adminContent" style="display:none;">
-
-        <!-- NAVIGATION -->
-
+        <!-- Navigation -->
         <div class="admin-nav">
-
-            <button
-                class="admin-nav-btn active"
-                onclick="switchTab('ordersTab', this)"
-            >
-                <i class="fa-solid fa-list-check"></i>
-                অর্ডারসমূহ
-            </button>
-
-
-            <button
-                class="admin-nav-btn"
-                onclick="switchTab('productsTab', this)"
-            >
-                <i class="fa-solid fa-box-open"></i>
-                পণ্য ব্যবস্থাপনা
-            </button>
-
-
-            <button
-                class="admin-nav-btn"
-                onclick="switchTab('settingsTab', this)"
-            >
-                <i class="fa-solid fa-sliders"></i>
-                দোকান সেটআপ ও নোটিশ
-            </button>
-
+            <button class="admin-nav-btn active" onclick="switchTab('ordersTab', this)"><i class="fa-solid fa-list-check"></i> অর্ডারসমূহ</button>
+            <button class="admin-nav-btn" onclick="switchTab('productsTab', this)"><i class="fa-solid fa-box-open"></i> পণ্য ব্যবস্থাপনা</button>
+            <button class="admin-nav-btn" onclick="switchTab('settingsTab', this)"><i class="fa-solid fa-sliders"></i> দোকান সেটআপ ও নোটিশ</button>
         </div>
 
-
-        <!-- =========================================
-             ORDERS TAB
-        ========================================== -->
-
+        <!-- ORDERS TAB -->
         <div id="ordersTab" class="tab-content">
-
-           <!-- =========================================
-     ORDER DASHBOARD
-========================================= -->
-
-<div class="dashboard-title">
-
-    <h3>
-        <i class="fa-solid fa-chart-line" style="color:#15803d;"></i>
-        অর্ডার ড্যাশবোর্ড
-    </h3>
-
-    <span class="dashboard-refresh">
-        <i class="fa-solid fa-rotate"></i>
-        লাইভ আপডেট
-    </span>
-
-</div>
-
-
-<div class="order-dashboard">
-
-    <!-- Pending -->
-    <div class="order-stat-card stat-pending">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-clock"></i>
-        </div>
-
-        <div class="stat-title">
-            Pending Order
-        </div>
-
-        <div
-            class="stat-number"
-            id="statPending"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            অপেক্ষমাণ অর্ডার
-        </div>
-
-    </div>
-
-
-    <!-- Confirmed -->
-    <div class="order-stat-card stat-confirmed">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-
-        <div class="stat-title">
-            Confirmed Order
-        </div>
-
-        <div
-            class="stat-number"
-            id="statConfirmed"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            নিশ্চিত করা হয়েছে
-        </div>
-
-    </div>
-
-
-    <!-- Processing -->
-    <div class="order-stat-card stat-processing">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-truck-fast"></i>
-        </div>
-
-        <div class="stat-title">
-            Processing
-        </div>
-
-        <div
-            class="stat-number"
-            id="statProcessing"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            ডেলিভারির প্রস্তুতি
-        </div>
-
-    </div>
-
-
-    <!-- Delivered -->
-    <div class="order-stat-card stat-delivered">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-box-circle-check"></i>
-        </div>
-
-        <div class="stat-title">
-            Delivered
-        </div>
-
-        <div
-            class="stat-number"
-            id="statDelivered"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            সম্পন্ন অর্ডার
-        </div>
-
-    </div>
-
-
-    <!-- Cancelled -->
-    <div class="order-stat-card stat-cancelled">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-circle-xmark"></i>
-        </div>
-
-        <div class="stat-title">
-            Cancelled
-        </div>
-
-        <div
-            class="stat-number"
-            id="statCancelled"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            বাতিল অর্ডার
-        </div>
-
-    </div>
-
-
-    <!-- Total -->
-    <div class="order-stat-card stat-total">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-layer-group"></i>
-        </div>
-
-        <div class="stat-title">
-            মোট অর্ডার
-        </div>
-
-        <div
-            class="stat-number"
-            id="statTotal"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            সব অর্ডার
-        </div>
-
-    </div>
-
-
-    <!-- Sales -->
-    <div class="order-stat-card stat-sales">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-bangladeshi-taka-sign"></i>
-        </div>
-
-        <div class="stat-title">
-            মোট বিক্রি
-        </div>
-
-        <div
-            class="stat-number"
-            id="statSales"
-        >
-            ৳0
-        </div>
-
-        <div class="stat-sub">
-            Delivered অর্ডারের বিক্রি
-        </div>
-
-    </div>
-
-
-    <!-- Today -->
-    <div class="order-stat-card stat-today">
-
-        <div class="stat-icon">
-            <i class="fa-solid fa-calendar-day"></i>
-        </div>
-
-        <div class="stat-title">
-            আজকের অর্ডার
-        </div>
-
-        <div
-            class="stat-number"
-            id="statToday"
-        >
-            0
-        </div>
-
-        <div class="stat-sub">
-            আজকের মোট অর্ডার
-        </div>
-
-    </div>
-
-</div>
- <div class="admin-card">
-
-                <h3>
-                    সর্বশেষ অর্ডার তালিকা
-                </h3>
-
+            <div class="admin-dashboard" id="adminDashboard"><div class="dash-card"><span>Pending</span><b id="statPending">0</b></div><div class="dash-card"><span>Confirmed</span><b id="statConfirmed">0</b></div><div class="dash-card"><span>Processing</span><b id="statProcessing">0</b></div><div class="dash-card"><span>Delivered</span><b id="statDelivered">0</b></div><div class="dash-card"><span>Cancelled</span><b id="statCancelled">0</b></div><div class="dash-card"><span>মোট অর্ডার</span><b id="statTotal">0</b></div><div class="dash-card"><span>মোট বিক্রি</span><b id="statSales">৳0</b></div><div class="dash-card"><span>আজকের অর্ডার</span><b id="statToday">0</b></div></div>
+            <div class="admin-card">
+                <h3>সর্বশেষ অর্ডার তালিকা</h3>
                 <div class="admin-table-wrap">
-
                     <table class="admin-table">
-
                         <thead>
-
                             <tr>
                                 <th>অর্ডার আইডি ও সময়</th>
                                 <th>গ্রাহক</th>
@@ -696,260 +210,62 @@
                                 <th>অবস্থা</th>
                                 <th>অ্যাকশন</th>
                             </tr>
-
                         </thead>
-
                         <tbody id="adminOrdersList">
-
-                            <tr>
-                                <td colspan="8" style="text-align:center;">
-                                    লোড হচ্ছে...
-                                </td>
-                            </tr>
-
+                            <tr><td colspan="8" style="text-align:center;">লোড হচ্ছে...</td></tr>
                         </tbody>
-
                     </table>
-
                 </div>
-
             </div>
-
         </div>
 
-
-        <!-- =========================================
-             PRODUCTS TAB
-        ========================================== -->
-
+        <!-- PRODUCTS TAB -->
         <div id="productsTab" class="tab-content" style="display:none;">
-
-            <!-- ADD / EDIT PRODUCT -->
-
             <div class="admin-card">
-
-                <h3 id="formTitle">
-                    নতুন পণ্য যোগ করুন
-                </h3>
-
-                <form
-                    id="addProductForm"
-                    style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-top:15px;"
-                >
-
+                <h3>নতুন পণ্য যোগ করুন</h3>
+                <form id="addProductForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
                     <div class="form-group">
-
-                        <label>
-                            পণ্যের নাম *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="pName"
-                            placeholder="যেমন: আলু"
-                            required
-                        >
-
+                        <label>পণ্যের নাম *</label>
+                        <input type="text" id="pName" placeholder="যেমন: আলু" required>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            ক্যাটাগরি *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="pCategory"
-                            placeholder="যেমন: সবজি"
-                            required
-                        >
-
+                        <label>ক্যাটাগরি *</label>
+                        <input type="text" id="pCategory" placeholder="যেমন: সবজি" required>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            মূল্য (টাকা) *
-                        </label>
-
-                        <input
-                            type="number"
-                            id="pPrice"
-                            placeholder="যেমন: ৫০"
-                            required
-                        >
-
+                        <label>মূল্য (টাকা) *</label>
+                        <input type="number" id="pPrice" placeholder="যেমন: ৫০" required>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            একক *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="pUnit"
-                            placeholder="যেমন: কেজি / আঁটি"
-                            value="কেজি"
-                            required
-                        >
-
+                        <label>একক *</label>
+                        <input type="text" id="pUnit" placeholder="যেমন: কেজি / আঁটি" value="কেজি" required>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            স্টক (সংখ্যা)
-                        </label>
-
-                        <input
-                            type="number"
-                            id="pStock"
-                            placeholder="যেমন: ১০০"
-                        >
-
+                        <label>স্টক (সংখ্যা)</label>
+                        <input type="number" id="pStock" placeholder="যেমন: ১০০">
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            ছবি লিংক (URL)
-                        </label>
-
-                        <input
-                            type="url"
-                            id="pImage"
-                            placeholder="https://..."
-                        >
-
+                        <label>ছবি লিংক (URL)</label>
+                        <input type="url" id="pImage" placeholder="https://...">
                     </div>
-
-
-                    <div
-                        class="form-group"
-                        style="grid-column:1 / -1; display:flex; gap:10px;"
-                    >
-
-                        <button
-                            type="submit"
-                            id="productSubmitBtn"
-                            style="padding:10px 20px; background:#15803d; color:white; border:none; border-radius:6px; cursor:pointer;"
-                        >
-                            <i class="fa-solid fa-plus"></i>
-                            পণ্য যুক্ত করুন
-                        </button>
-
-
-                        <button
-                            type="button"
-                            id="cancelEditBtn"
-                            onclick="cancelEdit()"
-                            style="display:none; padding:10px 20px; background:#64748b; color:white; border:none; border-radius:6px; cursor:pointer;"
-                        >
-                            বাতিল
-                        </button>
-
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
                     </div>
-
                 </form>
-
             </div>
 
-
-            <!-- PRODUCT LIST -->
-
             <div class="admin-card">
-
-                <h3>
-                    সকল পণ্যের তালিকা
-                </h3>
-
-
-                <!-- PRODUCT SEARCH & FILTER -->
-
-                <div class="product-search-box">
-
-                    <div class="search-input-wrap">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
-                        <input
-                            type="text"
-                            id="productSearch"
-                            placeholder="পণ্যের নাম বা ক্যাটাগরি লিখে খুঁজুন..."
-                            oninput="searchAdminProducts()"
-                        >
-
-                    </div>
-
-
-                    <select
-                        id="productCategoryFilter"
-                        onchange="searchAdminProducts()"
-                    >
-
-                        <option value="">
-                            সব ক্যাটাগরি
-                        </option>
-
-                    </select>
-
-
-                    <select
-                        id="productStockFilter"
-                        onchange="searchAdminProducts()"
-                    >
-
-                        <option value="">
-                            সব পণ্য
-                        </option>
-
-                        <option value="available">
-                            চালু পণ্য
-                        </option>
-
-                        <option value="unavailable">
-                            বন্ধ পণ্য
-                        </option>
-
-                    </select>
-
-
-                    <button
-                        type="button"
-                        onclick="clearProductSearch()"
-                        class="clear-search-btn"
-                    >
-                        <i class="fa-solid fa-rotate-left"></i>
-                        রিসেট
-                    </button>
-
+                <h3>সকল পণ্যের তালিকা</h3>
+                <div class="admin-product-tools">
+                    <input type="search" id="productSearch" placeholder="পণ্যের নাম দিয়ে খুঁজুন...">
+                    <select id="productCategoryFilter"><option value="all">সব ক্যাটাগরি</option></select>
+                    <select id="productStockFilter"><option value="all">সব স্টক</option><option value="in">স্টক আছে</option><option value="out">স্টক শেষ</option><option value="disabled">বন্ধ</option></select>
+                    <button type="button" id="clearProductSearch">পরিষ্কার</button>
+                    <span id="productSearchCount"></span>
                 </div>
-
-
-                <!-- PRODUCT COUNT -->
-
-                <div
-                    id="productSearchCount"
-                    class="product-count-box"
-                ></div>
-
-
-                <!-- PRODUCT TABLE -->
-
                 <div class="admin-table-wrap">
-
                     <table class="admin-table">
-
                         <thead>
-
                             <tr>
                                 <th>ছবি</th>
                                 <th>পণ্যের নাম</th>
@@ -959,944 +275,365 @@
                                 <th>অবস্থা</th>
                                 <th>অ্যাকশন</th>
                             </tr>
-
                         </thead>
-
-
                         <tbody id="adminProductsList">
-
-                            <tr>
-                                <td
-                                    colspan="7"
-                                    style="text-align:center;"
-                                >
-                                    লোড হচ্ছে...
-                                </td>
-                            </tr>
-
+                            <tr><td colspan="7" style="text-align:center;">লোড হচ্ছে...</td></tr>
                         </tbody>
-
                     </table>
-
                 </div>
-
             </div>
-
         </div>
 
-
-        <!-- =========================================
-             SETTINGS TAB
-        ========================================== -->
-
+        <!-- SETTINGS TAB -->
         <div id="settingsTab" class="tab-content" style="display:none;">
-
-            <div
-                class="admin-card"
-                style="max-width:600px;"
-            >
-
-                <h3>
-                    দোকানের তথ্য, নোটিশ ও ডেলিভারি সেটআপ
-                </h3>
-
-
-                <form
-                    id="saveSettingsForm"
-                    style="margin-top:15px;"
-                >
-
+            <div class="admin-card" style="max-width: 600px;">
+                <h3>দোকানের তথ্য, নোটিশ ও ডেলিভারি সেটআপ</h3>
+                <form id="saveSettingsForm" style="margin-top: 15px;">
                     <div class="form-group">
-
-                        <label>
-                            দোকানের নাম
-                        </label>
-
-                        <input
-                            type="text"
-                            id="sName"
-                        >
-
+                        <label>দোকানের নাম</label>
+                        <input type="text" id="sName">
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            মোবাইল নম্বর (কল ও SMS এর জন্য)
-                        </label>
-
-                        <input
-                            type="text"
-                            id="sPhone"
-                        >
-
+                        <label>মোবাইল নম্বর (কল ও SMS এর জন্য)</label>
+                        <input type="text" id="sPhone">
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            WhatsApp নম্বর (880XXXXXXXXXX)
-                        </label>
-
-                        <input
-                            type="text"
-                            id="sWhatsapp"
-                        >
-
+                        <label>WhatsApp নম্বর (880XXXXXXXXXX)</label>
+                        <input type="text" id="sWhatsapp">
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            ফেসবুক পেইজ লিংক
-                        </label>
-
-                        <input
-                            type="url"
-                            id="sFacebook"
-                        >
-
+                        <label>ফেসবুক পেইজ লিংক</label>
+                        <input type="url" id="sFacebook">
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            সাধারণ ডেলিভারি চার্জ (টাকা)
-                        </label>
-
-                        <input
-                            type="number"
-                            id="sDelivery"
-                            value="20"
-                            required
-                        >
-
+                        <label>সাধারণ ডেলিভারি চার্জ (টাকা)</label>
+                        <input type="number" id="sDelivery" value="20" required>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            ফ্রি ডেলিভারির জন্য সর্বনিম্ন অর্ডার মূল্য (টাকা)
-                        </label>
-
-                        <input
-                            type="number"
-                            id="sFreeDeliveryMin"
-                            value="300"
-                            required
-                        >
-
+                        <label>ফ্রি ডেলিভারির জন্য সর্বনিম্ন অর্ডার মূল্য (টাকা)</label>
+                        <input type="number" id="sFreeDeliveryMin" value="300" required>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            চলমান নোটিশের বার্তা (Notice Text)
-                        </label>
-
-                        <input
-                            type="text"
-                            id="sNoticeText"
-                            placeholder="যেমন: ৩০০ টাকার কেনাকাটায় ডেলিভারি একদম ফ্রি!"
-                        >
-
+                        <label>চলমান নোটিশের বার্তা (Notice Text)</label>
+                        <input type="text" id="sNoticeText" placeholder="যেমন: ৩০০ টাকার কেনাকাটায় ডেলিভারি একদম ফ্রি!">
                     </div>
-
-
                     <div class="form-group checkbox-group">
-
-                        <input
-                            type="checkbox"
-                            id="sNoticeActive"
-                        >
-
-                        <label
-                            for="sNoticeActive"
-                            style="margin:0; cursor:pointer;"
-                        >
-                            চলমান নোটিশ চালু রাখুন (On / Off)
-                        </label>
-
+                        <input type="checkbox" id="sNoticeActive">
+                        <label for="sNoticeActive" style="margin:0; cursor:pointer;">চলমান নোটিশ চালু রাখুন (On / Off)</label>
                     </div>
-
-
                     <div class="form-group">
-
-                        <label>
-                            ঠিকানা
-                        </label>
-
-                        <textarea
-                            id="sAddress"
-                            rows="2"
-                        ></textarea>
-
+                        <label>ঠিকানা</label>
+                        <textarea id="sAddress" rows="2"></textarea>
                     </div>
-
-
-                    <button
-                        type="submit"
-                        style="padding:10px 20px; background:#15803d; color:white; border:none; border-radius:6px; cursor:pointer;"
-                    >
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        পরিবর্তন সেভ করুন
-                    </button>
-
+                    <button type="submit" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-floppy-disk"></i> পরিবর্তন সেভ করুন</button>
                 </form>
-
             </div>
-
         </div>
-
     </div>
 
-
-    <!-- =========================================
-         FIREBASE SDK
-    ========================================== -->
-
+    <!-- Firebase SDKs with Auth Support -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-
+    
     <script>
-
-        /* =========================================
-           FIREBASE CONFIG
-        ========================================== */
-
         const firebaseConfig = {
-
             apiKey: "AIzaSyDGZjvwvZ_mbiVPgKtUAdMWWsBl3347xfA",
-
             authDomain: "kachabazar-87e97.firebaseapp.com",
-
-            databaseURL:
-                "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
-
+            databaseURL: "https://kachabazar-87e97-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "kachabazar-87e97",
-
-            storageBucket:
-                "kachabazar-87e97.firebasestorage.app",
-
+            storageBucket: "kachabazar-87e97.firebasestorage.app",
             messagingSenderId: "1033389997118",
-
-            appId:
-                "1:1033389997118:web:3af50b0e824f9e3cbf656f",
-
+            appId: "1:1033389997118:web:3af50b0e824f9e3cbf656f",
             measurementId: "G-63C54C7KH8"
-
         };
-
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-
-
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         const auth = firebase.auth();
 
-
-        /* =========================================
-           NEW ORDER SOUND
-        ========================================== */
-
-        const alertAudio =
-            new Audio(
-                'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'
-            );
-
-
+        // Audio Sound for New Order Alert
+        const alertAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
         let previousOrderCount = 0;
-
         let isFirstLoad = true;
 
+        // Firebase Auth Login
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPassword').value.trim();
+            const btn = document.getElementById('loginBtn');
 
-        /* =========================================
-   GLOBAL ORDER CACHE & FILTER
-========================================= */
+            btn.innerText = "লগইন হচ্ছে...";
+            btn.disabled = true;
 
-let allAdminOrders = {};
-
-let currentOrderFilter = 'all';
-
-
-        /* =========================================
-           LOGIN
-        ========================================== */
-
-        document
-            .getElementById('adminLoginForm')
-            .addEventListener('submit', function(e) {
-
-                e.preventDefault();
-
-                const email =
-                    document
-                        .getElementById('adminEmail')
-                        .value
-                        .trim();
-
-                const pass =
-                    document
-                        .getElementById('adminPassword')
-                        .value
-                        .trim();
-
-                const btn =
-                    document.getElementById('loginBtn');
-
-
-                btn.innerText = "লগইন হচ্ছে...";
-
-                btn.disabled = true;
-
-
-                auth
-                    .signInWithEmailAndPassword(email, pass)
-
-                    .then(() => {
-
-                        btn.innerText = "লগইন করুন";
-
-                        btn.disabled = false;
-
-                    })
-
-                    .catch((error) => {
-
-                        btn.innerText = "লগইন করুন";
-
-                        btn.disabled = false;
-
-                        alert(
-                            "লগইন ভুল হয়েছে! কারণ: " +
-                            error.message
-                        );
-
-                    });
-
-            });
-
-
-        /* =========================================
-           AUTH STATE
-        ========================================== */
-
-        auth.onAuthStateChanged((user) => {
-
-            if (
-                user &&
-                user.email === 'sowkat420@gmail.com'
-            ) {
-
-                document
-                    .getElementById('loginSection')
-                    .style.display = 'none';
-
-
-                document
-                    .getElementById('adminContent')
-                    .style.display = 'block';
-
-
-                document
-                    .getElementById('logoutBtn')
-                    .style.display = 'inline-block';
-
-
-                loadAdminOrders();
-
-                loadAdminProducts();
-
-                loadAdminSettings();
-
-            }
-
-            else {
-
-                document
-                    .getElementById('loginSection')
-                    .style.display = 'block';
-
-
-                document
-                    .getElementById('adminContent')
-                    .style.display = 'none';
-
-
-                document
-                    .getElementById('logoutBtn')
-                    .style.display = 'none';
-
-            }
-
+            auth.signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    btn.innerText = "লগইন করুন";
+                    btn.disabled = false;
+                })
+                .catch((error) => {
+                    btn.innerText = "লগইন করুন";
+                    btn.disabled = false;
+                    alert("লগইন ভুল হয়েছে! কারণ: " + error.message);
+                });
         });
 
+        // Track Login State
+        auth.onAuthStateChanged((user) => {
+            if (user && user.email === 'sowkat420@gmail.com') {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                loadAdminOrders();
+                loadAdminProducts();
+                loadAdminSettings();
+            } else {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('adminContent').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+            }
+        });
 
-        /* =========================================
-           LOGOUT
-        ========================================== */
-
-        function adminLogout() {
-
+        function adminLogout(){
             auth.signOut();
-
         }
 
-
-        /* =========================================
-           TAB SWITCH
-        ========================================== */
-
-        function switchTab(tabId, btn) {
-
-            document
-                .querySelectorAll('.tab-content')
-                .forEach(el => {
-
-                    el.style.display = 'none';
-
-                });
-
-
-            document
-                .querySelectorAll('.admin-nav-btn')
-                .forEach(el => {
-
-                    el.classList.remove('active');
-
-                });
-
-
-            document
-                .getElementById(tabId)
-                .style.display = 'block';
-
-
-            if (btn) {
-
-                btn.classList.add('active');
-
-            }
-
+        function switchTab(tabId, btn){
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.admin-nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            if(btn) btn.classList.add('active');
         }
 
-
-        /* =========================================
-           TIME AGO
-        ========================================== */
-
+        // Time-Ago Calculator
         function formatTimeAgo(timestamp) {
-
-            if (!timestamp) {
-                return "এখনই";
-            }
-
-
+            if(!timestamp) return "এখনই";
             const date = new Date(timestamp);
-
-
-            const seconds =
-                Math.floor(
-                    (new Date() - date) / 1000
-                );
-
-
-            if (seconds < 60) {
-                return `${seconds} সেকেণ্ড আগে`;
-            }
-
-
-            const minutes =
-                Math.floor(seconds / 60);
-
-
-            if (minutes < 60) {
-                return `${minutes} মিনিট আগে`;
-            }
-
-
-            const hours =
-                Math.floor(minutes / 60);
-
-
-            if (hours < 24) {
-                return `${hours} ঘণ্টা আগে`;
-            }
-
-
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return `${seconds} সেকেণ্ড আগে`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} মিনিট আগে`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} ঘণ্টা আগে`;
             return `${Math.floor(hours / 24)} দিন আগে`;
-
         }
 
+        // LOAD ORDERS (With Sound Alert & Time-Ago)
+        function loadAdminOrders(){
+            db.ref('orders').on('value', snapshot => {
+                const data = snapshot.val() || {};
+                const tbody = document.getElementById('adminOrdersList');
+                const keys = Object.keys(data).sort((a,b)=>(Number(data[b]?.createdAt||0)-Number(data[a]?.createdAt||0)));
+                const stats = {pending:0,confirmed:0,processing:0,delivered:0,cancelled:0,total:keys.length,sales:0,today:0};
+                const todayKey = new Date().toDateString();
+                keys.forEach(k=>{ const o=data[k]||{}; const st=o.status||'pending'; if(stats[st]!==undefined) stats[st]++; stats.sales += Number(o.total||o.grandTotal||0); if(o.createdAt && new Date(o.createdAt).toDateString()===todayKey) stats.today++; });
+                ['pending','confirmed','processing','delivered','cancelled'].forEach(s=>{const el=document.getElementById('stat'+s.charAt(0).toUpperCase()+s.slice(1)); if(el) el.textContent=stats[s];});
+                if(document.getElementById('statTotal')) document.getElementById('statTotal').textContent=stats.total;
+                if(document.getElementById('statSales')) document.getElementById('statSales').textContent='৳'+stats.sales.toLocaleString('bn-BD');
+                if(document.getElementById('statToday')) document.getElementById('statToday').textContent=stats.today;
 
-        /* =========================================
-   LOAD ORDERS + ORDER DASHBOARD
-========================================= */
+                // Sound notification on new order
+                if(!isFirstLoad && keys.length > previousOrderCount) {
+                    alertAudio.play().catch(e => console.log('Autoplay blocked'));
+                }
+                previousOrderCount = keys.length;
+                isFirstLoad = false;
 
-function loadAdminOrders() {
-
-    db.ref('orders').on('value', snapshot => {
-
-        const data = snapshot.val() || {};
-
-        const tbody =
-            document.getElementById('adminOrdersList');
-
-        const keys =
-            Object.keys(data).reverse();
-
-
-        /* =====================================
-           ORDER STATISTICS
-        ===================================== */
-
-        let pendingCount = 0;
-        let confirmedCount = 0;
-        let processingCount = 0;
-        let deliveredCount = 0;
-        let cancelledCount = 0;
-
-        let deliveredSales = 0;
-
-        let todayOrderCount = 0;
-
-        const today =
-            new Date();
-
-        const todayDate =
-            today.toDateString();
-
-
-        Object.keys(data).forEach(id => {
-
-            const o = data[id];
-
-            const status =
-                String(
-                    o.status || 'pending'
-                ).toLowerCase();
-
-
-            /* Status Count */
-
-            if (status === 'pending') {
-                pendingCount++;
-            }
-
-            else if (status === 'confirmed') {
-                confirmedCount++;
-            }
-
-            else if (status === 'processing') {
-                processingCount++;
-            }
-
-            else if (status === 'delivered') {
-                deliveredCount++;
-            }
-
-            else if (status === 'cancelled') {
-                cancelledCount++;
-            }
-
-
-            /* Delivered Sales */
-
-            if (status === 'delivered') {
-
-                const total =
-                    Number(
-                        o.total ||
-                        o.grandTotal ||
-                        0
-                    );
-
-                deliveredSales += total;
-
-            }
-
-
-            /* Today's Orders */
-
-            if (o.createdAt) {
-
-                const orderDate =
-                    new Date(o.createdAt);
-
-                if (
-                    orderDate.toDateString() ===
-                    todayDate
-                ) {
-
-                    todayOrderCount++;
-
+                if(!keys.length){
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
+                    return;
                 }
 
-            }
+                tbody.innerHTML = keys.map(id => {
+                    const o = data[id];
+                    const itemsStr = o.items ? (Array.isArray(o.items) ? o.items.map(i => `${i.name || i.title} (${i.quantity || 1})`).join(', ') : 'পণ্য আছে') : '';
+                    const timeAgo = formatTimeAgo(o.createdAt);
+                    const phone = o.phone || o.customerPhone || 'N/A';
+                    const name = o.name || o.customerName || 'N/A';
+                    const grandTotal = o.total || o.grandTotal || 0;
+                    const delivery = o.deliveryCharge !== undefined ? o.deliveryCharge : 0;
 
+                    return `
+                        <tr>
+                            <td>
+                                <strong>${id}</strong><br>
+                                <span class="time-badge">${timeAgo}</span>
+                            </td>
+                            <td>${name}</td>
+                            <td>${phone}</td>
+                            <td>${o.address || o.customerAddress || 'N/A'}</td>
+                            <td><small>${itemsStr}</small></td>
+                            <td>
+                                <b>৳${grandTotal}</b><br>
+                                <small style="color:#64748b;">ডেলিভারি: ৳${delivery}</small>
+                            </td>
+                            <td><span class="badge badge-${o.status || 'pending'}">${({'pending':'Pending','confirmed':'নিশ্চিত','processing':'প্রসেসিং','delivered':'ডেলিভারি হয়েছে','cancelled':'বাতিল'})[o.status || 'pending'] || 'Pending'}</span></td>
+                            <td>
+                                <select onchange="updateOrderStatus('${id}', this.value)" style="padding:3px; margin-bottom:5px;">
+                                    <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
+                                    <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
+                                    <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+                                    <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+                                    <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+                                </select><br>
+                                <button class="action-btn btn-wa" onclick="openWhatsAppCustomer('${phone}', '${name}', '${id}', ${grandTotal})">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }, error => {
+                document.getElementById('adminOrdersList').innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">ডাটা পড়তে সমস্যা হচ্ছে: ' + error.message + '</td></tr>';
+            });
+        }
+
+        function updateOrderStatus(id, status){
+            db.ref('orders/' + id).update({ status: status });
+        }
+
+        function openWhatsAppCustomer(phone, name, orderId, total) {
+            let cleanPhone = phone.replace(/\D/g, '');
+            if(cleanPhone.startsWith('0')) cleanPhone = '88' + cleanPhone;
+            let msg = `হ্যালো ${name}, ১০ নং সাতবাড়ীয়া কাঁচাবাজার থেকে আপনার অর্ডার (#${orderId}) গ্রহণ করা হয়েছে। সর্বমোট বিল: ৳${total}। ধন্যবাদ!`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // PRODUCTS MANAGEMENT
+        document.getElementById('addProductForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const productData = {
+                name: document.getElementById('pName').value.trim(),
+                category: document.getElementById('pCategory').value.trim(),
+                price: Number(document.getElementById('pPrice').value),
+                unit: document.getElementById('pUnit').value.trim() || 'কেজি',
+                stock: document.getElementById('pStock').value !== '' ? Number(document.getElementById('pStock').value) : null,
+                productImage: document.getElementById('pImage').value.trim(),
+                available: editingProductId && allAdminProducts[editingProductId] ? allAdminProducts[editingProductId].available !== false : true
+            };
+            const ref = editingProductId ? db.ref('products/' + editingProductId).update(productData) : db.ref('products').push().set(productData);
+            ref.then(() => { alert(editingProductId ? 'পণ্য সফলভাবে আপডেট করা হয়েছে!' : 'নতুন পণ্য যুক্ত করা হয়েছে!'); cancelEdit(); }).catch(err => alert('সেভ করা যায়নি: ' + err.message));
         });
 
-
-        const totalOrders =
-            Object.keys(data).length;
-
-
-        /* =====================================
-           UPDATE DASHBOARD
-        ===================================== */
-
-        document.getElementById('statPending').innerText =
-            pendingCount;
-
-        document.getElementById('statConfirmed').innerText =
-            confirmedCount;
-
-        document.getElementById('statProcessing').innerText =
-            processingCount;
-
-        document.getElementById('statDelivered').innerText =
-            deliveredCount;
-
-        document.getElementById('statCancelled').innerText =
-            cancelledCount;
-
-        document.getElementById('statTotal').innerText =
-            totalOrders;
-
-        document.getElementById('statSales').innerText =
-            '৳' + deliveredSales.toLocaleString('bn-BD');
-
-        document.getElementById('statToday').innerText =
-            todayOrderCount;
-
-
-        /* =====================================
-           NEW ORDER SOUND
-        ===================================== */
-
-        if (
-            !isFirstLoad &&
-            keys.length > previousOrderCount
-        ) {
-
-            alertAudio
-                .play()
-                .catch(e =>
-                    console.log(
-                        'Autoplay blocked'
-                    )
-                );
-
-        }
-
-
-        previousOrderCount =
-            keys.length;
-
-        isFirstLoad = false;
-
-
-        /* =====================================
-           NO ORDERS
-        ===================================== */
-
-        if (!keys.length) {
-
-            tbody.innerHTML = `
-
-                <tr>
-
-                    <td
-                        colspan="8"
-                        style="
-                            text-align:center;
-                            padding:30px;
-                        "
-                    >
-
-                        <i
-                            class="fa-solid fa-cart-shopping"
-                            style="
-                                font-size:35px;
-                                color:#94a3b8;
-                            "
-                        ></i>
-
-                        <br><br>
-
-                        কোনো অর্ডার পাওয়া যায়নি।
-
-                    </td>
-
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        /* =====================================
-           ORDER TABLE
-        ===================================== */
-
-        tbody.innerHTML =
-            keys.map(id => {
-
-                const o = data[id];
-
-
-                const itemsStr =
-                    o.items
-                        ? (
-
-                            Array.isArray(o.items)
-
-                            ?
-
-                            o.items
-                                .map(
-                                    i =>
-                                        `${i.name || i.title} (${i.quantity || 1})`
-                                )
-                                .join(', ')
-
-                            :
-
-                            'পণ্য আছে'
-
-                        )
-
-                        :
-
-                        '';
-
-
-                const timeAgo =
-                    formatTimeAgo(
-                        o.createdAt
-                    );
-
-
-                const phone =
-                    o.phone ||
-                    o.customerPhone ||
-                    'N/A';
-
-
-                const name =
-                    o.name ||
-                    o.customerName ||
-                    'N/A';
-
-
-                const grandTotal =
-                    Number(
-                        o.total ||
-                        o.grandTotal ||
-                        0
-                    );
-
-
-                const delivery =
-                    o.deliveryCharge !== undefined
-                        ? o.deliveryCharge
-                        : 0;
-
-
-                const status =
-                    o.status ||
-                    'pending';
-
-
-                return `
-
-                    <tr>
-
-                        <td>
-
-                            <strong>
-                                ${id}
-                            </strong>
-
-                            <br>
-
-                            <span class="time-badge">
-                                ${timeAgo}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            ${name}
-                        </td>
-
-
-                        <td>
-                            ${phone}
-                        </td>
-
-
-                        <td>
-                            ${
-                                o.address ||
-                                o.customerAddress ||
-                                'N/A'
-                            }
-                        </td>
-
-
-                        <td>
-
-                            <small>
-                                ${itemsStr}
-                            </small>
-
-                        </td>
-
-
-                        <td>
-
-                            <b>
-                                ৳${grandTotal.toLocaleString('bn-BD')}
-                            </b>
-
-                            <br>
-
-                            <small
-                                style="color:#64748b;"
-                            >
-                                ডেলিভারি:
-                                ৳${Number(delivery).toLocaleString('bn-BD')}
-                            </small>
-
-                        </td>
-
-
-                        <td>
-
-                            <span
-                                class="badge badge-${status}"
-                            >
-                                ${status}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <select
-                                onchange="updateOrderStatus('${id}', this.value)"
-                                style="
-                                    padding:3px;
-                                    margin-bottom:5px;
-                                "
-                            >
-
-                                <option
-                                    value="pending"
-                                    ${
-                                        status === 'pending'
-                                        ? 'selected'
-                                        : ''
-                                    }
-                                >
-                                    Pending
-                                </option>
-
-
-                                <option
-                                    value="confirmed"
-                                    ${
-                                        status === 'confirmed'
-                                        ? 'selected'
-                                        : ''
-                                    }
-                                >
-                                    Confirmed
-                                </option>
-
-
-                                <option
-                                    value="processing"
-                                    ${
-                                        status === 'processing'
-                                        ? 'selected'
-                                        : ''
-                                    }
-                                >
-                                    Processing
-                                </option>
-
-
-                                <option
-                                    value="delivered"
-                                    ${
-                                        status === 'delivered'
-                                        ? 'selected'
-                                        : ''
-                                    }
-                                >
-                                    Delivered
-                                </option>
-
-
-                                <option
-                                    value="cancelled"
-                                    ${
-                                        status === 'cancelled'
-                                        ? 'selected'
-                                        : ''
-                                    }
-                                >
-                                    Cancelled
-                                </option>
-
-                            </select>
-
-                            <br>
-
-
-                            <button
-                                class="action-btn btn-wa"
-                                onclick="openWhatsAppCustomer(
-                                    '${phone}',
-                                    '${name}',
-                                    '${id}',
-                                    ${grandTotal}
-                                )"
-                            >
-
-                                <i
-                                    class="fa-brands fa-whatsapp"
-                                ></i>
-
-                                WhatsApp
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
+        function renderAdminProducts(){
+            const tbody = document.getElementById('adminProductsList');
+            const search = (document.getElementById('productSearch')?.value || '').trim().toLowerCase();
+            const category = document.getElementById('productCategoryFilter')?.value || 'all';
+            const stockFilter = document.getElementById('productStockFilter')?.value || 'all';
+            let keys = Object.keys(allAdminProducts).filter(id => {
+                const p = allAdminProducts[id] || {};
+                const name = String(p.name || '').toLowerCase();
+                const cat = String(p.category || '');
+                const stockKnown = p.stock !== null && p.stock !== undefined && p.stock !== '';
+                const stock = Number(p.stock || 0);
+                if(search && !name.includes(search)) return false;
+                if(category !== 'all' && cat !== category) return false;
+                if(stockFilter === 'in' && (!stockKnown || stock <= 0)) return false;
+                if(stockFilter === 'out' && (!stockKnown || stock > 0)) return false;
+                if(stockFilter === 'disabled' && p.available !== false) return false;
+                return true;
+            });
+            document.getElementById('productSearchCount').textContent = keys.length + 'টি দেখানো হচ্ছে';
+            if(!keys.length){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">কোনো পণ্য পাওয়া যায়নি।</td></tr>'; return; }
+            tbody.innerHTML = keys.map(id => {
+                const p = allAdminProducts[id];
+                const isAvailable = p.available !== false;
+                const img = escapeAdminHtml(p.productImage || 'https://via.placeholder.com/40');
+                return `<tr><td><img src="${img}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td><td><strong>${escapeAdminHtml(p.name || '')}</strong></td><td>${escapeAdminHtml(p.category || '')}</td><td>৳${Number(p.price || 0)} / ${escapeAdminHtml(p.unit || '')}</td><td>${p.stock !== null && p.stock !== undefined && p.stock !== '' ? p.stock : 'N/A'}</td><td>${isAvailable ? 'চালু' : 'বন্ধ'}</td><td><button class="action-btn" style="background:${isAvailable ? '#f59e0b' : '#10b981'};color:#fff;" onclick="toggleProduct('${id}', ${isAvailable})">${isAvailable ? 'বন্ধ করুন' : 'চালু করুন'}</button> <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')">এডিট</button> <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button></td></tr>`;
             }).join('');
+        }
 
-    });
+        function escapeAdminHtml(value){ const div=document.createElement('div'); div.textContent=String(value ?? ''); return div.innerHTML; }
 
-}
+        function loadAdminProducts(){
+            db.ref('products').on('value', snapshot => {
+                allAdminProducts = snapshot.val() || {};
+                const select = document.getElementById('productCategoryFilter');
+                const cats = [...new Set(Object.values(allAdminProducts).map(p => p.category).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'bn'));
+                const current = select.value;
+                select.innerHTML = '<option value="all">সব ক্যাটাগরি</option>' + cats.map(c=>`<option value="${escapeAdminHtml(c)}">${escapeAdminHtml(c)}</option>`).join('');
+                if(cats.includes(current)) select.value=current;
+                renderAdminProducts();
+            });
+        }
+
+        ['productSearch','productCategoryFilter','productStockFilter'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', renderAdminProducts);
+            document.getElementById(id)?.addEventListener('change', renderAdminProducts);
+        });
+        document.getElementById('clearProductSearch')?.addEventListener('click', function(){
+            document.getElementById('productSearch').value=''; document.getElementById('productCategoryFilter').value='all'; document.getElementById('productStockFilter').value='all'; renderAdminProducts();
+        });
+
+        function openEditProductModal(id){
+            const p = allAdminProducts[id];
+            if(!p) return;
+            editingProductId = id;
+            document.getElementById('pName').value = p.name || '';
+            document.getElementById('pCategory').value = p.category || '';
+            document.getElementById('pPrice').value = p.price ?? '';
+            document.getElementById('pUnit').value = p.unit || 'কেজি';
+            document.getElementById('pStock').value = p.stock !== null && p.stock !== undefined ? p.stock : '';
+            document.getElementById('pImage').value = p.productImage || '';
+            document.getElementById('formTitle').textContent = 'পণ্য এডিট করুন';
+            document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট করুন';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        function cancelEdit(){
+            editingProductId = null;
+            document.getElementById('addProductForm').reset();
+            document.getElementById('pUnit').value = 'কেজি';
+            document.getElementById('formTitle').textContent = 'নতুন পণ্য যোগ করুন';
+            document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        function toggleProduct(id, currentStatus){
+            db.ref('products/' + id).update({ available: !currentStatus });
+        }
+
+        function deleteProduct(id){
+            if(confirm('পণ্যটি মুছে ফেলতে চান?')){
+                db.ref('products/' + id).remove();
+            }
+        }
+
+        // SETTINGS MANAGEMENT
+        function loadAdminSettings(){
+            db.ref('settings').once('value', snapshot => {
+                const s = snapshot.val() || {};
+                document.getElementById('sName').value = s.shopName || '১০ নং সাতবাড়ীয়া কাঁচাবাজার';
+                document.getElementById('sPhone').value = s.shopPhone || '';
+                document.getElementById('sWhatsapp').value = s.shopWhatsApp || '';
+                document.getElementById('sFacebook').value = s.shopFacebook || '';
+                document.getElementById('sDelivery').value = s.deliveryCharge !== undefined ? s.deliveryCharge : 20;
+                document.getElementById('sFreeDeliveryMin').value = s.freeDeliveryMin !== undefined ? s.freeDeliveryMin : 300;
+                document.getElementById('sNoticeText').value = s.noticeText || '';
+                document.getElementById('sNoticeActive').checked = s.isNoticeActive || false;
+                document.getElementById('sAddress').value = s.shopAddress || '';
+            });
+        }
+
+        document.getElementById('saveSettingsForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const settings = {
+                shopName: document.getElementById('sName').value,
+                shopPhone: document.getElementById('sPhone').value,
+                shopWhatsApp: document.getElementById('sWhatsapp').value,
+                shopFacebook: document.getElementById('sFacebook').value,
+                deliveryCharge: Number(document.getElementById('sDelivery').value),
+                freeDeliveryMin: Number(document.getElementById('sFreeDeliveryMin').value),
+                noticeText: document.getElementById('sNoticeText').value,
+                isNoticeActive: document.getElementById('sNoticeActive').checked,
+                shopAddress: document.getElementById('sAddress').value
+            };
+            db.ref('settings').update(settings).then(() => {
+                alert('সেটিং ও নোটিশ সফলভাবে সেভ করা হয়েছে!');
+            });
+        });
+    </script>
+</body>
+</html>

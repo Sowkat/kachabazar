@@ -1688,3 +1688,23 @@ body {
 .cart-total-row {
     font-size: 13px !important;
 }
+
+/* কার্ট স্লাইড ওপেন হলে হেডারসহ পুরো স্ক্রিন ঢেকে ফেলার ফিক্স */
+.cart-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 99998 !important; /* হেডারের চেয়ে উপরে থাকবে */
+}
+
+.cart-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    z-index: 99999 !important; /* সবার উপরে থাকবে */
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2) !important;
+}

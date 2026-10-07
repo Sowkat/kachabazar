@@ -480,6 +480,10 @@
                                 <button class="action-btn btn-wa" onclick="openWhatsAppCustomer('${phone}', '${name}', '${id}', ${grandTotal})">
                                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                 </button>
+                                <!-- নতুন প্রিন্ট মেমো বাটন -->
+                                <button class="action-btn" style="background: #0284c7; color: white; margin-top: 5px;" onclick="printOrderSlip('${id}')">
+                                    <i class="fa-solid fa-print"></i> প্রিন্ট মেমো
+                                </button>
                             </td>
                         </tr>
                     `;
@@ -515,6 +519,9 @@
             const ref = editingProductId ? db.ref('products/' + editingProductId).update(productData) : db.ref('products').push().set(productData);
             ref.then(() => { alert(editingProductId ? 'পণ্য সফলভাবে আপডেট করা হয়েছে!' : 'নতুন পণ্য যুক্ত করা হয়েছে!'); cancelEdit(); }).catch(err => alert('সেভ করা যায়নি: ' + err.message));
         });
+
+        let allAdminProducts = {};
+        let editingProductId = null;
 
         function renderAdminProducts(){
             const tbody = document.getElementById('adminProductsList');
@@ -634,6 +641,121 @@
                 alert('সেটিং ও নোটিশ সফলভাবে সেভ করা হয়েছে!');
             });
         });
+
+        // ==========================================
+        // প্রিন্ট মেমোর ফাংশন (নতুন যুক্ত করা হয়েছে)
+        // ==========================================
+        function printOrderSlip(orderId) {
+            db.ref("orders/" + orderId).once("value").then(function(snapshot) {
+                const order = snapshot.val();
+                if (!order) {
+                    alert("অর্ডার ডাটা পাওয়া যায়নি!");
+                    return;
+                }
+
+                const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleString("bn-BD") : "-";
+                const phone = order.phone || order.customerPhone || '-';
+                const name = order.name || order.customerName || '-';
+                const address = order.address || order.customerAddress || '-';
+                const grandTotal = order.total || order.grandTotal || 0;
+                const delivery = order.deliveryCharge !== undefined ? order.deliveryCharge : 0;
+                const subtotal = grandTotal - delivery;
+
+                let itemsHtml = "";
+                if (order.items) {
+                    const itemsArray = Array.isArray(order.items) ? order.items : Object.values(order.items);
+                    itemsArray.forEach((item, index) => {
+                        itemsHtml += `
+                            <tr>
+                                <td style="padding: 6px; border-bottom: 1px solid #ddd; text-align: center;">${index + 1}</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.name || item.title || '-'}</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #ddd; text-align: center;">${item.quantity || 1} ${item.unit || ''}</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #ddd; text-align: right;">৳${item.price || 0}</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #ddd; text-align: right;">৳${((item.price || 0) * (item.quantity || 1)).toFixed(0)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                const printContent = `
+                    <!DOCTYPE html>
+                    <html lang="bn">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>মেমো - ${orderId}</title>
+                        <style>
+                            body { font-family: 'Hind Siliguri', sans-serif, Arial; padding: 20px; color: #333; max-width: 600px; margin: auto; }
+                            .header { text-align: center; border-bottom: 2px dashed #15803d; padding-bottom: 10px; margin-bottom: 15px; }
+                            .header h2 { margin: 0; color: #15803d; font-size: 22px; }
+                            .header p { margin: 3px 0; font-size: 13px; color: #666; }
+                            .info-box { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 6px; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+                            th { background: #15803d; color: white; padding: 6px; text-align: left; }
+                            .totals { margin-top: 15px; text-align: right; font-size: 13px; }
+                            .totals p { margin: 4px 0; }
+                            .grand-total { font-weight: bold; font-size: 16px; color: #15803d; border-top: 1px solid #333; padding-top: 4px; }
+                            .footer-msg { text-align: center; margin-top: 25px; font-size: 12px; color: #777; border-top: 1px solid #ddd; padding-top: 10px; }
+                            @media print { body { padding: 0; } }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h2>১০ নং সাতবাড়ীয়া কাঁচাবাজার</h2>
+                            <p>তাজা কাঁচামাল ও নিত্যপ্রয়োজনীয় বাজার</p>
+                        </div>
+
+                        <div class="info-box">
+                            <div>
+                                <strong>কাস্টমারের তথ্য:</strong><br>
+                                নাম: ${name}<br>
+                                মোবাইল: ${phone}<br>
+                                ঠিকানা: ${address}
+                            </div>
+                            <div style="text-align: right;">
+                                <strong>অর্ডার আইডি:</strong> ${orderId}<br>
+                                <strong>তারিখ:</strong> ${orderDate}<br>
+                            </div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">#</th>
+                                    <th>পণ্যের নাম</th>
+                                    <th style="text-align: center;">পরিমাণ</th>
+                                    <th style="text-align: right;">দর</th>
+                                    <th style="text-align: right;">মোট</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+
+                        <div class="totals">
+                            <p>পণ্যের মোট মূল্য: ৳${subtotal}</p>
+                            <p>ডেলিভারি চার্জ: ৳${delivery}</p>
+                            <p class="grand-total">সর্বমোট বিল: ৳${grandTotal}</p>
+                        </div>
+
+                        <div class="footer-msg">
+                            <p>কেনাকাটা করার জন্য ধন্যবাদ!</p>
+                        </div>
+
+                        <script>
+                            window.onload = function() {
+                                setTimeout(function() { window.print(); }, 500);
+                            }
+                        <\/script>
+                    </body>
+                    </html>
+                `;
+
+                const printWindow = window.open("", "_blank");
+                printWindow.document.write(printContent);
+                printWindow.document.close();
+            });
+        }
     </script>
 </body>
 </html>

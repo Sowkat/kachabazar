@@ -1712,3 +1712,43 @@ body {
     width: 85% !important; /* মোবাইলে স্ক্রিনের ৮৫% জায়গা নেবে */
     max-width: 320px !important; /* সর্বোচ্চ ৩২০ পিক্সেল চওড়া হবে */
 }
+
+/* পপ-আপ/মোডালের সঠিক সিএসএস */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 999999 !important;
+    display: none; /* ডিফল্টভাবে সব পপ-আপ বন্ধ থাকবে */
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+}
+
+/* যখন কোনো পপ-আপ ওপেন হবে (show ক্লাস থাকবে) */
+.modal-overlay.show {
+    display: flex !important;
+}
+
+/* প্রোডাক্ট পপ-আপের ব্যাকগ্রাউন্ড ফিক্স */
+#productModal .modal-card {
+    background: #ffffff !important; /* সম্পূর্ণ সাদা ব্যাকগ্রাউন্ড */
+    width: 90% !important;
+    max-width: 380px !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    border-radius: 14px !important;
+    padding: 20px 16px !important;
+    position: relative !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    box-sizing: border-box !important;
+}
+
+#productModalContent {
+    background: #ffffff !important;
+    border-radius: 10px;
+}

@@ -222,7 +222,7 @@
         <!-- PRODUCTS TAB -->
         <div id="productsTab" class="tab-content" style="display:none;">
             <div class="admin-card">
-                <h3>নতুন পণ্য যোগ করুন</h3>
+                <h3 id="formTitle">নতুন পণ্য যোগ করুন</h3>
                 <form id="addProductForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
                     <div class="form-group">
                         <label>পণ্যের নাম *</label>
@@ -248,8 +248,14 @@
                         <label>ছবি লিংক (URL)</label>
                         <input type="url" id="pImage" placeholder="https://...">
                     </div>
+                    <!-- পণ্য বিবরণ ফিল্ড -->
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <button type="submit" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
+                        <label>পণ্য বিবরণ (Description)</label>
+                        <textarea id="pDescription" rows="3" placeholder="যেমন: তাজা ও রাসায়নিক মুক্ত দেশি আলু..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" id="productSubmitBtn" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন</button>
+                        <button type="button" id="cancelEditBtn" onclick="cancelEdit()" style="display:none; padding: 10px 20px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px;">বাতিল করুন</button>
                     </div>
                 </form>
             </div>
@@ -433,7 +439,6 @@
                 if(document.getElementById('statSales')) document.getElementById('statSales').textContent='৳'+stats.sales.toLocaleString('bn-BD');
                 if(document.getElementById('statToday')) document.getElementById('statToday').textContent=stats.today;
 
-                // Sound notification on new order
                 if(!isFirstLoad && keys.length > previousOrderCount) {
                     alertAudio.play().catch(e => console.log('Autoplay blocked'));
                 }
@@ -480,14 +485,12 @@
                                 <button class="action-btn btn-wa" onclick="openWhatsAppCustomer('${phone}', '${name}', '${id}', ${grandTotal})">
                                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <!-- নতুন প্রিন্ট মেমো বাটন -->
                                 <button class="action-btn" style="background: #0284c7; color: white; margin-top: 5px;" onclick="printOrderSlip('${id}')">
                                     <i class="fa-solid fa-print"></i> প্রিন্ট মেমো
                                 </button>
                                 <button class="action-btn btn-delete" style="margin-top: 5px;" onclick="deleteOrder('${id}')">
-    <i class="fa-solid fa-trash"></i> ডিলিট
-</button>
-
+                                    <i class="fa-solid fa-trash"></i> ডিলিট
+                                </button>
                             </td>
                         </tr>
                     `;
@@ -518,6 +521,7 @@
                 unit: document.getElementById('pUnit').value.trim() || 'কেজি',
                 stock: document.getElementById('pStock').value !== '' ? Number(document.getElementById('pStock').value) : null,
                 productImage: document.getElementById('pImage').value.trim(),
+                description: document.getElementById('pDescription') ? document.getElementById('pDescription').value.trim() : '',
                 available: editingProductId && allAdminProducts[editingProductId] ? allAdminProducts[editingProductId].available !== false : true
             };
             const ref = editingProductId ? db.ref('products/' + editingProductId).update(productData) : db.ref('products').push().set(productData);
@@ -587,6 +591,9 @@
             document.getElementById('pUnit').value = p.unit || 'কেজি';
             document.getElementById('pStock').value = p.stock !== null && p.stock !== undefined ? p.stock : '';
             document.getElementById('pImage').value = p.productImage || '';
+            if(document.getElementById('pDescription')) {
+                document.getElementById('pDescription').value = p.description || '';
+            }
             document.getElementById('formTitle').textContent = 'পণ্য এডিট করুন';
             document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট করুন';
             document.getElementById('cancelEditBtn').style.display = 'inline-block';
@@ -597,6 +604,9 @@
             editingProductId = null;
             document.getElementById('addProductForm').reset();
             document.getElementById('pUnit').value = 'কেজি';
+            if(document.getElementById('pDescription')) {
+                document.getElementById('pDescription').value = '';
+            }
             document.getElementById('formTitle').textContent = 'নতুন পণ্য যোগ করুন';
             document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন';
             document.getElementById('cancelEditBtn').style.display = 'none';
@@ -647,7 +657,7 @@
         });
 
         // ==========================================
-        // প্রিন্ট মেমোর ফাংশন (নতুন যুক্ত করা হয়েছে)
+        // প্রিন্ট মেমোর ফাংশন
         // ==========================================
         function printOrderSlip(orderId) {
             db.ref("orders/" + orderId).once("value").then(function(snapshot) {
@@ -760,21 +770,21 @@
                 printWindow.document.close();
             });
         }
-        // ==========================================
-// অর্ডার ডিলিট ফাংশন
-// ==========================================
-function deleteOrder(id) {
-    if (confirm('আপনি কি নিশ্চিত যে অর্ডার #' + id + ' মুছে ফেলতে চান?')) {
-        db.ref('orders/' + id).remove()
-            .then(() => {
-                alert('অর্ডারটি সফলভাবে মুছে ফেলা হয়েছে!');
-            })
-            .catch(error => {
-                alert('অর্ডার মুছতে সমস্যা হয়েছে: ' + error.message);
-            });
-    }
-}
 
+        // ==========================================
+        // অর্ডার ডিলিট ফাংশন
+        // ==========================================
+        function deleteOrder(id) {
+            if (confirm('আপনি কি নিশ্চিত যে অর্ডার #' + id + ' মুছে ফেলতে চান?')) {
+                db.ref('orders/' + id).remove()
+                    .then(() => {
+                        alert('অর্ডারটি সফলভাবে মুছে ফেলা হয়েছে!');
+                    })
+                    .catch(error => {
+                        alert('অর্ডার মুছতে সমস্যা হয়েছে: ' + error.message);
+                    });
+            }
+        }
     </script>
 </body>
 </html>

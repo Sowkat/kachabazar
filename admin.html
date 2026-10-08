@@ -484,6 +484,10 @@
                                 <button class="action-btn" style="background: #0284c7; color: white; margin-top: 5px;" onclick="printOrderSlip('${id}')">
                                     <i class="fa-solid fa-print"></i> প্রিন্ট মেমো
                                 </button>
+                                <button class="action-btn btn-delete" style="margin-top: 5px;" onclick="deleteOrder('${id}')">
+    <i class="fa-solid fa-trash"></i> ডিলিট
+</button>
+
                             </td>
                         </tr>
                     `;
@@ -756,6 +760,21 @@
                 printWindow.document.close();
             });
         }
+        // ==========================================
+// অর্ডার ডিলিট ফাংশন
+// ==========================================
+function deleteOrder(id) {
+    if (confirm('আপনি কি নিশ্চিত যে অর্ডার #' + id + ' মুছে ফেলতে চান?')) {
+        db.ref('orders/' + id).remove()
+            .then(() => {
+                alert('অর্ডারটি সফলভাবে মুছে ফেলা হয়েছে!');
+            })
+            .catch(error => {
+                alert('অর্ডার মুছতে সমস্যা হয়েছে: ' + error.message);
+            });
+    }
+}
+
     </script>
 </body>
 </html>

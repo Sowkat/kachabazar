@@ -423,7 +423,7 @@ function changeQty(productId, amount) {
 }
 
 /* =========================================================
-   RENDER PRODUCTS (WITH FA ICONS FOR PLUS & MINUS)
+   RENDER PRODUCTS (CLICK PHOTO / NAME TO OPEN MODAL)
 ========================================================= */
 
 function renderProducts() {
@@ -482,14 +482,14 @@ function renderProducts() {
 
         return `
             <article class="product-card" style="padding: 8px; border: 1px solid #eee; border-radius: 8px; background: #fff;">
-                <div class="image-slider">
+                <div class="image-slider" onclick="openProductModal('${id}')" style="cursor: pointer;">
                     ${image ? 
                         `<img src="${escapeHtml(image)}" alt="${safeName}" style="width:100%; border-radius:6px; height:120px; object-fit:cover;">` : 
                         `<div class="product-image-placeholder" style="height:120px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:6px;"><i class="fa-solid fa-image"></i></div>`
                     }
                 </div>
                 
-                <h3 style="margin: 6px 0 2px 0; font-size: 14px; font-weight: bold; line-height: 1.2;">${safeName}</h3>
+                <h3 onclick="openProductModal('${id}')" style="margin: 6px 0 2px 0; font-size: 14px; font-weight: bold; line-height: 1.2; cursor: pointer; color: #1e293b;">${safeName}</h3>
                 <p style="margin: 0 0 6px 0; color: #555; font-size: 12px;">দাম: ৳${formatNumber(price)} / ${escapeHtml(rawUnit)}</p>
 
                 <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 3px;">
@@ -1048,11 +1048,21 @@ function setupModalEvents() {
         });
     }
 
+    const productModal = document.getElementById("productModal");
+    if (productModal) {
+        productModal.addEventListener("click", function (event) {
+            if (event.target === this) {
+                closeProductModal();
+            }
+        });
+    }
+
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
             closeCheckout();
             closeSuccess();
             closeCart();
+            closeProductModal();
         }
     });
 }
@@ -1061,6 +1071,61 @@ function scrollToProducts() {
     const section = document.getElementById("productsSection");
     if (section) {
         section.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+/* =========================================================
+   PRODUCT DETAILS MODAL FUNCTIONS
+========================================================= */
+
+function openProductModal(id) {
+    const product = allProducts[id];
+    if (!product) return;
+
+    const modal = document.getElementById("productModal");
+    const content = document.getElementById("productModalContent");
+    if (!modal || !content) return;
+
+    const safeName = escapeHtml(product.name || "");
+    const price = Number(product.price || 0);
+    const rawUnit = String(product.unit || "কেজি").trim();
+    const image = product.productImage || product.image || "";
+    const category = escapeHtml(product.category || "সাধারণ");
+    const description = escapeHtml(product.description || "এই পণ্যটির জন্য কোনো অতিরিক্ত বিবরণ দেওয়া হয়নি।");
+    const available = product.available !== false;
+
+    content.innerHTML = `
+        <div style="text-align: center; margin-bottom: 12px;">
+            ${image ? 
+                `<img src="${escapeHtml(image)}" alt="${safeName}" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px;">` : 
+                `<div style="height:140px; background:#f0f0f0; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-image fa-2x" style="color:#aaa;"></i></div>`
+            }
+        </div>
+        
+        <span style="display:inline-block; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold;">${category}</span>
+        
+        <h3 style="margin: 8px 0 4px 0; font-size: 18px; color: #0f172a;">${safeName}</h3>
+        <p style="font-size: 15px; font-weight: bold; color: #15803d; margin: 0 0 12px 0;">মূল্য: ৳${formatNumber(price)} / ${rawUnit}</p>
+        
+        <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 13px; color: #475569; margin-bottom: 15px; border: 1px solid #e2e8f0;">
+            <strong style="color: #334155; display: block; margin-bottom: 3px;">পণ্যের বিবরণ:</strong>
+            <p style="margin: 0; line-height: 1.4;">${description}</p>
+        </div>
+
+        <button type="button" onclick="addToCart('${id}'); closeProductModal();" ${!available ? "disabled" : ""} style="width:100%; padding:10px; background:${available ? '#ff5722' : '#ccc'}; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer; font-size:14px;">
+            <i class="fa-solid fa-cart-plus"></i> ${available ? 'কার্টে যোগ করুন' : 'স্টক নেই'}
+        </button>
+    `;
+
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+}
+
+function closeProductModal() {
+    const modal = document.getElementById("productModal");
+    if (modal) {
+        modal.style.display = "none";
+        document.body.style.overflow = "";
     }
 }
 

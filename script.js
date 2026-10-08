@@ -378,22 +378,53 @@ function applyProductFilter() {
 }
 
 /* =========================================================
-   RENDER PRODUCTS
+   DYNAMIC QTY & UNIT HANDLERS
 ========================================================= */
+
+function onUnitChange(productId) {
+    const qtyInput = document.getElementById(`qty-${productId}`);
+    const unitSelect = document.getElementById(`unit-${productId}`);
+    if (!qtyInput || !unitSelect) return;
+
+    if (unitSelect.value === 'gram') {
+        qtyInput.value = 250;
+        qtyInput.step = 50;
+        qtyInput.min = 50;
+    } else {
+        qtyInput.value = 1;
+        qtyInput.step = 0.5;
+        qtyInput.min = 0.1;
+    }
+}
 
 function changeQty(productId, amount) {
     let qtyInput = document.getElementById(`qty-${productId}`);
     if (!qtyInput) return;
 
-    let currentQty = parseFloat(qtyInput.value) || 1;
     let unitSelect = document.getElementById(`unit-${productId}`);
-    let step = (unitSelect && unitSelect.value === 'gram') ? 100 : 0.5;
+    let step = parseFloat(qtyInput.step) || 1;
+    let min = parseFloat(qtyInput.min) || 0.1;
 
+    if (unitSelect) {
+        if (unitSelect.value === 'gram') {
+            step = 100;
+            min = 50;
+        } else if (unitSelect.value === 'kg') {
+            step = 0.5;
+            min = 0.1;
+        }
+    }
+
+    let currentQty = parseFloat(qtyInput.value) || min;
     let newQty = currentQty + (amount * step);
-    if (newQty > 0) {
+    if (newQty >= min) {
         qtyInput.value = Number(newQty.toFixed(2));
     }
 }
+
+/* =========================================================
+   RENDER PRODUCTS (WITH FA ICONS FOR PLUS & MINUS)
+========================================================= */
 
 function renderProducts() {
     const container = document.getElementById("productList");
@@ -423,7 +454,31 @@ function renderProducts() {
         const image = product.productImage || product.image || "";
         const safeName = escapeHtml(product.name || "");
         const price = Number(product.price || 0);
-        const unit = escapeHtml(product.unit || "কেজি");
+        const rawUnit = String(product.unit || "কেজি").trim();
+
+        const isKg = (rawUnit === "কেজি" || rawUnit.toLowerCase() === "kg");
+        const isGram = (rawUnit === "গ্রাম" || rawUnit.toLowerCase() === "gram");
+
+        let unitSelectorHtml = "";
+        if (isKg) {
+            unitSelectorHtml = `
+                <input type="number" id="qty-${id}" class="qty-input" value="1" min="0.1" step="0.5" style="width: 45px; text-align: center; padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                <select id="unit-${id}" class="unit-select" onchange="onUnitChange('${id}')" style="padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+                    <option value="kg">কেজি</option>
+                    <option value="gram">গ্রাম</option>
+                </select>
+            `;
+        } else if (isGram) {
+            unitSelectorHtml = `
+                <input type="number" id="qty-${id}" class="qty-input" value="100" min="50" step="50" style="width: 50px; text-align: center; padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                <span style="font-size: 12px; font-weight: bold; color: #475569;">গ্রাম</span>
+            `;
+        } else {
+            unitSelectorHtml = `
+                <input type="number" id="qty-${id}" class="qty-input" value="1" min="1" step="1" style="width: 45px; text-align: center; padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                <span style="font-size: 12px; font-weight: bold; color: #475569; padding: 0 2px;">${escapeHtml(rawUnit)}</span>
+            `;
+        }
 
         return `
             <article class="product-card" style="padding: 8px; border: 1px solid #eee; border-radius: 8px; background: #fff;">
@@ -435,20 +490,18 @@ function renderProducts() {
                 </div>
                 
                 <h3 style="margin: 6px 0 2px 0; font-size: 14px; font-weight: bold; line-height: 1.2;">${safeName}</h3>
-                <p style="margin: 0 0 6px 0; color: #555; font-size: 12px;">দাম: ৳${formatNumber(price)} / ${unit}</p>
+                <p style="margin: 0 0 6px 0; color: #555; font-size: 12px;">দাম: ৳${formatNumber(price)} / ${escapeHtml(rawUnit)}</p>
 
                 <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 3px;">
-                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 3px 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: 13px;">-</button>
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 5px 8px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #334155; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
                     
-                    <input type="number" id="qty-${id}" class="qty-input" value="1" min="0.1" step="0.1" style="width: 40px; text-align: center; padding: 3px 2px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;">
+                    ${unitSelectorHtml}
                     
-                    <select id="unit-${id}" class="unit-select" style="padding: 3px 2px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px;">
-                        <option value="kg">কেজি</option>
-                        <option value="gram">গ্রাম</option>
-                        <option value="piece">পিস</option>
-                    </select>
-                    
-                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 3px 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: 13px;">+</button>
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 5px 8px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #334155; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
 
                 <button
@@ -490,7 +543,7 @@ function addToCart(id) {
     const unitSelect = document.getElementById(`unit-${id}`);
     
     let qtyToAdd = qtyInput ? parseFloat(qtyInput.value) : 1;
-    let selectedUnit = unitSelect ? unitSelect.value : "kg";
+    let selectedUnit = unitSelect ? unitSelect.value : (product.unit || "কেজি");
 
     if (selectedUnit === "gram") {
         qtyToAdd = qtyToAdd / 1000;
@@ -507,8 +560,17 @@ function addToCart(id) {
 
     cart[id] = currentQty + qtyToAdd;
 
-    if(qtyInput) qtyInput.value = "1";
-    if(unitSelect) unitSelect.value = "kg";
+    if (qtyInput) {
+        if (unitSelect && unitSelect.value === 'gram') {
+            qtyInput.value = "250";
+        } else if (unitSelect) {
+            qtyInput.value = "1";
+        } else if (String(product.unit).trim() === "গ্রাম") {
+            qtyInput.value = "100";
+        } else {
+            qtyInput.value = "1";
+        }
+    }
 
     saveCart();
     updateCart();
@@ -643,18 +705,17 @@ function updateCart() {
         }
     }
 
-        safeSetText("cartSubtotal", "৳" + formatNumber(subtotal));
+    safeSetText("cartSubtotal", "৳" + formatNumber(subtotal));
     safeSetText("cartDelivery", deliveryCharge === 0 && subtotal > 0 ? "ফ্রি (Free)" : "৳" + formatNumber(deliveryCharge));
     safeSetText("cartTotal", "৳" + formatNumber(grandTotal));
 
-    // এই তিনটি লাইন চেকআউট পপআপের মেমোর জন্য যুক্ত করতে হবে:
     safeSetText("checkoutSubtotal", "৳" + formatNumber(subtotal));
     safeSetText("checkoutDelivery", deliveryCharge === 0 && subtotal > 0 ? "ফ্রি" : "৳" + formatNumber(deliveryCharge));
     safeSetText("checkoutTotal", "৳" + formatNumber(grandTotal));
-
 }
+
 /* =========================================================
-   CART & CHECKOUT OPEN/CLOSE (FIXED)
+   CART & CHECKOUT OPEN/CLOSE
 ========================================================= */
 
 function openCart() {
@@ -679,7 +740,7 @@ function closeCart() {
 }
 
 function openCheckout() {
-    closeCart(); // কার্ট বন্ধ করে চেকআউট ওপেন হবে
+    closeCart();
     const checkoutModal = document.getElementById("checkoutModal");
     if (checkoutModal) {
         checkoutModal.classList.add("show");
@@ -696,7 +757,7 @@ function closeCheckout() {
 }
 
 /* =========================================================
-   CHECKOUT WITH WHATSAPP VALIDATION (FIXED)
+   CHECKOUT WITH WHATSAPP VALIDATION
 ========================================================= */
 
 function openCheckoutWithValidation(action) {
@@ -706,13 +767,11 @@ function openCheckoutWithValidation(action) {
         return;
     }
 
-    // চেকআউট ফর্মের ইনপুট চেক করা হচ্ছে
     const name = document.getElementById("customerName")?.value.trim() || "";
     const phone = document.getElementById("customerPhone")?.value.trim() || "";
     const address = document.getElementById("customerAddress")?.value.trim() || "";
     const note = document.getElementById("special-note")?.value.trim() || "";
     
-    // যদি নাম, ফোন বা ঠিকানা ফাঁকা থাকে, তবে চেকআউট ফর্ম ওপেন করে পূরণ করতে বলবে
     if (!name || !phone || !address) {
         showToast("দয়া করে আপনার নাম, মোবাইল নম্বর এবং ঠিকানা পূরণ করুন।", "error");
         openCheckout(); 
@@ -752,7 +811,6 @@ function openCheckoutWithValidation(action) {
         window.location.href = "tel:" + phoneNo;
     }
 }
-
 
 /* =========================================================
    PLACE ORDER (FIREBASE)
@@ -852,11 +910,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 closeCheckout();
                 closeCart();
 
-                // ডাইনামিক অর্ডার আইডি পপআপে সেট করা হলো
                 safeSetText("successOrderId", orderId);
                 const waBtn = document.getElementById("successWhatsAppBtn");
                 
-                // হোয়াটসঅ্যাপ নম্বর নিশ্চিত করা
                 let targetWhatsApp = shopSettings.shopWhatsApp || shopSettings.shopPhone || "8801960174982";
                 const whatsapp = cleanWhatsApp(targetWhatsApp);
 

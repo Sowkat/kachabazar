@@ -401,5 +401,15 @@
             showSlide(index);
         }
     </script>
+    <!-- PRODUCT DETAILS MODAL -->
+<div id="productModal" class="modal-overlay" style="display:none;" onclick="closeProductModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <button type="button" class="modal-close-btn" onclick="closeProductModal()">&times;</button>
+        <div id="productModalContent">
+            <!-- ডায়নামিক ডাটা লোড হবে -->
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -144,7 +144,10 @@
     
         .admin-product-tools{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:8px;margin-top:12px;align-items:center}.admin-product-tools input,.admin-product-tools select{padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;outline:none;font-family:inherit}.admin-product-tools button{padding:9px 12px;border:0;border-radius:8px;background:#64748b;color:#fff;cursor:pointer}.admin-product-tools span{font-size:13px;color:#64748b;white-space:nowrap}@media(max-width:760px){.admin-product-tools{grid-template-columns:1fr 1fr}.admin-product-tools input{grid-column:1/-1}.admin-product-tools span{grid-column:1/-1}}
     
-        .admin-dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.dash-card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}.dash-card span{display:block;color:#64748b;font-size:12px}.dash-card b{font-size:22px;color:#15803d}@media(max-width:760px){.admin-dashboard{grid-template-columns:repeat(2,1fr)}}
+        .admin-dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+        .dash-card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);transition: transform 0.2s, box-shadow 0.2s;}
+        .dash-card:hover{transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
+        .dash-card span{display:block;color:#64748b;font-size:12px}.dash-card b{font-size:22px;color:#15803d}@media(max-width:760px){.admin-dashboard{grid-template-columns:repeat(2,1fr)}}
     </style>
 </head>
 <body>
@@ -194,9 +197,18 @@
 
         <!-- ORDERS TAB -->
         <div id="ordersTab" class="tab-content">
-            <div class="admin-dashboard" id="adminDashboard"><div class="dash-card"><span>Pending</span><b id="statPending">0</b></div><div class="dash-card"><span>Confirmed</span><b id="statConfirmed">0</b></div><div class="dash-card"><span>Processing</span><b id="statProcessing">0</b></div><div class="dash-card"><span>Delivered</span><b id="statDelivered">0</b></div><div class="dash-card"><span>Cancelled</span><b id="statCancelled">0</b></div><div class="dash-card"><span>মোট অর্ডার</span><b id="statTotal">0</b></div><div class="dash-card"><span>মোট বিক্রি</span><b id="statSales">৳0</b></div><div class="dash-card"><span>আজকের অর্ডার</span><b id="statToday">0</b></div></div>
+            <div class="admin-dashboard" id="adminDashboard">
+                <div class="dash-card" onclick="filterOrders('pending')" style="cursor: pointer;"><span>Pending</span><b id="statPending">0</b></div>
+                <div class="dash-card" onclick="filterOrders('confirmed')" style="cursor: pointer;"><span>Confirmed</span><b id="statConfirmed">0</b></div>
+                <div class="dash-card" onclick="filterOrders('processing')" style="cursor: pointer;"><span>Processing</span><b id="statProcessing">0</b></div>
+                <div class="dash-card" onclick="filterOrders('delivered')" style="cursor: pointer;"><span>Delivered</span><b id="statDelivered">0</b></div>
+                <div class="dash-card" onclick="filterOrders('cancelled')" style="cursor: pointer;"><span>Cancelled</span><b id="statCancelled">0</b></div>
+                <div class="dash-card" onclick="filterOrders('all')" style="cursor: pointer;"><span>মোট অর্ডার</span><b id="statTotal">0</b></div>
+                <div class="dash-card"><span>মোট বিক্রি</span><b id="statSales">৳0</b></div>
+                <div class="dash-card" onclick="filterOrders('today')" style="cursor: pointer;"><span>আজকের অর্ডার</span><b id="statToday">0</b></div>
+            </div>
             <div class="admin-card">
-                <h3>সর্বশেষ অর্ডার তালিকা</h3>
+                <h3 id="orderListTitle">সর্বশেষ অর্ডার তালিকা (সকল)</h3>
                 <div class="admin-table-wrap">
                     <table class="admin-table">
                         <thead>
@@ -358,6 +370,10 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
+        // Global variables for Order filtering
+        let globalOrdersData = {};
+        let currentFilterStatus = 'all';
+
         // Audio Sound for New Order Alert
         const alertAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
         let previousOrderCount = 0;
@@ -425,15 +441,114 @@
             return `${Math.floor(hours / 24)} দিন আগে`;
         }
 
+        // FILTER ORDERS FUNCTION
+        function filterOrders(status) {
+            currentFilterStatus = status;
+            renderOrdersTable();
+            
+            // স্মুথ স্ক্রোল করে টেবিল সেকশনে নিয়ে যাবে
+            const tableCard = document.querySelector('#ordersTab .admin-card');
+            if(tableCard) {
+                tableCard.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // RENDER ORDERS TABLE BASED ON FILTER
+        function renderOrdersTable() {
+            const data = globalOrdersData;
+            const tbody = document.getElementById('adminOrdersList');
+            if (!tbody) return;
+
+            let keys = Object.keys(data).sort((a,b)=>(Number(data[b]?.createdAt||0)-Number(data[a]?.createdAt||0)));
+            const todayKey = new Date().toDateString();
+
+            // স্ট্যাটাস অনুযায়ী ফিল্টার
+            if (currentFilterStatus !== 'all') {
+                if (currentFilterStatus === 'today') {
+                    keys = keys.filter(k => data[k]?.createdAt && new Date(data[k].createdAt).toDateString() === todayKey);
+                } else {
+                    keys = keys.filter(k => (data[k]?.status || 'pending') === currentFilterStatus);
+                }
+            }
+
+            // হেডিং আপডেট
+            const titleEl = document.getElementById('orderListTitle');
+            if (titleEl) {
+                const statusNames = {
+                    'all': 'সকল',
+                    'pending': 'Pending',
+                    'confirmed': 'Confirmed',
+                    'processing': 'Processing',
+                    'delivered': 'Delivered',
+                    'cancelled': 'Cancelled',
+                    'today': 'আজকের'
+                };
+                titleEl.textContent = `অর্ডার তালিকা: ${statusNames[currentFilterStatus] || currentFilterStatus} (${keys.length}টি)`;
+            }
+
+            if(!keys.length){
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">এই ক্যাটাগরিতে কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = keys.map(id => {
+                const o = data[id];
+                const itemsStr = o.items ? (Array.isArray(o.items) ? o.items.map(i => `${i.name || i.title} (${i.quantity || 1})`).join(', ') : 'পণ্য আছে') : '';
+                const timeAgo = formatTimeAgo(o.createdAt);
+                const phone = o.phone || o.customerPhone || 'N/A';
+                const name = o.name || o.customerName || 'N/A';
+                const grandTotal = o.total || o.grandTotal || 0;
+                const delivery = o.deliveryCharge !== undefined ? o.deliveryCharge : 0;
+
+                return `
+                    <tr>
+                        <td>
+                            <strong>${id}</strong><br>
+                            <span class="time-badge">${timeAgo}</span>
+                        </td>
+                        <td>${name}</td>
+                        <td>${phone}</td>
+                        <td>${o.address || o.customerAddress || 'N/A'}</td>
+                        <td><small>${itemsStr}</small></td>
+                        <td>
+                            <b>৳${grandTotal}</b><br>
+                            <small style="color:#64748b;">ডেলিভারি: ৳${delivery}</small>
+                        </td>
+                        <td><span class="badge badge-${o.status || 'pending'}">${({'pending':'Pending','confirmed':'নিশ্চিত','processing':'প্রসেসিং','delivered':'ডেলিভারি হয়েছে','cancelled':'বাতিল'})[o.status || 'pending'] || 'Pending'}</span></td>
+                        <td>
+                            <select onchange="updateOrderStatus('${id}', this.value)" style="padding:3px; margin-bottom:5px;">
+                                <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
+                                <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
+                                <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+                                <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+                                <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+                            </select><br>
+                            <button class="action-btn btn-wa" onclick="openWhatsAppCustomer('${phone}', '${name}', '${id}', ${grandTotal})">
+                                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="action-btn" style="background: #0284c7; color: white; margin-top: 5px;" onclick="printOrderSlip('${id}')">
+                                <i class="fa-solid fa-print"></i> প্রিন্ট মেমো
+                            </button>
+                            <button class="action-btn btn-delete" style="margin-top: 5px;" onclick="deleteOrder('${id}')">
+                                <i class="fa-solid fa-trash"></i> ডিলিট
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         // LOAD ORDERS (With Sound Alert & Time-Ago)
         function loadAdminOrders(){
             db.ref('orders').on('value', snapshot => {
-                const data = snapshot.val() || {};
-                const tbody = document.getElementById('adminOrdersList');
-                const keys = Object.keys(data).sort((a,b)=>(Number(data[b]?.createdAt||0)-Number(data[a]?.createdAt||0)));
+                globalOrdersData = snapshot.val() || {};
+                const data = globalOrdersData;
+                const keys = Object.keys(data);
                 const stats = {pending:0,confirmed:0,processing:0,delivered:0,cancelled:0,total:keys.length,sales:0,today:0};
                 const todayKey = new Date().toDateString();
+
                 keys.forEach(k=>{ const o=data[k]||{}; const st=o.status||'pending'; if(stats[st]!==undefined) stats[st]++; stats.sales += Number(o.total||o.grandTotal||0); if(o.createdAt && new Date(o.createdAt).toDateString()===todayKey) stats.today++; });
+
                 ['pending','confirmed','processing','delivered','cancelled'].forEach(s=>{const el=document.getElementById('stat'+s.charAt(0).toUpperCase()+s.slice(1)); if(el) el.textContent=stats[s];});
                 if(document.getElementById('statTotal')) document.getElementById('statTotal').textContent=stats.total;
                 if(document.getElementById('statSales')) document.getElementById('statSales').textContent='৳'+stats.sales.toLocaleString('bn-BD');
@@ -445,56 +560,7 @@
                 previousOrderCount = keys.length;
                 isFirstLoad = false;
 
-                if(!keys.length){
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">কোনো অর্ডার পাওয়া যায়নি।</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = keys.map(id => {
-                    const o = data[id];
-                    const itemsStr = o.items ? (Array.isArray(o.items) ? o.items.map(i => `${i.name || i.title} (${i.quantity || 1})`).join(', ') : 'পণ্য আছে') : '';
-                    const timeAgo = formatTimeAgo(o.createdAt);
-                    const phone = o.phone || o.customerPhone || 'N/A';
-                    const name = o.name || o.customerName || 'N/A';
-                    const grandTotal = o.total || o.grandTotal || 0;
-                    const delivery = o.deliveryCharge !== undefined ? o.deliveryCharge : 0;
-
-                    return `
-                        <tr>
-                            <td>
-                                <strong>${id}</strong><br>
-                                <span class="time-badge">${timeAgo}</span>
-                            </td>
-                            <td>${name}</td>
-                            <td>${phone}</td>
-                            <td>${o.address || o.customerAddress || 'N/A'}</td>
-                            <td><small>${itemsStr}</small></td>
-                            <td>
-                                <b>৳${grandTotal}</b><br>
-                                <small style="color:#64748b;">ডেলিভারি: ৳${delivery}</small>
-                            </td>
-                            <td><span class="badge badge-${o.status || 'pending'}">${({'pending':'Pending','confirmed':'নিশ্চিত','processing':'প্রসেসিং','delivered':'ডেলিভারি হয়েছে','cancelled':'বাতিল'})[o.status || 'pending'] || 'Pending'}</span></td>
-                            <td>
-                                <select onchange="updateOrderStatus('${id}', this.value)" style="padding:3px; margin-bottom:5px;">
-                                    <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
-                                    <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
-                                    <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
-                                    <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
-                                    <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
-                                </select><br>
-                                <button class="action-btn btn-wa" onclick="openWhatsAppCustomer('${phone}', '${name}', '${id}', ${grandTotal})">
-                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                                </button>
-                                <button class="action-btn" style="background: #0284c7; color: white; margin-top: 5px;" onclick="printOrderSlip('${id}')">
-                                    <i class="fa-solid fa-print"></i> প্রিন্ট মেমো
-                                </button>
-                                <button class="action-btn btn-delete" style="margin-top: 5px;" onclick="deleteOrder('${id}')">
-                                    <i class="fa-solid fa-trash"></i> ডিলিট
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+                renderOrdersTable();
             }, error => {
                 document.getElementById('adminOrdersList').innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">ডাটা পড়তে সমস্যা হচ্ছে: ' + error.message + '</td></tr>';
             });

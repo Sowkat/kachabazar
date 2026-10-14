@@ -6,7 +6,7 @@
 /* =========================================================
    TELEGRAM BOT CONFIGURATION (টেলিগ্রাম বটের তথ্য)
 ========================================================= */
-const TELEGRAM_BOT_TOKEN ="bot8799407672:AAFpwkatGEIhv2UGlTOjmCrkidJ2xhvSKr8E";  // এখানে আপনার বটের API Token বসান
+const TELEGRAM_BOT_TOKEN ="8799407672:AAFpwkatGEIhv2UGlTOjmCrkidJ2xhvSKr8E";  // এখানে আপনার বটের API Token বসান
 const TELEGRAM_CHAT_ID ="8930649102";      // এখানে আপনার বা আপনার গ্রুপের Chat ID বসান
 
 /* =========================================================

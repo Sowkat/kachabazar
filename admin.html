@@ -287,6 +287,14 @@
                         <input type="text" id="pUnit" placeholder="যেমন: কেজি / আঁটি" value="কেজি" required>
                     </div>
                     <div class="form-group">
+                        <label>সর্বনিম্ন পরিমাণ (Min Qty)</label>
+                        <input type="number" id="pMinQty" placeholder="যেমন: 0.5 বা 1" step="0.1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>সর্বোচ্চ পরিমাণ (Max Qty)</label>
+                        <input type="number" id="pMaxQty" placeholder="যেমন: 10 বা 20" step="0.1">
+                    </div>
+                    <div class="form-group">
                         <label>স্টক (সংখ্যা)</label>
                         <input type="number" id="pStock" placeholder="যেমন: ১০০">
                     </div>
@@ -323,13 +331,14 @@
                                 <th>পণ্যের নাম</th>
                                 <th>ক্যাটাগরি</th>
                                 <th>মূল্য</th>
+                                <th>মিন/ম্যাক্স</th>
                                 <th>স্টক</th>
                                 <th>অবস্থা</th>
                                 <th>অ্যাকশন</th>
                             </tr>
                         </thead>
                         <tbody id="adminProductsList">
-                            <tr><td colspan="7" style="text-align:center;">লোড হচ্ছে...</td></tr>
+                            <tr><td colspan="8" style="text-align:center;">লোড হচ্ছে...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -417,16 +426,13 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
-        // Global variables for Order filtering
         let globalOrdersData = {};
         let currentFilterStatus = 'all';
 
-        // Audio Sound for New Order Alert
         const alertAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
         let previousOrderCount = 0;
         let isFirstLoad = true;
 
-        // Firebase Auth Login
         document.getElementById('adminLoginForm').addEventListener('submit', function(e){
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim();
@@ -448,7 +454,6 @@
                 });
         });
 
-        // Track Login State
         auth.onAuthStateChanged((user) => {
             if (user && user.email === 'sowkat420@gmail.com') {
                 document.getElementById('loginSection').style.display = 'none';
@@ -475,7 +480,6 @@
             if(btn) btn.classList.add('active');
         }
 
-        // Time-Ago Calculator
         function formatTimeAgo(timestamp) {
             if(!timestamp) return "এখনই";
             const date = new Date(timestamp);
@@ -488,19 +492,16 @@
             return `${Math.floor(hours / 24)} দিন আগে`;
         }
 
-        // FILTER ORDERS FUNCTION
         function filterOrders(status) {
             currentFilterStatus = status;
             renderOrdersTable();
             
-            // স্মুথ স্ক্রোল করে টেবিল সেকশনে নিয়ে যাবে
             const tableCard = document.querySelector('#ordersTab .admin-card');
             if(tableCard) {
                 tableCard.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // SHOW ORDER DETAILS MODAL
         function showOrderModal(id) {
             const o = globalOrdersData[id];
             if (!o) return;
@@ -549,12 +550,10 @@
             document.getElementById('orderDetailsModal').style.display = 'flex';
         }
 
-        // CLOSE MODAL
         function closeOrderModal() {
             document.getElementById('orderDetailsModal').style.display = 'none';
         }
 
-        // RENDER ORDERS TABLE BASED ON FILTER
         function renderOrdersTable() {
             const data = globalOrdersData;
             const tbody = document.getElementById('adminOrdersList');
@@ -563,7 +562,6 @@
             let keys = Object.keys(data).sort((a,b)=>(Number(data[b]?.createdAt||0)-Number(data[a]?.createdAt||0)));
             const todayKey = new Date().toDateString();
 
-            // স্ট্যাটাস অনুযায়ী ফিল্টার
             if (currentFilterStatus !== 'all') {
                 if (currentFilterStatus === 'today') {
                     keys = keys.filter(k => data[k]?.createdAt && new Date(data[k].createdAt).toDateString() === todayKey);
@@ -572,7 +570,6 @@
                 }
             }
 
-            // হেডিং আপডেট
             const titleEl = document.getElementById('orderListTitle');
             if (titleEl) {
                 const statusNames = {
@@ -631,7 +628,6 @@
             }).join('');
         }
 
-        // LOAD ORDERS (With Sound Alert & Time-Ago)
         function loadAdminOrders(){
             db.ref('orders').on('value', snapshot => {
                 globalOrdersData = snapshot.val() || {};
@@ -678,6 +674,8 @@
                 category: document.getElementById('pCategory').value.trim(),
                 price: Number(document.getElementById('pPrice').value),
                 unit: document.getElementById('pUnit').value.trim() || 'কেজি',
+                minQty: document.getElementById('pMinQty').value !== '' ? Number(document.getElementById('pMinQty').value) : 1,
+                maxQty: document.getElementById('pMaxQty').value !== '' ? Number(document.getElementById('pMaxQty').value) : null,
                 stock: document.getElementById('pStock').value !== '' ? Number(document.getElementById('pStock').value) : null,
                 productImage: document.getElementById('pImage').value.trim(),
                 description: document.getElementById('pDescription') ? document.getElementById('pDescription').value.trim() : '',
@@ -709,12 +707,14 @@
                 return true;
             });
             document.getElementById('productSearchCount').textContent = keys.length + 'টি দেখানো হচ্ছে';
-            if(!keys.length){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">কোনো পণ্য পাওয়া যায়নি।</td></tr>'; return; }
+            if(!keys.length){ tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">কোনো পণ্য পাওয়া যায়নি।</td></tr>'; return; }
             tbody.innerHTML = keys.map(id => {
                 const p = allAdminProducts[id];
                 const isAvailable = p.available !== false;
                 const img = escapeAdminHtml(p.productImage || 'https://via.placeholder.com/40');
-                return `<tr><td><img src="${img}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td><td><strong>${escapeAdminHtml(p.name || '')}</strong></td><td>${escapeAdminHtml(p.category || '')}</td><td>৳${Number(p.price || 0)} / ${escapeAdminHtml(p.unit || '')}</td><td>${p.stock !== null && p.stock !== undefined && p.stock !== '' ? p.stock : 'N/A'}</td><td>${isAvailable ? 'চালু' : 'বন্ধ'}</td><td><button class="action-btn" style="background:${isAvailable ? '#f59e0b' : '#10b981'};color:#fff;" onclick="toggleProduct('${id}', ${isAvailable})">${isAvailable ? 'বন্ধ করুন' : 'চালু করুন'}</button> <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')">এডিট</button> <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button></td></tr>`;
+                const min = p.minQty ?? 1;
+                const max = p.maxQty ? p.maxQty : '∞';
+                return `<tr><td><img src="${img}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td><td><strong>${escapeAdminHtml(p.name || '')}</strong></td><td>${escapeAdminHtml(p.category || '')}</td><td>৳${Number(p.price || 0)} / ${escapeAdminHtml(p.unit || '')}</td><td>${min} - ${max}</td><td>${p.stock !== null && p.stock !== undefined && p.stock !== '' ? p.stock : 'N/A'}</td><td>${isAvailable ? 'চালু' : 'বন্ধ'}</td><td><button class="action-btn" style="background:${isAvailable ? '#f59e0b' : '#10b981'};color:#fff;" onclick="toggleProduct('${id}', ${isAvailable})">${isAvailable ? 'বন্ধ করুন' : 'চালু করুন'}</button> <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')">এডিট</button> <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button></td></tr>`;
             }).join('');
         }
 
@@ -748,6 +748,8 @@
             document.getElementById('pCategory').value = p.category || '';
             document.getElementById('pPrice').value = p.price ?? '';
             document.getElementById('pUnit').value = p.unit || 'কেজি';
+            document.getElementById('pMinQty').value = p.minQty ?? 1;
+            document.getElementById('pMaxQty').value = p.maxQty ?? '';
             document.getElementById('pStock').value = p.stock !== null && p.stock !== undefined ? p.stock : '';
             document.getElementById('pImage').value = p.productImage || '';
             if(document.getElementById('pDescription')) {
@@ -763,6 +765,8 @@
             editingProductId = null;
             document.getElementById('addProductForm').reset();
             document.getElementById('pUnit').value = 'কেজি';
+            document.getElementById('pMinQty').value = 1;
+            document.getElementById('pMaxQty').value = '';
             if(document.getElementById('pDescription')) {
                 document.getElementById('pDescription').value = '';
             }
@@ -781,7 +785,6 @@
             }
         }
 
-        // SETTINGS MANAGEMENT
         function loadAdminSettings(){
             db.ref('settings').once('value', snapshot => {
                 const s = snapshot.val() || {};
@@ -815,9 +818,6 @@
             });
         });
 
-        // ==========================================
-        // প্রিন্ট মেমোর ফাংশন
-        // ==========================================
         function printOrderSlip(orderId) {
             db.ref("orders/" + orderId).once("value").then(function(snapshot) {
                 const order = snapshot.val();
@@ -930,9 +930,6 @@
             });
         }
 
-        // ==========================================
-        // অর্ডার ডিলিট ফাংশন
-        // ==========================================
         function deleteOrder(id) {
             if (confirm('আপনি কি নিশ্চিত যে অর্ডার #' + id + ' মুছে ফেলতে চান?')) {
                 db.ref('orders/' + id).remove()

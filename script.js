@@ -4,10 +4,10 @@
 ========================================================= */
 
 /* =========================================================
-   TELEGRAM BOT CONFIGURATION (টেলিগ্রাম বটের তথ্য)
+   TELEGRAM BOT CONFIGURATION
 ========================================================= */
-const TELEGRAM_BOT_TOKEN ="8799407672:AAFpwkatGEIhv2UGlTOjmCrkidJ2xhvSKr8E";  // এখানে আপনার বটের API Token বসান
-const TELEGRAM_CHAT_ID ="8930649102";      // এখানে আপনার বা আপনার গ্রুপের Chat ID বসান
+const TELEGRAM_BOT_TOKEN = "8799407672:AAFpwkatGEIhv2UGlTQimCrkidJ2xbvSKr8E";  
+const TELEGRAM_CHAT_ID = "8930649102";      
 
 /* =========================================================
    FIREBASE CONFIG
@@ -884,30 +884,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 // ১. ফায়ারবেসে অর্ডার সেভ করা
                 await db.ref("orders/" + orderId).set(orderData);
                 
-                // ২. টেলিগ্রাম নোটিফিকেশন মেসেজ তৈরি
+                // ২. টেলিগ্রাম মেসেজ সাজানো
                 let itemsText = "";
-                orderData.items.forEach(function (item, index) {
-                    itemsText += `• ${item.name} × ${item.quantity} ${item.unit} (৳${formatNumber(item.price * item.quantity)})\n`;
+                orderData.items.forEach(function (item) {
+                    itemsText += `• ${item.name} - ${item.quantity} ${item.unit} (৳${formatNumber(item.price * item.quantity)})\n`;
                 });
 
-                let telegramMessage = `
-🛍️ *নতুন কাঁচাবাজার অর্ডার এসেছে!*
-━━━━━━━━━━━━━━━━━━
-🆔 *অর্ডার আইডি:* ${orderId}
-👤 *নাম:* ${name}
-📞 *মোবাইল:* ${phone}
-📍 *ঠিকানা:* ${address}
-🛒 *পণ্যসমূহ:*
-${itemsText}
-💰 *পণ্যের মূল্য:* ৳${formatNumber(subtotal)}
-🚚 *ডেলিভারি চার্জ:* ৳${formatNumber(delivery)}
-💵 *সর্বমোট বিল:* ৳${formatNumber(total)}
-💳 *পেমেন্ট:* ${paymentMethod}
-${note ? `📝 *নোট:* ${note}\n` : ''}━━━━━━━━━━━━━━━━━━
-⏰ *সময়:* ${now.toLocaleString("bn-BD")}
-                `;
+                let telegramMessage = `🛍️ নতুন কাঁচাবাজার অর্ডার এসেছে!\n\n` +
+                    `🆔 অর্ডার আইডি: ${orderId}\n` +
+                    `👤 নাম: ${name}\n` +
+                    `📞 মোবাইল: ${phone}\n` +
+                    `📍 ঠিকানা: ${address}\n\n` +
+                    `🛒 পণ্যসমূহ:\n${itemsText}\n` +
+                    `💰 পণ্যের মূল্য: ৳${formatNumber(subtotal)}\n` +
+                    `🚚 ডেলিভারি চার্জ: ৳${formatNumber(delivery)}\n` +
+                    `💵 সর্বমোট বিল: ৳${formatNumber(total)}\n` +
+                    `💳 পেমেন্ট: ${paymentMethod}\n` +
+                    (note ? `📝 নোট: ${note}\n` : '') +
+                    `⏰ সময়: ${now.toLocaleString("bn-BD")}`;
 
-                // ৩. টেলিগ্রাম বটের মাধ্যমে নোটিফিকেশন পাঠানো
+                // ৩. টেলিগ্রাম বটের মাধ্যমে নোটিফিকেশন পাঠানো (সঠিক ফাংশন কল)
                 sendTelegramAlert(telegramMessage);
 
                 cart = {};
@@ -953,10 +949,7 @@ ${note ? `📝 *নোট:* ${note}\n` : ''}━━━━━━━━━━━━
 ========================================================= */
 
 function sendTelegramAlert(messageText) {
-    if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
-        console.warn("Telegram Bot Token is not configured!");
-        return;
-    }
+    if (!TELEGRAM_BOT_TOKEN) return;
 
     fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: "POST",
@@ -965,18 +958,11 @@ function sendTelegramAlert(messageText) {
         },
         body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
-            text: messageText,
-            parse_mode: "Markdown"
+            text: messageText
         })
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.ok) {
-            console.log("Telegram notification sent successfully!");
-        } else {
-            console.error("Telegram error:", data);
-        }
-    })
+    .then(data => console.log("Telegram notification response:", data))
     .catch(error => console.error("Error sending Telegram notification:", error));
 }
 

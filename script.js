@@ -1,7 +1,13 @@
 /* =========================================================
    ১০ নং সাতবাড়ীয়া কাঁচাবাজার
-   CUSTOMER WEBSITE SCRIPT
+   CUSTOMER WEBSITE SCRIPT (WITH TELEGRAM BOT NOTIFICATION)
 ========================================================= */
+
+/* =========================================================
+   TELEGRAM BOT CONFIGURATION (টেলিগ্রাম বটের তথ্য)
+========================================================= */
+const TELEGRAM_BOT_TOKEN = "8799407672:AAFpwkatGEIhv2UGlTOjmCrkidJ2xhvSKr8E";  // এখানে আপনার বটের API Token বসান
+const TELEGRAM_CHAT_ID = "8930649102";      // এখানে আপনার বা আপনার গ্রুপের Chat ID বসান
 
 /* =========================================================
    FIREBASE CONFIG
@@ -391,39 +397,43 @@ function onUnitChange(productId) {
         qtyInput.step = 50;
         qtyInput.min = 50;
     } else {
-        qtyInput.value = 1;
+        const product = allProducts[productId] || {};
+        const min = product.minQty !== undefined && product.minQty !== null ? product.minQty : 1;
+        qtyInput.value = min;
         qtyInput.step = 0.5;
-        qtyInput.min = 0.1;
+        qtyInput.min = min;
     }
 }
 
 function changeQty(productId, amount) {
     let qtyInput = document.getElementById(`qty-${productId}`);
+    let unitSelect = document.getElementById(`unit-${productId}`);
     if (!qtyInput) return;
 
-    let unitSelect = document.getElementById(`unit-${productId}`);
-    let step = parseFloat(qtyInput.step) || 1;
-    let min = parseFloat(qtyInput.min) || 0.1;
+    const product = allProducts[productId] || {};
+    let isGram = unitSelect && unitSelect.value === 'gram';
 
-    if (unitSelect) {
-        if (unitSelect.value === 'gram') {
-            step = 100;
-            min = 50;
-        } else if (unitSelect.value === 'kg') {
-            step = 0.5;
-            min = 0.1;
-        }
-    }
+    let min = isGram ? 50 : (product.minQty !== undefined && product.minQty !== null ? Number(product.minQty) : 0.5);
+    let max = isGram ? null : (product.maxQty !== undefined && product.maxQty !== null && product.maxQty !== "" ? Number(product.maxQty) : null);
+    let step = isGram ? 100 : 0.5;
 
     let currentQty = parseFloat(qtyInput.value) || min;
     let newQty = currentQty + (amount * step);
-    if (newQty >= min) {
-        qtyInput.value = Number(newQty.toFixed(2));
+
+    if (newQty < min) {
+        newQty = min;
+        showToast(`সর্বনিম্ন ${min} ${isGram ? 'গ্রাম' : 'কেজি'} নিতে হবে।`, "error");
     }
+    if (max !== null && newQty > max) {
+        newQty = max;
+        showToast(`সর্বোচ্চ ${max} কেজি নেওয়া যাবে।`, "error");
+    }
+
+    qtyInput.value = Number(newQty.toFixed(2));
 }
 
 /* =========================================================
-   RENDER PRODUCTS (CLICK PHOTO / NAME TO OPEN MODAL)
+   RENDER PRODUCTS
 ========================================================= */
 
 function renderProducts() {
@@ -456,50 +466,47 @@ function renderProducts() {
         const price = Number(product.price || 0);
         const rawUnit = String(product.unit || "কেজি").trim();
 
+        const minVal = product.minQty !== undefined && product.minQty !== null ? product.minQty : 1;
+        const maxVal = product.maxQty !== undefined && product.maxQty !== null && product.maxQty !== "" ? product.maxQty : "";
+
         const isKg = (rawUnit === "কেজি" || rawUnit.toLowerCase() === "kg");
-        const isGram = (rawUnit === "গ্রাম" || rawUnit.toLowerCase() === "gram");
 
         let unitSelectorHtml = "";
         if (isKg) {
             unitSelectorHtml = `
-                <input type="number" id="qty-${id}" class="qty-input" value="1" min="0.1" step="0.5" style="width: 45px; text-align: center; padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
-                <select id="unit-${id}" class="unit-select" onchange="onUnitChange('${id}')" style="padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+                <input type="number" id="qty-${id}" class="qty-input" value="${minVal}" min="${minVal}" ${maxVal ? 'max="'+maxVal+'"' : ''} step="0.5" style="width: 28px; text-align: center; padding: 1px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 10px;">
+                <select id="unit-${id}" class="unit-select" onchange="onUnitChange('${id}')" style="padding: 1px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 9px;">
                     <option value="kg">কেজি</option>
                     <option value="gram">গ্রাম</option>
                 </select>
             `;
-        } else if (isGram) {
-            unitSelectorHtml = `
-                <input type="number" id="qty-${id}" class="qty-input" value="100" min="50" step="50" style="width: 50px; text-align: center; padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
-                <span style="font-size: 12px; font-weight: bold; color: #475569;">গ্রাম</span>
-            `;
         } else {
             unitSelectorHtml = `
-                <input type="number" id="qty-${id}" class="qty-input" value="1" min="1" step="1" style="width: 45px; text-align: center; padding: 3px 2px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
-                <span style="font-size: 12px; font-weight: bold; color: #475569; padding: 0 2px;">${escapeHtml(rawUnit)}</span>
+                <input type="number" id="qty-${id}" class="qty-input" value="${minVal}" min="${minVal}" ${maxVal ? 'max="'+maxVal+'"' : ''} step="1" style="width: 28px; text-align: center; padding: 1px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 10px;">
+                <span style="font-size: 9px; font-weight: bold; color: #475569; padding: 0 1px;">${escapeHtml(rawUnit)}</span>
             `;
         }
 
         return `
-            <article class="product-card" style="padding: 8px; border: 1px solid #eee; border-radius: 8px; background: #fff;">
+            <article class="product-card" style="padding: 5px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; overflow: hidden;">
                 <div class="image-slider" onclick="openProductModal('${id}')" style="cursor: pointer;">
                     ${image ? 
-                        `<img src="${escapeHtml(image)}" alt="${safeName}" style="width:100%; border-radius:6px; height:120px; object-fit:cover;">` : 
-                        `<div class="product-image-placeholder" style="height:120px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:6px;"><i class="fa-solid fa-image"></i></div>`
+                        `<img src="${escapeHtml(image)}" alt="${safeName}" style="width:100%; border-radius:4px; height:70px; object-fit:cover;">` : 
+                        `<div class="product-image-placeholder" style="height:70px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:4px;"><i class="fa-solid fa-image" style="font-size: 14px; color: #aaa;"></i></div>`
                     }
                 </div>
                 
-                <h3 onclick="openProductModal('${id}')" style="margin: 6px 0 2px 0; font-size: 14px; font-weight: bold; line-height: 1.2; cursor: pointer; color: #1e293b;">${safeName}</h3>
-                <p style="margin: 0 0 6px 0; color: #555; font-size: 12px;">দাম: ৳${formatNumber(price)} / ${escapeHtml(rawUnit)}</p>
+                <h3 onclick="openProductModal('${id}')" style="margin: 3px 0 2px 0; font-size: 11px; font-weight: bold; line-height: 1.2; cursor: pointer; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${safeName}</h3>
+                <p style="margin: 0 0 3px 0; color: #15803d; font-size: 10px; font-weight: bold;">দাম: ৳${formatNumber(price)} / ${escapeHtml(rawUnit)}</p>
 
-                <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 3px;">
-                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 5px 8px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #334155; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                <div class="qty-selector" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 1px;">
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', -1)" ${soldOut ? "disabled" : ""} style="padding: 2px 4px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 3px; background: #f8fafc; color: #334155; font-size: 9px; display: flex; align-items: center; justify-content: center;">
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     
                     ${unitSelectorHtml}
                     
-                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 5px 8px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #334155; font-size: 11px; display: flex; align-items: center; justify-content: center;">
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)" ${soldOut ? "disabled" : ""} style="padding: 2px 4px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 3px; background: #f8fafc; color: #334155; font-size: 9px; display: flex; align-items: center; justify-content: center;">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
@@ -509,7 +516,7 @@ function renderProducts() {
                     class="add-to-cart-btn"
                     onclick="addToCart('${id}')"
                     ${soldOut ? "disabled" : ""}
-                    style="width: 100%; padding: 7px; border: none; background: ${soldOut ? '#ccc' : '#ff5722'}; color: #fff; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px;">
+                    style="width: 100%; padding: 4px 2px; border: none; background: ${soldOut ? '#ccc' : '#ff5722'}; color: #fff; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 10px;">
                     <i class="fa-solid fa-cart-plus"></i>
                     ${soldOut ? "স্টক নেই" : "কার্টে যোগ করুন"}
                 </button>
@@ -559,18 +566,6 @@ function addToCart(id) {
     }
 
     cart[id] = currentQty + qtyToAdd;
-
-    if (qtyInput) {
-        if (unitSelect && unitSelect.value === 'gram') {
-            qtyInput.value = "250";
-        } else if (unitSelect) {
-            qtyInput.value = "1";
-        } else if (String(product.unit).trim() === "গ্রাম") {
-            qtyInput.value = "100";
-        } else {
-            qtyInput.value = "1";
-        }
-    }
 
     saveCart();
     updateCart();
@@ -813,7 +808,7 @@ function openCheckoutWithValidation(action) {
 }
 
 /* =========================================================
-   PLACE ORDER (FIREBASE)
+   PLACE ORDER (FIREBASE & TELEGRAM NOTIFICATION)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -886,21 +881,34 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             try {
+                // ১. ফায়ারবেসে অর্ডার সেভ করা
                 await db.ref("orders/" + orderId).set(orderData);
                 
-                let message = (shopSettings.shopName || "১০ নং সাতবাড়ীয়া কাঁচাবাজার") + "\n\nঅর্ডার বিবরণ:\n\n";
+                // ২. টেলিগ্রাম নোটিফিকেশন মেসেজ তৈরি
+                let itemsText = "";
                 orderData.items.forEach(function (item, index) {
-                    message += (index + 1) + ". " + item.name + " × " + item.quantity + " " + item.unit + "\n";
+                    itemsText += `• ${item.name} × ${item.quantity} ${item.unit} (৳${formatNumber(item.price * item.quantity)})\n`;
                 });
-                message += "\nপণ্যের মূল্য: ৳" + formatNumber(subtotal) + "\n";
-                message += "ডেলিভারি চার্জ: ৳" + formatNumber(delivery) + "\n";
-                message += "সর্বমোট: ৳" + formatNumber(total) + "\n\n";
-                message += "অর্ডার আইডি: " + orderId + "\n";
-                message += "নাম: " + name + "\n";
-                message += "মোবাইল: " + phone + "\n";
-                message += "ঠিকানা: " + address + "\n";
-                if (note) message += "নোট: " + note + "\n";
-                message += "পেমেন্ট: " + paymentMethod;
+
+                let telegramMessage = `
+🛍️ *নতুন কাঁচাবাজার অর্ডার এসেছে!*
+━━━━━━━━━━━━━━━━━━
+🆔 *অর্ডার আইডি:* ${orderId}
+👤 *নাম:* ${name}
+📞 *মোবাইল:* ${phone}
+📍 *ঠিকানা:* ${address}
+🛒 *পণ্যসমূহ:*
+${itemsText}
+💰 *পণ্যের মূল্য:* ৳${formatNumber(subtotal)}
+🚚 *ডেলিভারি চার্জ:* ৳${formatNumber(delivery)}
+💵 *সর্বমোট বিল:* ৳${formatNumber(total)}
+💳 *পেমেন্ট:* ${paymentMethod}
+${note ? `📝 *নোট:* ${note}\n` : ''}━━━━━━━━━━━━━━━━━━
+⏰ *সময়:* ${now.toLocaleString("bn-BD")}
+                `;
+
+                // ৩. টেলিগ্রাম বটের মাধ্যমে নোটিফিকেশন পাঠানো
+                sendTelegramAlert(telegramMessage);
 
                 cart = {};
                 saveCart();
@@ -917,7 +925,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const whatsapp = cleanWhatsApp(targetWhatsApp);
 
                 if (whatsapp && waBtn) {
-                    waBtn.href = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(message);
+                    waBtn.href = "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(telegramMessage);
                     waBtn.style.display = "inline-flex";
                 } else if (waBtn) {
                     waBtn.style.display = "none";
@@ -941,26 +949,39 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* =========================================================
-   ORDER ID & MESSAGE GENERATION
+   TELEGRAM ALERT FUNCTION
 ========================================================= */
 
-function generateOrderId() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const random = Math.floor(1000 + Math.random() * 9000);
-    return "SB-" + year + month + day + "-" + random;
-}
+function sendTelegramAlert(messageText) {
+    if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+        console.warn("Telegram Bot Token is not configured!");
+        return;
+    }
 
-function closeSuccess() {
-    const successModal = document.getElementById("successModal");
-    if (successModal) successModal.classList.remove("show");
-    document.body.style.overflow = "";
+    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: messageText,
+            parse_mode: "Markdown"
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            console.log("Telegram notification sent successfully!");
+        } else {
+            console.error("Telegram error:", data);
+        }
+    })
+    .catch(error => console.error("Error sending Telegram notification:", error));
 }
 
 /* =========================================================
-   ORDER TRACKING
+   ORDER TRACKING & MODAL
 ========================================================= */
 
 async function trackOrder() {
@@ -1025,10 +1046,6 @@ function getStatusText(status) {
     return statuses[status] || "অর্ডার গ্রহণ করা হয়েছে";
 }
 
-/* =========================================================
-   MODAL EVENTS
-========================================================= */
-
 function setupModalEvents() {
     const checkoutModal = document.getElementById("checkoutModal");
     if (checkoutModal) {
@@ -1066,17 +1083,6 @@ function setupModalEvents() {
         }
     });
 }
-
-function scrollToProducts() {
-    const section = document.getElementById("productsSection");
-    if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-    }
-}
-
-/* =========================================================
-   PRODUCT DETAILS MODAL FUNCTIONS
-========================================================= */
 
 function openProductModal(id) {
     const product = allProducts[id];
@@ -1128,10 +1134,6 @@ function closeProductModal() {
         document.body.style.overflow = "";
     }
 }
-
-/* =========================================================
-   HELPERS & TOAST
-========================================================= */
 
 function formatNumber(number) {
     return Number(number || 0).toLocaleString("bn-BD");

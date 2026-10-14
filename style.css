@@ -1752,3 +1752,226 @@ body {
     background: #ffffff !important;
     border-radius: 10px;
 }
+
+/* প্রোডাক্টগুলোর মেইন গ্রিড কনটেইনার ছোট করা */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* প্রতিটি কার্ডের ন্যূনতম সাইজ ১৩০ পিক্সেল */
+  gap: 10px; /* কার্ডগুলোর মাঝের দূরত্ব কমানো */
+  padding: 10px 0;
+}
+
+/* মোবাইল ডিভাইসের জন্য নির্দিষ্ট সাইজ (এক সারিতে ৩ বা ৪টি দেখাবে) */
+@media (max-width: 600px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr); /* মোবাইলে এক সারিতে ৩টি প্রোডাক্ট */
+    gap: 6px;
+  }
+}
+
+/* প্রোডাক্ট কার্ডের সাইজ ও প্যাডিং ছোট করা */
+.product-card {
+  padding: 8px !important;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* প্রোডাক্ট ইমেজের হাইট কমানো */
+.product-card img, 
+.product-card .product-img {
+  width: 100%;
+  height: 90px !important; /* ছবির উচ্চতা কমিয়ে ছোট করা হলো */
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* প্রোডাক্টের নাম ও টেক্সট ছোট করা */
+.product-card h3, 
+.product-card .product-title {
+  font-size: 12px !important;
+  margin: 5px 0 3px 0 !important;
+  line-height: 1.2;
+}
+
+/* দাম এবং পরিমাপ ছোট ফন্টে রাখা */
+.product-card .price, 
+.product-card .product-price {
+  font-size: 12px !important;
+  font-weight: bold;
+  color: #15803d;
+}
+
+/* কার্ডের ভেତরের বাটন সাইজ ছোট করা */
+.product-card button, 
+.product-card .add-to-cart-btn {
+  font-size: 11px !important;
+  padding: 4px 6px !important;
+  margin-top: 5px;
+  border-radius: 4px;
+}
+
+/* প্রোডাক্ট গ্রিড ডিজাইন */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) !important; /* মোবাইলে সবসময় পাশাপাশি ৩টি কার্ড দেখাবে */
+  gap: 8px !important;
+  padding: 5px !important;
+}
+
+/* প্রোডাক্ট কার্ড ডিজাইন */
+.product-card {
+  padding: 6px !important;
+  border-radius: 6px !important;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* প্রোডাক্ট ছবি */
+.product-card img, 
+.product-card .product-img {
+  width: 100% !important;
+  height: 75px !important; /* ছবির উচ্চতা কমিয়ে কম্প্যাক্ট করা হলো */
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* প্রোডাক্টের নাম */
+.product-card h3, 
+.product-card .product-title {
+  font-size: 11px !important;
+  margin: 4px 0 2px 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* নাম বড় হলে ডট ডট দেখাবে যেন কেটে না যায় */
+}
+
+/* দাম ও পরিমাপ টেক্সট */
+.product-card .price, 
+.product-card .product-price,
+.product-card p {
+  font-size: 10px !important;
+  margin: 2px 0 !important;
+  color: #15803d;
+}
+
+/* পরিমাণ ইনপুট বক্স ও ইউনিট (কেজি/পিস) */
+.product-card .quantity-box,
+.product-card .qty-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 4px 0;
+}
+
+.product-card input[type="number"],
+.product-card input[type="text"] {
+  width: 35px !important;
+  padding: 2px !important;
+  font-size: 11px !important;
+  text-align: center;
+}
+
+.product-card button, 
+.product-card .add-to-cart-btn {
+  font-size: 10px !important;
+  padding: 4px 2px !important;
+  margin-top: 2px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* সব প্রোডাক্ট কার্ড এবং ডায়নামিক্যালি তৈরি হওয়া কার্ডগুলোকে ছোট করার জন্য */
+.product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  padding: 5px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* সকল কার্ডের ক্ষেত্রে একই সাইজ ও প্যাডিং কার্যকর করা */
+.product-grid > div,
+.product-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  border: 1px solid #cbd5e1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* সব প্রোডাক্টের ছবির সাইজ ছোট করা */
+.product-grid img,
+.product-card img, 
+.product-card .product-img {
+  width: 100% !important;
+  height: 75px !important;
+  object-fit: cover !important;
+  border-radius: 4px !important;
+}
+
+/* প্রোডাক্টের নাম ছোট করা */
+.product-grid h3,
+.product-card h3, 
+.product-card .product-title {
+  font-size: 11px !important;
+  margin: 4px 0 2px 0 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* দাম ও পরিমাপের টেক্সট ছোট করা */
+.product-grid p,
+.product-card .price, 
+.product-card .product-price,
+.product-card p {
+  font-size: 10px !important;
+  margin: 2px 0 !important;
+  color: #15803d !important;
+}
+
+/* পরিমাণ ইনপুট বক্স ও বাটন ছোট করা */
+.product-grid input,
+.product-card input[type="number"],
+.product-card input[type="text"] {
+  width: 32px !important;
+  padding: 2px !important;
+  font-size: 11px !important;
+  text-align: center !important;
+}
+
+.product-grid button,
+.product-card button, 
+.product-card .add-to-cart-btn {
+  font-size: 10px !important;
+  padding: 4px 2px !important;
+  margin-top: 3px !important;
+  border-radius: 4px !important;
+  width: 100% !important;
+}
+
+.product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  padding: 5px !important;
+}
+

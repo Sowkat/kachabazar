@@ -945,25 +945,20 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* =========================================================
-   TELEGRAM ALERT FUNCTION
+   TELEGRAM ALERT FUNCTION (FIXED FOR BROWSER CORS)
 ========================================================= */
 
 function sendTelegramAlert(messageText) {
     if (!TELEGRAM_BOT_TOKEN) return;
 
-    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: messageText
-        })
-    })
-    .then(response => response.json())
-    .then(data => console.log("Telegram notification response:", data))
-    .catch(error => console.error("Error sending Telegram notification:", error));
+    // URL Safe Format
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(messageText)}`;
+
+    // Image tag trick (CORS Block বাইপাস করার সবচেয়ে সহজ উপায়)
+    const img = new Image();
+    img.src = url;
+
+    console.log("Telegram alert trigger sent via img request!");
 }
 
 /* =========================================================

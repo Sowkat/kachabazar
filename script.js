@@ -6,7 +6,7 @@
 /* =========================================================
    TELEGRAM BOT CONFIGURATION
 ========================================================= */
-const TELEGRAM_BOT_TOKEN = "8799407672:AAFpwkatGEIhv2UGlTQimCrkidJ2xbvSKr8E";  
+const TELEGRAM_BOT_TOKEN = "8799407672:AAFpwkatGEIhv2UGlTOjmCrkidJ2xhvSKr8";  
 const TELEGRAM_CHAT_ID = "8930649102";      
 
 /* =========================================================

@@ -1166,6 +1166,10 @@ function showToast(message, type = "") {
 function closeSuccess() {
     const successModal = document.getElementById('successModal');
     if (successModal) {
-        successModal.style.display = 'none';
+        // ১. সরাসরি ইনলাইন স্টাইল ও গুরুত্বপূর্ণ ফ্ল্যাগ দেওয়া
+        successModal.style.setProperty('display', 'none', 'important');
+        
+        // ২. যদি অ্যাক্টিভ বা ওপেন কোনো ক্লাস যুক্ত থাকে তা মুছে ফেলা
+        successModal.classList.remove('active', 'show', 'open');
     }
 }

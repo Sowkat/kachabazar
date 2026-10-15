@@ -1162,3 +1162,10 @@ function showToast(message, type = "") {
         toast.classList.remove("show");
     }, 3000);
 }
+// সফল অর্ডার পপ-আপ বন্ধ করার ফাংশন
+function closeSuccess() {
+    const successModal = document.getElementById('successModal');
+    if (successModal) {
+        successModal.style.display = 'none';
+    }
+}

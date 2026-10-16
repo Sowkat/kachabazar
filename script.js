@@ -1151,14 +1151,12 @@ let toastTimer = null;
 function showToast(message, type = "") {
     let toast = document.getElementById("siteToast");
     
-    // HTML-এ siteToast না থাকলে ডায়নামিক তৈরি করবে
     if (!toast) {
         toast = document.createElement("div");
         toast.id = "siteToast";
         document.body.appendChild(toast);
     }
 
-    // সুন্দর ডাইনামিক স্টাইল
     toast.style.cssText = `
         position: fixed;
         bottom: 30px;
@@ -1182,12 +1180,10 @@ function showToast(message, type = "") {
 
     clearTimeout(toastTimer);
     
-    // শো করানো
     setTimeout(() => {
         toast.style.opacity = "1";
     }, 10);
 
-    // ৩ সেকেন্ড পর হাইড করা
     toastTimer = setTimeout(() => {
         toast.style.opacity = "0";
     }, 3000);
@@ -1230,8 +1226,8 @@ function loadOffersFromFirebase() {
 
                 const storyHtml = `
                     <div onclick="openOfferModal('${escapeJsString(offer.title)}', '${escapeJsString(offer.description)}', '${escapeJsString(offer.imageUrl)}', '${key}', ${price})" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 75px; text-align: center;">
-                        <div style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid #15803d; padding: 2px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-                            <img src="${offer.imageUrl}" alt="${offer.title}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        <div style="width: 65px; height: 65px; border-radius: 50%; padding: 2px;">
+                            <img src="${offer.imageUrl}" alt="${offer.title}" class="combo-offer-img" style="width: 100%; height: 100%;">
                         </div>
                         <span style="font-size: 11px; margin-top: 5px; font-weight: 600; color: #334155; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${offer.title}</span>
                     </div>

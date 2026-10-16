@@ -27,7 +27,7 @@
             </div>
             <button class="cart-button" onclick="openCart()">
                 <i class="fa-solid fa-cart-shopping"></i>
-                <span>কার্ট</span>
+
                 <b id="cartCount">0</b>
             </button>
         </div>
@@ -39,27 +39,47 @@
     </div>
 
     <!-- HERO BANNER AREA -->
-    <section class="hero-banner-area">
-        <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; width: 100%;">
-            <div class="hero-text-content" style="flex: 1; min-width: 250px;">
-                <span class="badge-tag" style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 13px;">🌿 ১০০% তাজা ও খাঁটি কাঁচামাল</span>
-                <h1 style="font-size: 28px; margin: 10px 0;">ঘরে বসে পান তাজা কাঁচাবাজার</h1>
-                <p id="heroDescription">তাজা কাঁচামাল সহজেই অর্ডার করুন।</p>
-                <a href="#productsSection" class="hero-btn" style="display: inline-block; background: #fff; color: #15803d; padding: 8px 16px; border-radius: 6px; font-weight: bold; margin-top: 10px; text-decoration: none;">কেনাকাটা শুরু করুন</a>
-            </div>
-
-            <!-- স্লাইডশো কন্টেইনার -->
-            <div class="hero-slider-container" style="flex: 0 0 280px; margin-top: 15px;">
-                <div class="hero-slides" id="heroSlidesWrapper">
-                    <div class="hero-slide active">
-                        <img src="https://via.placeholder.com/300x250?text=Kachabazar" alt="Product">
-                    </div>
-                </div>
-                <!-- স্লাইড ডট ইন্ডিকেটর -->
-                <div class="slider-dots" id="sliderDots"></div>
+    <section class="hero-banner-area" style="background: #15803d; padding: 25px 0; color: white;">
+        <div class="container">
+            <div class="hero-text-content" style="text-align: center;">
+                <span class="badge-tag" style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 13px;">🌿 ১০০% তাজা ও খাঁটি কাঁচামাল</span>
+                <h1 style="font-size: 26px; margin: 12px 0; font-weight: bold;">ঘরে বসে পান তাজা কাঁচাবাজার</h1>
+                <p id="heroDescription" style="margin-bottom: 15px; font-size: 14px;">তাজা কাঁচামাল সহজেই অর্ডার করুন।</p>
+                <a href="#productsSection" class="hero-btn" style="display: inline-block; background: #fff; color: #15803d; padding: 10px 20px; border-radius: 6px; font-weight: bold; text-decoration: none;">কেনাকাটা শুরু করুন</a>
             </div>
         </div>
     </section>
+
+    <!-- স্টোরি বা গোলাকার অফার ও কম্বো সেকশন -->
+    <section class="story-offers-section" style="padding: 15px 0; background: #ffffff; border-bottom: 1px solid #e2e8f0;">
+        <div class="container">
+            <h4 style="font-size: 14px; margin-bottom: 10px; color: #15803d; font-weight: bold;">🔥 স্পেশাল অফার ও কম্বো প্যাক</h4>
+            <div id="storyOffersContainer" style="display: flex; gap: 15px; align-items: flex-start; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch;">
+                <!-- ফায়ারবেস থেকে অফারসমূহ লোড হবে -->
+            </div>
+        </div>
+    </section>
+
+    <!-- OFERS MODAL -->
+    <div id="offerModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #fff; padding: 20px; border-radius: 12px; max-width: 350px; width: 90%; text-align: center; position: relative;">
+            <button onclick="closeOfferModal()" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b;">&times;</button>
+            <img id="offerModalImg" src="" alt="Offer" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+            <h3 id="offerModalTitle" style="margin-bottom: 8px; color: #15803d; font-size: 18px;"></h3>
+            <p id="offerModalDesc" style="font-size: 14px; color: #475569; margin-bottom: 15px; line-height: 1.5;"></p>
+            <button onclick="closeOfferModal()" style="background: #15803d; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- স্লাইডশো কন্টেইনার -->
+    <div class="hero-slider-container" style="flex: 0 0 280px; margin-top: 15px; display:none;">
+        <div class="hero-slides" id="heroSlidesWrapper">
+            <div class="hero-slide active">
+                <img src="https://via.placeholder.com/300x250?text=Kachabazar" alt="Product">
+            </div>
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+    </div>
 
     <!-- SHOP INFO SECTION -->
     <section class="shop-info-section" style="padding: 20px 0; background: #fff; border-bottom: 1px solid #e2e8f0;">
@@ -156,10 +176,11 @@
             <div class="alternative-order">
                 <h3>সরাসরি যোগাযোগ করে অর্ডার করতে চান?</h3>
                 <p>নিচের বাটনগুলোতে ক্লিক করে মেসেজ বা কল দিয়ে সহজেই অর্ডার নিশ্চিত করুন</p>
-    <!-- নতুন অর্ডার নাও বাটন -->
-    <button type="button" class="direct-order-btn" onclick="if(Object.keys(cart).length === 0) { showToast('আগে কার্টে অন্তত একটি পণ্য যোগ করুন।', 'error'); } else { openCheckout(); }" style="background: #ea580c; color: white;">
-        <i class="fa-solid fa-bag-shopping"></i> সরাসরি অর্ডার করুন
-    </button>
+                
+                <!-- সরাসরি অর্ডার নাও বাটন -->
+                <button type="button" class="direct-order-btn" onclick="openCheckout()" style="background: #ea580c; color: white; margin-bottom: 10px;">
+                    <i class="fa-solid fa-bag-shopping"></i> সরাসরি অর্ডার করুন
+                </button>
 
                 <div class="direct-order-buttons">
                     <button type="button" class="direct-order-btn whatsapp-btn" onclick="openCheckoutWithValidation('whatsapp')">
@@ -194,7 +215,7 @@
     <aside class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <div>
-                <h2>আপনার কার্ট</h2>
+                <h1>আপনার কার্ট</h1>
                 <small id="cartItemCount">০টি পণ্য</small>
             </div>
             <button class="cart-close" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
@@ -300,8 +321,9 @@
                 <i class="fa-brands fa-whatsapp"></i> WhatsApp-এ বিবরণ পাঠান
             </a><br>
 
-            <<button class="success-button" onclick="document.getElementById('successModal').style.display='none'; document.getElementById('successModal').classList.remove('active');" style="background: #64748b; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">ঠিক আছে</button>
-
+            <button class="success-button" onclick="document.getElementById('successModal').style.display='none'; document.getElementById('successModal').classList.remove('active');" style="background: #64748b; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">ঠিক আছে</button>
+        </div>
+    </div>
 
     <!-- TOAST NOTIFICATION -->
     <div class="site-toast" id="siteToast"></div>
@@ -329,88 +351,23 @@
         </div>
     </footer>
 
+    <!-- PRODUCT DETAILS MODAL -->
+    <div id="productModal" class="modal-overlay" style="display:none;" onclick="closeProductModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button type="button" class="modal-close-btn" onclick="closeProductModal()">&times;</button>
+            <div id="productModalContent">
+                <!-- ডায়নামিক ডাটা লোড হবে -->
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase compatibility SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <!-- JavaScript Link -->
     <script src="script.js"></script>
-
-        <script>
-        // স্লাইডশো এবং ফায়ারবেস থেকে প্রোডাক্ট এনে স্লাইড করানোর ফাংশন
-        function setupProductSlider(productsData) {
-            const sliderWrapper = document.getElementById('heroSlidesWrapper');
-            const dotsWrapper = document.getElementById('sliderDots');
-            if (!sliderWrapper || !dotsWrapper) return;
-
-            let slideImages = [];
-            if (productsData) {
-                Object.values(productsData).forEach(p => {
-                    let imgUrl = p.productImage || p.image;
-                    if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
-                        slideImages.push(imgUrl);
-                    }
-                });
-            }
-
-            if (slideImages.length === 0) {
-                slideImages = [
-                    'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500',
-                    'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=500'
-                ];
-            }
-
-            sliderWrapper.innerHTML = slideImages.map((img, index) => `
-                <div class="hero-slide ${index === 0 ? 'active' : ''}">
-                    <img src="${img}" alt="Slide">
-                </div>
-            `).join('');
-
-            dotsWrapper.innerHTML = slideImages.map((_, index) => `
-                <div class="slider-dot ${index === 0 ? 'active' : ''}" onclick="currentSlide(${index})"></div>
-            `).join('');
-
-            startSlideInterval(slideImages.length);
-        }
-
-        let currentSlideIndex = 0;
-        let slideInterval;
-
-        function startSlideInterval(totalSlides) {
-            if (slideInterval) clearInterval(slideInterval);
-            slideInterval = setInterval(() => {
-                currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
-                showSlide(currentSlideIndex);
-            }, 3000);
-        }
-
-        function showSlide(index) {
-            const slides = document.querySelectorAll('.hero-slide');
-            const dots = document.querySelectorAll('.slider-dot');
-            if(slides.length === 0) return;
-
-            slides.forEach(s => s.classList.remove('active'));
-            dots.forEach(d => d.classList.remove('active'));
-
-            currentSlideIndex = index;
-            if(slides[currentSlideIndex]) slides[currentSlideIndex].classList.add('active');
-            if(dots[currentSlideIndex]) dots[currentSlideIndex].classList.add('active');
-        }
-
-        function currentSlide(index) {
-            showSlide(index);
-        }
-    </script>
-    <!-- PRODUCT DETAILS MODAL -->
-<div id="productModal" class="modal-overlay" style="display:none;" onclick="closeProductModal(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <button type="button" class="modal-close-btn" onclick="closeProductModal()">&times;</button>
-        <div id="productModalContent">
-            <!-- ডায়নামিক ডাটা লোড হবে -->
-        </div>
-    </div>
-</div>
-
-    </script>
-<script src="//code.tidio.co/o68xbbx9j4ut8ifgeo3ubbyaep9cyfvj.js" async></script>
+    
+    <!-- Tidio Chat Widget -->
+    <script src="//code.tidio.co/o68xbbx9j4ut8ifgeo3ubbyaep9cyfvj.js" async></script>
 </body>
 </html>

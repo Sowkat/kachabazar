@@ -862,3 +862,38 @@ a {
 
 .site-toast.success { background: #15803d; }
 .site-toast.error { background: #dc2626; }
+
+.combo-offer-img {
+  width: 120px; /* আপনার প্রয়োজনমতো সাইজ ছোট-বড় করতে পারেন */
+  height: 120px;
+  border-radius: 50%; /* ছবি নিখুঁত গোল করার জন্য */
+  object-fit: cover;
+  border: 2px solid #ff4500; /* কম্বো অফারের সাথে মানানসই কমলা বর্ডার */
+  
+  /* লাইটিং অ্যানিমেশন চালু করা (২ সেকেন্ড পরপর আলো জ্বলবে-কমবে) */
+  animation: offerGlow 1s infinite ease-in-out;
+}
+
+/* কম্বো অফারের অ্যানিমেটেড গ্লো লাইটিং */
+.combo-offer-img {
+  width: 70px; /* আপনার ডিজাইনের সাইজ অনুযায়ী ছোট/বড় করতে পারেন */
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ff4500;
+  
+  /* লাইটিং অ্যানিমেশন */
+  animation: offerGlow 2s infinite ease-in-out;
+}
+
+@keyframes offerGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(255, 69, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(255, 69, 0, 0.4);
+  }
+}

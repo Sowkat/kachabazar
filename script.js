@@ -205,13 +205,14 @@ function safeSetText(id, text) {
 
 function loadProducts() {
     db.ref("products").on("value", function (snapshot) {
-        allProducts = snapshot.val() || {};
+        const productsData = snapshot.val() || {};
+        allProducts = { ...allProducts, ...productsData };
         const loadingEl = document.getElementById("productsLoading");
         if (loadingEl) loadingEl.classList.add("hidden");
         
         renderCategories();
         applyProductFilter();
-        setupProductSlider(allProducts);
+        setupProductSlider(productsData);
     }, function (error) {
         console.error(error);
         const loadingEl = document.getElementById("productsLoading");
@@ -710,7 +711,7 @@ function updateCart() {
 }
 
 /* =========================================================
-   CART & CHECKOUT OPEN/CLOSE
+   CART & CHECKOUT OPEN/CLOSE (FIXED)
 ========================================================= */
 
 function openCart() {
@@ -735,6 +736,12 @@ function closeCart() {
 }
 
 function openCheckout() {
+    const items = getCartItems();
+    if (!items || items.length === 0) {
+        showToast("আগে কার্টে অন্তত একটি পণ্য যোগ করুন।", "error");
+        return;
+    }
+
     closeCart();
     const checkoutModal = document.getElementById("checkoutModal");
     if (checkoutModal) {
@@ -757,7 +764,7 @@ function closeCheckout() {
 
 function openCheckoutWithValidation(action) {
     const items = getCartItems();
-    if (!items.length) {
+    if (!items || items.length === 0) {
         showToast("আগে কার্টে অন্তত একটি পণ্য যোগ করুন।", "error");
         return;
     }
@@ -818,7 +825,7 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
 
             const items = getCartItems();
-            if (!items.length) {
+            if (!items || items.length === 0) {
                 showToast("কার্ট খালি। অনুগ্রহ করে পণ্য যোগ করুন।", "error");
                 return;
             }
@@ -881,10 +888,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             try {
-                // ১. ফায়ারবেসে অর্ডার সেভ করা
                 await db.ref("orders/" + orderId).set(orderData);
                 
-                // ২. টেলিগ্রাম মেসেজ সাজানো
                 let itemsText = "";
                 orderData.items.forEach(function (item) {
                     itemsText += `• ${item.name} - ${item.quantity} ${item.unit} (৳${formatNumber(item.price * item.quantity)})\n`;
@@ -903,7 +908,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     (note ? `📝 নোট: ${note}\n` : '') +
                     `⏰ সময়: ${now.toLocaleString("bn-BD")}`;
 
-                // ৩. টেলিগ্রাম বটের মাধ্যমে নোটিফিকেশন পাঠানো (সঠিক ফাংশন কল)
                 sendTelegramAlert(telegramMessage);
 
                 cart = {};
@@ -945,20 +949,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* =========================================================
-   TELEGRAM ALERT FUNCTION (FIXED FOR BROWSER CORS)
+   TELEGRAM ALERT FUNCTION
 ========================================================= */
 
 function sendTelegramAlert(messageText) {
     if (!TELEGRAM_BOT_TOKEN) return;
-
-    // URL Safe Format
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(messageText)}`;
-
-    // Image tag trick (CORS Block বাইপাস করার সবচেয়ে সহজ উপায়)
     const img = new Image();
     img.src = url;
-
-    console.log("Telegram alert trigger sent via img request!");
 }
 
 /* =========================================================
@@ -1145,31 +1143,165 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
+/* =========================================================
+   AUTO-CREATING FLOATING TOAST NOTIFICATION (AUTO FIX)
+========================================================= */
+
 let toastTimer = null;
 function showToast(message, type = "") {
-    const toast = document.getElementById("siteToast");
-    if (!toast) return;
-    toast.textContent = message;
-    toast.className = "site-toast";
-    if (type) {
-        toast.classList.add(type);
+    let toast = document.getElementById("siteToast");
+    
+    // HTML-এ siteToast না থাকলে ডায়নামিক তৈরি করবে
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "siteToast";
+        document.body.appendChild(toast);
     }
+
+    // সুন্দর ডাইনামিক স্টাইল
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${type === "error" ? "#dc2626" : "#15803d"};
+        color: #ffffff;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 999999;
+        text-align: center;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        opacity: 0;
+        pointer-events: none;
+    `;
+
+    toast.textContent = message;
+
     clearTimeout(toastTimer);
-    setTimeout(function () {
-        toast.classList.add("show");
+    
+    // শো করানো
+    setTimeout(() => {
+        toast.style.opacity = "1";
     }, 10);
-    toastTimer = setTimeout(function () {
-        toast.classList.remove("show");
+
+    // ৩ সেকেন্ড পর হাইড করা
+    toastTimer = setTimeout(() => {
+        toast.style.opacity = "0";
     }, 3000);
 }
-// সফল অর্ডার পপ-আপ বন্ধ করার ফাংশন
+
 function closeSuccess() {
     const successModal = document.getElementById('successModal');
     if (successModal) {
-        // ১. সরাসরি ইনলাইন স্টাইল ও গুরুত্বপূর্ণ ফ্ল্যাগ দেওয়া
         successModal.style.setProperty('display', 'none', 'important');
-        
-        // ২. যদি অ্যাক্টিভ বা ওপেন কোনো ক্লাস যুক্ত থাকে তা মুছে ফেলা
         successModal.classList.remove('active', 'show', 'open');
     }
 }
+
+/* =========================================================
+   OFFERS & COMBO PACKS
+========================================================= */
+
+function loadOffersFromFirebase() {
+    const container = document.getElementById('storyOffersContainer');
+    if (!container) return;
+
+    const dbRef = (typeof database !== 'undefined') ? database : (typeof db !== 'undefined' ? db : firebase.database());
+
+    dbRef.ref('offers').on('value', (snapshot) => {
+        container.innerHTML = '';
+        if (snapshot.exists()) {
+            const offersData = snapshot.val();
+            Object.keys(offersData).forEach((key) => {
+                const offer = offersData[key];
+                const price = Number(offer.price) || 0;
+                
+                allProducts[key] = {
+                    id: key,
+                    name: offer.title || 'কম্বো প্যাক',
+                    price: price,
+                    unit: 'প্যাক',
+                    productImage: offer.imageUrl || '',
+                    available: true
+                };
+
+                const storyHtml = `
+                    <div onclick="openOfferModal('${escapeJsString(offer.title)}', '${escapeJsString(offer.description)}', '${escapeJsString(offer.imageUrl)}', '${key}', ${price})" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 75px; text-align: center;">
+                        <div style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid #15803d; padding: 2px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                            <img src="${offer.imageUrl}" alt="${offer.title}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        </div>
+                        <span style="font-size: 11px; margin-top: 5px; font-weight: 600; color: #334155; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${offer.title}</span>
+                    </div>
+                `;
+                container.innerHTML += storyHtml;
+            });
+        } else {
+            container.innerHTML = '<span style="font-size: 12px; color: #94a3b8;">বর্তমানে কোনো অফার চালু নেই।</span>';
+        }
+    });
+}
+
+function escapeJsString(str) {
+    return String(str || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+function openOfferModal(title, description, imgUrl, offerId, price) {
+    const offerPriceNum = Number(price) || (allProducts[offerId] ? Number(allProducts[offerId].price) : 0);
+
+    document.getElementById('offerModalTitle').innerText = title;
+    document.getElementById('offerModalDesc').innerText = description;
+    document.getElementById('offerModalImg').src = imgUrl;
+    
+    let modalOverlay = document.getElementById('offerModal');
+    let modalCard = modalOverlay.querySelector('div > div');
+    
+    let existingBtns = modalCard.querySelectorAll('#dynamicOfferOrderBtn, button');
+    existingBtns.forEach(btn => {
+        if(btn.id === 'dynamicOfferOrderBtn' || btn.textContent.includes('ঠিক আছে') || btn.textContent.includes('অর্ডার')) {
+            btn.remove();
+        }
+    });
+
+    const orderBtn = document.createElement('button');
+    orderBtn.id = 'dynamicOfferOrderBtn';
+    orderBtn.style.cssText = "background: #15803d; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; font-size: 14px;";
+    orderBtn.innerHTML = `<i class="fa-solid fa-cart-plus"></i> এই কম্বো অর্ডার করুন (৳${formatNumber(offerPriceNum)})`;
+    
+    orderBtn.onclick = function() {
+        allProducts[offerId] = {
+            id: offerId,
+            name: title,
+            price: offerPriceNum,
+            unit: 'প্যাক',
+            productImage: imgUrl,
+            available: true
+        };
+        
+        if (cart[offerId]) {
+            cart[offerId] += 1;
+        } else {
+            cart[offerId] = 1;
+        }
+        
+        saveCart();
+        updateCart();
+        showToast(title + ' কার্টে যোগ করা হয়েছে!', 'success');
+        
+        closeOfferModal();
+        openCart();
+    };
+
+    modalCard.appendChild(orderBtn);
+    modalOverlay.style.display = 'flex';
+}
+
+function closeOfferModal() {
+    document.getElementById('offerModal').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadOffersFromFirebase();
+});

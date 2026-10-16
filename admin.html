@@ -145,15 +145,11 @@
         .checkbox-group input {
             width: auto;
         }
-    
         .admin-product-tools{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:8px;margin-top:12px;align-items:center}.admin-product-tools input,.admin-product-tools select{padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;outline:none;font-family:inherit}.admin-product-tools button{padding:9px 12px;border:0;border-radius:8px;background:#64748b;color:#fff;cursor:pointer}.admin-product-tools span{font-size:13px;color:#64748b;white-space:nowrap}@media(max-width:760px){.admin-product-tools{grid-template-columns:1fr 1fr}.admin-product-tools input{grid-column:1/-1}.admin-product-tools span{grid-column:1/-1}}
-    
         .admin-dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
         .dash-card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);transition: transform 0.2s, box-shadow 0.2s;}
         .dash-card:hover{transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
         .dash-card span{display:block;color:#64748b;font-size:12px}.dash-card b{font-size:22px;color:#15803d}@media(max-width:760px){.admin-dashboard{grid-template-columns:repeat(2,1fr)}}
-
-        /* অর্ডার ডিটেলস মোডাল (Popup) সিএসএস */
         .order-modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -229,6 +225,7 @@
         <div class="admin-nav">
             <button class="admin-nav-btn active" onclick="switchTab('ordersTab', this)"><i class="fa-solid fa-list-check"></i> অর্ডারসমূহ</button>
             <button class="admin-nav-btn" onclick="switchTab('productsTab', this)"><i class="fa-solid fa-box-open"></i> পণ্য ব্যবস্থাপনা</button>
+            <button class="admin-nav-btn" onclick="switchTab('offersTab', this)"><i class="fa-solid fa-gift"></i> অফার ও কম্বো প্যাক</button>
             <button class="admin-nav-btn" onclick="switchTab('settingsTab', this)"><i class="fa-solid fa-sliders"></i> দোকান সেটআপ ও নোটিশ</button>
         </div>
 
@@ -302,7 +299,6 @@
                         <label>ছবি লিংক (URL)</label>
                         <input type="url" id="pImage" placeholder="https://...">
                     </div>
-                    <!-- পণ্য বিবরণ ফিল্ড -->
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>পণ্য বিবরণ (Description)</label>
                         <textarea id="pDescription" rows="3" placeholder="যেমন: তাজা ও রাসায়নিক মুক্ত দেশি আলু..."></textarea>
@@ -339,6 +335,53 @@
                         </thead>
                         <tbody id="adminProductsList">
                             <tr><td colspan="8" style="text-align:center;">লোড হচ্ছে...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- OFFERS & COMBO TAB WITH EDIT OPTION -->
+        <div id="offersTab" class="tab-content" style="display:none;">
+            <div class="admin-card">
+                <h3 id="offerFormTitle">নতুন অফার / কম্বো প্যাক যোগ করুন</h3>
+                <form id="addOfferForm" onsubmit="saveOffer(event)" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label>অফারের শিরোনাম *</label>
+                        <input type="text" id="offerTitle" placeholder="যেমন: কম্বো প্যাক ১" required>
+                    </div>
+                    <div class="form-group">
+                        <label>অফারের মূল্য/দাম (টাকা) *</label>
+                        <input type="number" id="offerPrice" placeholder="যেমন: ২৫০" required>
+                    </div>
+                    <div class="form-group">
+                        <label>অফারের বিবরণ *</label>
+                        <textarea id="offerDesc" rows="3" placeholder="যেমন: ৫ কেজি আলু + ২ কেজি পেঁয়াজ" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>ছবির লিংক (Image URL) *</label>
+                        <input type="url" id="offerImg" placeholder="https://..." required>
+                    </div>
+                    <button type="submit" id="offerSubmitBtn" style="padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-plus"></i> অফার সেভ করুন</button>
+                    <button type="button" id="cancelOfferEditBtn" onclick="resetOfferForm()" style="display:none; padding: 10px 20px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px;">বাতিল করুন</button>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <h3>বর্তমান অফারসমূহ</h3>
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ছবি</th>
+                                <th>শিরোনাম</th>
+                                <th>দাম</th>
+                                <th>বিবরণ</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOffersList">
+                            <tr><td colspan="5" style="text-align:center;">কোনো অফার নেই।</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -399,9 +442,7 @@
             <h3 style="color: #15803d; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">
                 <i class="fa-solid fa-file-invoice"></i> অর্ডারের বিস্তারিত তথ্য
             </h3>
-            <div id="modalDetailsBody">
-                <!-- জাভাস্ক্রিপ্ট দিয়ে তথ্য এখানে দেখাবে -->
-            </div>
+            <div id="modalDetailsBody"></div>
         </div>
     </div>
 
@@ -443,7 +484,7 @@
             btn.disabled = true;
 
             auth.signInWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
+                .then(() => {
                     btn.innerText = "লগইন করুন";
                     btn.disabled = false;
                 })
@@ -461,6 +502,7 @@
                 document.getElementById('logoutBtn').style.display = 'inline-block';
                 loadAdminOrders();
                 loadAdminProducts();
+                loadAdminOffers();
                 loadAdminSettings();
             } else {
                 document.getElementById('loginSection').style.display = 'block';
@@ -495,11 +537,8 @@
         function filterOrders(status) {
             currentFilterStatus = status;
             renderOrdersTable();
-            
             const tableCard = document.querySelector('#ordersTab .admin-card');
-            if(tableCard) {
-                tableCard.scrollIntoView({ behavior: 'smooth' });
-            }
+            if(tableCard) tableCard.scrollIntoView({ behavior: 'smooth' });
         }
 
         function showOrderModal(id) {
@@ -525,8 +564,7 @@
             const grandTotal = o.total || o.grandTotal || 0;
             const subtotal = grandTotal - delivery;
 
-            const modalBody = document.getElementById('modalDetailsBody');
-            modalBody.innerHTML = `
+            document.getElementById('modalDetailsBody').innerHTML = `
                 <div style="font-size: 13px; line-height: 1.6; color: #334155;">
                     <p><strong>অর্ডার আইডি:</strong> #${id}</p>
                     <p><strong>তারিখ ও সময়:</strong> ${orderDate} (${timeAgo})</p>
@@ -546,7 +584,6 @@
                     </p>
                 </div>
             `;
-
             document.getElementById('orderDetailsModal').style.display = 'flex';
         }
 
@@ -572,15 +609,7 @@
 
             const titleEl = document.getElementById('orderListTitle');
             if (titleEl) {
-                const statusNames = {
-                    'all': 'সকল',
-                    'pending': 'Pending',
-                    'confirmed': 'Confirmed',
-                    'processing': 'Processing',
-                    'delivered': 'Delivered',
-                    'cancelled': 'Cancelled',
-                    'today': 'আজকের'
-                };
+                const statusNames = {'all': 'সকল', 'pending': 'Pending', 'confirmed': 'Confirmed', 'processing': 'Processing', 'delivered': 'Delivered', 'cancelled': 'Cancelled', 'today': 'আজকের'};
                 titleEl.textContent = `অর্ডার তালিকা: ${statusNames[currentFilterStatus] || currentFilterStatus} (${keys.length}টি)`;
             }
 
@@ -598,20 +627,12 @@
 
                 return `
                     <tr>
-                        <td>
-                            <strong>#${id}</strong><br>
-                            <span class="time-badge">${timeAgo}</span>
-                        </td>
-                        <td>
-                            <b>${name}</b><br>
-                            <small style="color:#64748b;">${phone}</small>
-                        </td>
+                        <td><strong>#${id}</strong><br><span class="time-badge">${timeAgo}</span></td>
+                        <td><b>${name}</b><br><small style="color:#64748b;">${phone}</small></td>
                         <td><b>৳${grandTotal}</b></td>
                         <td><span class="badge badge-${o.status || 'pending'}">${({'pending':'Pending','confirmed':'নিশ্চিত','processing':'প্রসেসিং','delivered':'ডেলিভারি হয়েছে','cancelled':'বাতিল'})[o.status || 'pending'] || 'Pending'}</span></td>
                         <td>
-                            <button class="action-btn" style="background:#0f766e; color:#fff;" onclick="showOrderModal('${id}')" title="বিস্তারিত দেখুন">
-                                <i class="fa-solid fa-eye"></i> ডিটেলস
-                            </button>
+                            <button class="action-btn" style="background:#0f766e; color:#fff;" onclick="showOrderModal('${id}')"><i class="fa-solid fa-eye"></i> ডিটেলস</button>
                             <select onchange="updateOrderStatus('${id}', this.value)" style="padding:4px; border-radius:4px; font-size:12px;">
                                 <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
                                 <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
@@ -650,8 +671,6 @@
                 isFirstLoad = false;
 
                 renderOrdersTable();
-            }, error => {
-                document.getElementById('adminOrdersList').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">ডাটা পড়তে সমস্যা হচ্ছে: ' + error.message + '</td></tr>';
             });
         }
 
@@ -682,7 +701,7 @@
                 available: editingProductId && allAdminProducts[editingProductId] ? allAdminProducts[editingProductId].available !== false : true
             };
             const ref = editingProductId ? db.ref('products/' + editingProductId).update(productData) : db.ref('products').push().set(productData);
-            ref.then(() => { alert(editingProductId ? 'পণ্য সফলভাবে আপডেট করা হয়েছে!' : 'নতুন পণ্য যুক্ত করা হয়েছে!'); cancelEdit(); }).catch(err => alert('সেভ করা যায়নি: ' + err.message));
+            ref.then(() => { alert(editingProductId ? 'পণ্য সফলভাবে আপডেট করা হয়েছে!' : 'নতুন পণ্য যুক্ত করা হয়েছে!'); cancelEdit(); });
         });
 
         let allAdminProducts = {};
@@ -712,9 +731,7 @@
                 const p = allAdminProducts[id];
                 const isAvailable = p.available !== false;
                 const img = escapeAdminHtml(p.productImage || 'https://via.placeholder.com/40');
-                const min = p.minQty ?? 1;
-                const max = p.maxQty ? p.maxQty : '∞';
-                return `<tr><td><img src="${img}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td><td><strong>${escapeAdminHtml(p.name || '')}</strong></td><td>${escapeAdminHtml(p.category || '')}</td><td>৳${Number(p.price || 0)} / ${escapeAdminHtml(p.unit || '')}</td><td>${min} - ${max}</td><td>${p.stock !== null && p.stock !== undefined && p.stock !== '' ? p.stock : 'N/A'}</td><td>${isAvailable ? 'চালু' : 'বন্ধ'}</td><td><button class="action-btn" style="background:${isAvailable ? '#f59e0b' : '#10b981'};color:#fff;" onclick="toggleProduct('${id}', ${isAvailable})">${isAvailable ? 'বন্ধ করুন' : 'চালু করুন'}</button> <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')">এডিট</button> <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button></td></tr>`;
+                return `<tr><td><img src="${img}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td><td><strong>${escapeAdminHtml(p.name || '')}</strong></td><td>${escapeAdminHtml(p.category || '')}</td><td>৳${Number(p.price || 0)} / ${escapeAdminHtml(p.unit || '')}</td><td>${p.minQty ?? 1} - ${p.maxQty ?? '∞'}</td><td>${p.stock ?? 'N/A'}</td><td>${isAvailable ? 'চালু' : 'বন্ধ'}</td><td><button class="action-btn" style="background:${isAvailable ? '#f59e0b' : '#10b981'};color:#fff;" onclick="toggleProduct('${id}', ${isAvailable})">${isAvailable ? 'বন্ধ করুন' : 'চালু করুন'}</button> <button class="action-btn btn-edit" onclick="openEditProductModal('${id}')">এডিট</button> <button class="action-btn btn-delete" onclick="deleteProduct('${id}')">মুছুন</button></td></tr>`;
             }).join('');
         }
 
@@ -724,7 +741,7 @@
             db.ref('products').on('value', snapshot => {
                 allAdminProducts = snapshot.val() || {};
                 const select = document.getElementById('productCategoryFilter');
-                const cats = [...new Set(Object.values(allAdminProducts).map(p => p.category).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'bn'));
+                const cats = [...new Set(Object.values(allAdminProducts).map(p => p.category).filter(Boolean))].sort();
                 const current = select.value;
                 select.innerHTML = '<option value="all">সব ক্যাটাগরি</option>' + cats.map(c=>`<option value="${escapeAdminHtml(c)}">${escapeAdminHtml(c)}</option>`).join('');
                 if(cats.includes(current)) select.value=current;
@@ -750,11 +767,9 @@
             document.getElementById('pUnit').value = p.unit || 'কেজি';
             document.getElementById('pMinQty').value = p.minQty ?? 1;
             document.getElementById('pMaxQty').value = p.maxQty ?? '';
-            document.getElementById('pStock').value = p.stock !== null && p.stock !== undefined ? p.stock : '';
+            document.getElementById('pStock').value = p.stock ?? '';
             document.getElementById('pImage').value = p.productImage || '';
-            if(document.getElementById('pDescription')) {
-                document.getElementById('pDescription').value = p.description || '';
-            }
+            if(document.getElementById('pDescription')) document.getElementById('pDescription').value = p.description || '';
             document.getElementById('formTitle').textContent = 'পণ্য এডিট করুন';
             document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> আপডেট করুন';
             document.getElementById('cancelEditBtn').style.display = 'inline-block';
@@ -766,22 +781,122 @@
             document.getElementById('addProductForm').reset();
             document.getElementById('pUnit').value = 'কেজি';
             document.getElementById('pMinQty').value = 1;
-            document.getElementById('pMaxQty').value = '';
-            if(document.getElementById('pDescription')) {
-                document.getElementById('pDescription').value = '';
-            }
+            if(document.getElementById('pDescription')) document.getElementById('pDescription').value = '';
             document.getElementById('formTitle').textContent = 'নতুন পণ্য যোগ করুন';
             document.getElementById('productSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> পণ্য যুক্ত করুন';
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
 
-        function toggleProduct(id, currentStatus){
-            db.ref('products/' + id).update({ available: !currentStatus });
+        function toggleProduct(id, currentStatus){ db.ref('products/' + id).update({ available: !currentStatus }); }
+        function deleteProduct(id){ if(confirm('পণ্যটি মুছে ফেলতে চান?')) db.ref('products/' + id).remove(); }
+
+        // OFFERS MANAGEMENT (COMBO PACKS) - WITH EDIT & DELETE
+        let editingOfferId = null;
+
+        function saveOffer(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            
+            const title = document.getElementById('offerTitle').value.trim();
+            const price = Number(document.getElementById('offerPrice').value);
+            const description = document.getElementById('offerDesc').value.trim();
+            const imageUrl = document.getElementById('offerImg').value.trim();
+
+            if (!title || isNaN(price) || !description || !imageUrl) {
+                alert('সবগুলো ঘর সঠিকভাবে পূরণ করুন!');
+                return false;
+            }
+
+            const offerData = {
+                title: title,
+                price: price,
+                description: description,
+                imageUrl: imageUrl,
+                borderColor: '#15803d',
+                updatedAt: Date.now()
+            };
+
+            const promise = editingOfferId 
+                ? db.ref('offers/' + editingOfferId).update(offerData)
+                : db.ref('offers').push().set({ ...offerData, createdAt: Date.now() });
+
+            promise.then(() => {
+                alert(editingOfferId ? 'অফার সফলভাবে আপডেট হয়েছে!' : 'অফার সফলভাবে সেভ হয়েছে!');
+                resetOfferForm();
+            }).catch((error) => {
+                alert('সমস্যা হয়েছে! কারণ: ' + error.message);
+            });
+
+            return false;
         }
 
-        function deleteProduct(id){
-            if(confirm('পণ্যটি মুছে ফেলতে চান?')){
-                db.ref('products/' + id).remove();
+        function loadAdminOffers() {
+            db.ref('offers').on('value', (snapshot) => {
+                const list = document.getElementById('adminOffersList');
+                if (!list) return;
+                list.innerHTML = '';
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    list.innerHTML = Object.keys(data).map(key => {
+                        const item = data[key];
+                        return `
+                            <tr>
+                                <td><img src="${escapeAdminHtml(item.imageUrl)}" width="40" height="40" style="object-fit:cover;border-radius:6px;"></td>
+                                <td><strong>${escapeAdminHtml(item.title)}</strong></td>
+                                <td>৳${Number(item.price || 0)}</td>
+                                <td>${escapeAdminHtml(item.description)}</td>
+                                <td>
+                                    <button class="action-btn btn-edit" onclick="openEditOfferModal('${key}')"><i class="fa-solid fa-pen-to-square"></i> এডিট</button>
+                                    <button class="action-btn btn-delete" onclick="deleteOffer('${key}')"><i class="fa-solid fa-trash"></i> মুছুন</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    list.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো অফার নেই।</td></tr>';
+                }
+            });
+        }
+
+        function openEditOfferModal(key) {
+            db.ref('offers/' + key).once('value').then(snapshot => {
+                const offer = snapshot.val();
+                if (!offer) return;
+
+                editingOfferId = key;
+                document.getElementById('offerTitle').value = offer.title || '';
+                document.getElementById('offerPrice').value = offer.price || '';
+                document.getElementById('offerDesc').value = offer.description || '';
+                document.getElementById('offerImg').value = offer.imageUrl || '';
+
+                document.getElementById('offerFormTitle').textContent = 'অফার এডিট করুন';
+                const submitBtn = document.getElementById('offerSubmitBtn');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> অফার আপডেট করুন';
+                    submitBtn.style.background = '#0284c7';
+                }
+                document.getElementById('cancelOfferEditBtn').style.display = 'inline-block';
+
+                const offerFormCard = document.querySelector('#offersTab .admin-card');
+                if (offerFormCard) offerFormCard.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        function resetOfferForm() {
+            editingOfferId = null;
+            document.getElementById('addOfferForm').reset();
+            document.getElementById('offerFormTitle').textContent = 'নতুন অফার / কম্বো প্যাক যোগ করুন';
+            const submitBtn = document.getElementById('offerSubmitBtn');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fa-solid fa-plus"></i> অফার সেভ করুন';
+                submitBtn.style.background = '#15803d';
+            }
+            document.getElementById('cancelOfferEditBtn').style.display = 'none';
+        }
+
+        function deleteOffer(key) {
+            if (confirm('আপনি কি এই অফারটি মুছে ফেলতে চান?')) {
+                db.ref('offers/' + key).remove();
             }
         }
 
@@ -802,7 +917,7 @@
 
         document.getElementById('saveSettingsForm').addEventListener('submit', function(e){
             e.preventDefault();
-            const settings = {
+            db.ref('settings').update({
                 shopName: document.getElementById('sName').value,
                 shopPhone: document.getElementById('sPhone').value,
                 shopWhatsApp: document.getElementById('sWhatsapp').value,
@@ -812,19 +927,13 @@
                 noticeText: document.getElementById('sNoticeText').value,
                 isNoticeActive: document.getElementById('sNoticeActive').checked,
                 shopAddress: document.getElementById('sAddress').value
-            };
-            db.ref('settings').update(settings).then(() => {
-                alert('সেটিং ও নোটিশ সফলভাবে সেভ করা হয়েছে!');
-            });
+            }).then(() => alert('সেটিং ও নোটিশ সফলভাবে সেভ করা হয়েছে!'));
         });
 
         function printOrderSlip(orderId) {
             db.ref("orders/" + orderId).once("value").then(function(snapshot) {
                 const order = snapshot.val();
-                if (!order) {
-                    alert("অর্ডার ডাটা পাওয়া যায়নি!");
-                    return;
-                }
+                if (!order) { alert("অর্ডার ডাটা পাওয়া যায়নি!"); return; }
 
                 const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleString("bn-BD") : "-";
                 const phone = order.phone || order.customerPhone || '-';
@@ -853,77 +962,20 @@
                 const printContent = `
                     <!DOCTYPE html>
                     <html lang="bn">
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>মেমো - ${orderId}</title>
-                        <style>
-                            body { font-family: 'Hind Siliguri', sans-serif, Arial; padding: 20px; color: #333; max-width: 600px; margin: auto; }
-                            .header { text-align: center; border-bottom: 2px dashed #15803d; padding-bottom: 10px; margin-bottom: 15px; }
-                            .header h2 { margin: 0; color: #15803d; font-size: 22px; }
-                            .header p { margin: 3px 0; font-size: 13px; color: #666; }
-                            .info-box { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 6px; }
-                            table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-                            th { background: #15803d; color: white; padding: 6px; text-align: left; }
-                            .totals { margin-top: 15px; text-align: right; font-size: 13px; }
-                            .totals p { margin: 4px 0; }
-                            .grand-total { font-weight: bold; font-size: 16px; color: #15803d; border-top: 1px solid #333; padding-top: 4px; }
-                            .footer-msg { text-align: center; margin-top: 25px; font-size: 12px; color: #777; border-top: 1px solid #ddd; padding-top: 10px; }
-                            @media print { body { padding: 0; } }
-                        </style>
-                    </head>
+                    <head><meta charset="UTF-8"><title>মেমো - ${orderId}</title>
+                    <style>body{font-family:'Hind Siliguri',sans-serif,Arial;padding:20px;color:#333;max-width:600px;margin:auto}.header{text-align:center;border-bottom:2px dashed #15803d;padding-bottom:10px;margin-bottom:15px}.header h2{margin:0;color:#15803d;font-size:22px}.header p{margin:3px 0;font-size:13px;color:#666}.info-box{display:flex;justify-content:space-between;font-size:13px;margin-bottom:15px;background:#f9f9f9;padding:10px;border-radius:6px}table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}th{background:#15803d;color:white;padding:6px;text-align:left}.totals{margin-top:15px;text-align:right;font-size:13px}.totals p{margin:4px 0}.grand-total{font-weight:bold;font-size:16px;color:#15803d;border-top:1px solid #333;padding-top:4px}.footer-msg{text-align:center;margin-top:25px;font-size:12px;color:#777;border-top:1px solid #ddd;padding-top:10px}</style></head>
                     <body>
-                        <div class="header">
-                            <h2>১০ নং সাতবাড়ীয়া কাঁচাবাজার</h2>
-                            <p>তাজা কাঁচামাল ও নিত্যপ্রয়োজনীয় বাজার</p>
-                        </div>
-
+                        <div class="header"><h2>১০ নং সাতবাড়ীয়া কাঁচাবাজার</h2><p>তাজা কাঁচামাল ও নিত্যপ্রয়োজনীয় বাজার</p></div>
                         <div class="info-box">
-                            <div>
-                                <strong>কাস্টমারের তথ্য:</strong><br>
-                                নাম: ${name}<br>
-                                মোবাইল: ${phone}<br>
-                                ঠিকানা: ${address}
-                            </div>
-                            <div style="text-align: right;">
-                                <strong>অর্ডার আইডি:</strong> ${orderId}<br>
-                                <strong>তারিখ:</strong> ${orderDate}<br>
-                            </div>
+                            <div><strong>কাস্টমারের তথ্য:</strong><br>নাম: ${name}<br>মোবাইল: ${phone}<br>ঠিকানা: ${address}</div>
+                            <div style="text-align: right;"><strong>অর্ডার আইডি:</strong> ${orderId}<br><strong>তারিখ:</strong> ${orderDate}</div>
                         </div>
-
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="text-align: center;">#</th>
-                                    <th>পণ্যের নাম</th>
-                                    <th style="text-align: center;">পরিমাণ</th>
-                                    <th style="text-align: right;">দর</th>
-                                    <th style="text-align: right;">মোট</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${itemsHtml}
-                            </tbody>
-                        </table>
-
-                        <div class="totals">
-                            <p>পণ্যের মোট মূল্য: ৳${subtotal}</p>
-                            <p>ডেলিভারি চার্জ: ৳${delivery}</p>
-                            <p class="grand-total">সর্বমোট বিল: ৳${grandTotal}</p>
-                        </div>
-
-                        <div class="footer-msg">
-                            <p>কেনাকাটা করার জন্য ধন্যবাদ!</p>
-                        </div>
-
-                        <script>
-                            window.onload = function() {
-                                setTimeout(function() { window.print(); }, 500);
-                            }
-                        <\/script>
-                    </body>
-                    </html>
+                        <table><thead><tr><th style="text-align: center;">#</th><th>পণ্যের নাম</th><th style="text-align: center;">পরিমাণ</th><th style="text-align: right;">দর</th><th style="text-align: right;">মোট</th></tr></thead><tbody>${itemsHtml}</tbody></table>
+                        <div class="totals"><p>পণ্যের মোট মূল্য: ৳${subtotal}</p><p>ডেলিভারি চার্জ: ৳${delivery}</p><p class="grand-total">সর্বমোট বিল: ৳${grandTotal}</p></div>
+                        <div class="footer-msg"><p>কেনাকাটা করার জন্য ধন্যবাদ!</p></div>
+                        <script>window.onload = function() { setTimeout(function() { window.print(); }, 500); }<\/script>
+                    </body></html>
                 `;
-
                 const printWindow = window.open("", "_blank");
                 printWindow.document.write(printContent);
                 printWindow.document.close();
@@ -932,13 +984,7 @@
 
         function deleteOrder(id) {
             if (confirm('আপনি কি নিশ্চিত যে অর্ডার #' + id + ' মুছে ফেলতে চান?')) {
-                db.ref('orders/' + id).remove()
-                    .then(() => {
-                        alert('অর্ডারটি সফলভাবে মুছে ফেলা হয়েছে!');
-                    })
-                    .catch(error => {
-                        alert('অর্ডার মুছতে সমস্যা হয়েছে: ' + error.message);
-                    });
+                db.ref('orders/' + id).remove().then(() => alert('অর্ডারটি সফলভাবে মুছে ফেলা হয়েছে!'));
             }
         }
     </script>
